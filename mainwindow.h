@@ -3,9 +3,16 @@
 
 #include <QMainWindow>
 
+QT_BEGIN_NAMESPACE
+
 namespace Ui {
 class MainWindow;
 }
+
+QT_END_NAMESPACE
+
+class Console;
+//class QTextEdit;
 
 class MainWindow : public QMainWindow
 {
@@ -16,7 +23,8 @@ public:
     ~MainWindow();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow *ui = nullptr;
+    Console *m_console = nullptr;
 };
 
 #endif // MAINWINDOW_H
