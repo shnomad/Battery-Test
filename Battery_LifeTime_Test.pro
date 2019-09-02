@@ -22,18 +22,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    console.cpp
+        seed_relay.cpp
 
 HEADERS += \
         mainwindow.h \
-    console.h
+        seed_relay.h
 
 FORMS += \
         mainwindow.ui
+
+INCLUDEPATH += /opt/qt5pi/sysroot/usr/include
+LIBS += -L/opt/qt5pi/sysroot/usr/lib -lwiringPi
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

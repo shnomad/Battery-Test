@@ -11,8 +11,7 @@ class MainWindow;
 
 QT_END_NAMESPACE
 
-class Console;
-//class QTextEdit;
+class seed_relay;
 
 class MainWindow : public QMainWindow
 {
@@ -24,7 +23,10 @@ public:
 
 private:
     Ui::MainWindow *ui = nullptr;
-    Console *m_console = nullptr;
+    seed_relay *relay;
+
+    void PrintMessage(quint8 messageType);
+
 };
 
 #endif // MAINWINDOW_H
