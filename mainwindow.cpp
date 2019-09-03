@@ -1,7 +1,9 @@
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "seed_relay.h"
 #include <QTextEdit>
+#include <QThread>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow), relay(new seed_relay)
@@ -10,12 +12,16 @@ MainWindow::MainWindow(QWidget *parent) :
     QTextEdit *textEdit = new QTextEdit(this);
 
     timer = new QTimer(this);
+ //   ui->test_start->setEnabled(false);
 
     ui->textEdit->setStyleSheet("background-color:black;");
     ui->textEdit->setTextColor("yellow");
     relay->port_reset();
 
     ui->textEdit->append("First Checking the Device Conntection");
+
+    ui->label->setAlignment(Qt::AlignCenter);
+    ui->label->setText("Camera is Closed");
 
 //    relay->port_reset();
 
@@ -52,7 +58,27 @@ void MainWindow::on_device_check_clicked()
 
 void MainWindow::on_test_start_clicked()
 {
+    ui->textEdit->append("measure start");
 
+    while(measure_coount<500)
+    {
+        relay->work(CH1_DETECT, CH_ON);
+        //delay 3 sec
+        QThread::msleep(3000);
+
+        relay->work(CH2_WORK, CH_ON);
+        //delay 1 sec
+        QThread::msleep(1000);
+
+        relay->work(CH3_THIRD, CH_ON);
+        //delay 8 sec
+        QThread::sleep(8);
+
+        measure_coount++;
+//        ui->textEdit->append("measurement count is : ");
+//        ui->textEdit->append("measurement count is : ",QString::number(measure_coount));
+    }
+    //delay 5sec
 }
 
 void MainWindow::on_camera_start_clicked()
@@ -80,7 +106,9 @@ void MainWindow::on_camera_stop_clicked()
     qt_image = QImage((const unsigned char*)(image.data), image.cols, image.rows, QImage::Format_RGB888);
     ui->label->setPixmap(QPixmap::fromImage(qt_image));
 //  ui->label->resize(ui->label->pixmap()->size());       //resize the camera display
-//  cout<<"camera is closed"<<endl;
+//  ui->label->setStyleSheet("color: yellow");            //font color
+    ui->label->setAlignment(Qt::AlignCenter);
+    ui->label->setText("Camera is Closed");
 }
 
 void MainWindow::update_camera()

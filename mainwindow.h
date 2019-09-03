@@ -2,10 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+
 #include <QTimer>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
-#include <iostream>
 
 QT_BEGIN_NAMESPACE
 
@@ -23,6 +23,8 @@ class seed_relay;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+
+    quint32 measure_coount=0;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -43,7 +45,6 @@ private:
     QImage qt_image;
     seed_relay *relay;
     void PrintMessage(quint8 messageType);
-
 };
 
 #endif // MAINWINDOW_H
