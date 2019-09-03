@@ -59,23 +59,25 @@ void MainWindow::on_device_check_clicked()
 void MainWindow::on_test_start_clicked()
 {
     ui->textEdit->append("measure start");
+    ui->textEdit->append(tr("measurement count is: %1").arg(QString::number(measure_coount)));
 
-    while(measure_coount<500)
+//    while(measure_coount<500)
+    while(0)
     {
         relay->work(CH1_DETECT, CH_ON);
         //delay 3 sec
-        QThread::msleep(3000);
+//        QThread::msleep(3000);
 
         relay->work(CH2_WORK, CH_ON);
         //delay 1 sec
-        QThread::msleep(1000);
+//        QThread::msleep(1000);
 
         relay->work(CH3_THIRD, CH_ON);
         //delay 8 sec
-        QThread::sleep(8);
+//        QThread::sleep(8);
 
         measure_coount++;
-//        ui->textEdit->append("measurement count is : ");
+        ui->textEdit->append(tr("measurement count is: %1").arg(QString::number(measure_coount)));
 //        ui->textEdit->append("measurement count is : ",QString::number(measure_coount));
     }
     //delay 5sec
