@@ -9,9 +9,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     QTextEdit *textEdit = new QTextEdit(this);
 
+    timer = new QTimer(this);
+
     ui->textEdit->setStyleSheet("background-color:black;");
     ui->textEdit->setTextColor("yellow");
     relay->port_reset();
+
+    ui->textEdit->append("First Checking the Device Conntection");
 
 //    relay->port_reset();
 
@@ -39,4 +43,51 @@ MainWindow::~MainWindow()
 void MainWindow::PrintMessage(quint8 messageType)
 {
 
+}
+
+void MainWindow::on_device_check_clicked()
+{
+    ui->textEdit->clear();
+}
+
+void MainWindow::on_test_start_clicked()
+{
+
+}
+
+void MainWindow::on_camera_start_clicked()
+{
+    cap.open(0);
+
+    if(!cap.isOpened())
+    {
+        ui->label->setText("camera is not open");
+        ui->camera_stop->setEnabled(false);
+    }
+    else
+    {
+        ui->camera_stop->setEnabled(true);
+        connect(timer, SIGNAL(timeout()), this, SLOT(update_camera()));
+        timer->start(20);
+    }
+}
+
+void MainWindow::on_camera_stop_clicked()
+{
+    disconnect(timer, SIGNAL(timeout()), this, SLOT(update_camera()));
+    cap.release();
+    Mat image = Mat::zeros(frame.size(), CV_8UC3);
+    qt_image = QImage((const unsigned char*)(image.data), image.cols, image.rows, QImage::Format_RGB888);
+    ui->label->setPixmap(QPixmap::fromImage(qt_image));
+//  ui->label->resize(ui->label->pixmap()->size());       //resize the camera display
+//  cout<<"camera is closed"<<endl;
+}
+
+void MainWindow::update_camera()
+{
+    cap >> frame;
+    cvtColor(frame, frame, COLOR_BGR2RGB);
+    qt_image = QImage((const unsigned char*)(frame.data), frame.cols, frame.rows, QImage::Format_RGB888);
+    ui->label->setPixmap(QPixmap::fromImage(qt_image));
+//  ui->label->resize(ui->label->pixmap()->size());       //resize the camera display
 }
