@@ -23,6 +23,7 @@ class seed_relay : public QObject
 
     explicit seed_relay();
             ~seed_relay();
+public slots:
     void port_reset(void);
     void work(quint8 Channel, quint8 OnOff);
 

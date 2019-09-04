@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
 #include <QTimer>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
@@ -15,7 +14,6 @@ using namespace cv;
 namespace Ui {
 class MainWindow;
 }
-
 QT_END_NAMESPACE
 
 class seed_relay;
@@ -24,7 +22,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-    quint32 measure_coount=0;
+    quint16 measure_coount=0;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -36,15 +34,28 @@ private slots:
     void on_camera_start_clicked();
     void on_camera_stop_clicked();
     void update_camera();
+    void measurement();
+    void detect_on();
+    void work_on();
+    void third_on();
+    void detect_off();
+    void port_reset();
+    void measure_count_check();
+
+    void on_test_stop_clicked();
+
+signals:
+    void measure_start();
+    void measure_stop();
 
 private:
     Ui::MainWindow *ui = nullptr;    
-    QTimer *timer;
+    QTimer *camera_timer;
     VideoCapture cap;
     Mat frame;
     QImage qt_image;
+
     seed_relay *relay;
-    void PrintMessage(quint8 messageType);
 };
 
 #endif // MAINWINDOW_H
