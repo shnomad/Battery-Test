@@ -9,7 +9,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     ui->setupUi(this);
   //QTextEdit *textEdit = new QTextEdit(this);
-
 //  seed_relay *relay = new seed_relay;
     relay->port_reset();
 
@@ -31,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->label->setText("Camera is Closed");
 
     connect(this, SIGNAL(measure_start()), this, SLOT(measurement()));
-    connect(this, SIGNAL(measure_stop()), this, SLOT(measure_count_check()));
+    connect(this, SIGNAL(measure_check()), this, SLOT(measure_count_check()));
 }
 
 MainWindow::~MainWindow()
@@ -49,13 +48,25 @@ void MainWindow::on_test_start_clicked()
     ui->textEdit->clear();
     ui->textEdit->append("measure start");
 
+    ui->test_start->setEnabled(false);
+
     emit measure_start();
 }
 
 void MainWindow::on_test_stop_clicked()
-{
+{   
     disconnect(this, SIGNAL(measure_start()), this, SLOT(measurement()));
-    disconnect(this, SIGNAL(measure_stop()), this, SLOT(measure_count_check()));
+    disconnect(this, SIGNAL(measure_check()), this, SLOT(measure_count_check()));
+
+    measure_coount = 0;
+
+    ui->test_start->setEnabled(true);
+
+    port_reset();
+
+    ui->textEdit->clear();
+    ui->textEdit->append("measure stopped");
+
 }
 
 void MainWindow::on_camera_start_clicked()
@@ -111,14 +122,14 @@ void MainWindow::measurement()
     //delay 8 sec
     //QThread::msleep(5000);
 
-     QTimer::singleShot(1000, this, SLOT(detect_on()));
-
+     QTimer::singleShot(0, this, SLOT(detect_on()));
+       //5 Sec
      QTimer::singleShot(5000, this, SLOT(work_on()));
-
+       //1 Sec
      QTimer::singleShot(6000, this, SLOT(third_on()));
-
+       //9 Sec
      QTimer::singleShot(15000, this, SLOT(detect_off()));
-
+       //14 Sec
      QTimer::singleShot(30000, this, SLOT(port_reset()));
 
      measure_coount++;
@@ -147,13 +158,22 @@ void MainWindow::detect_off()
 void MainWindow::port_reset()
 {
     relay->port_reset();
-    emit measure_stop();
+    emit measure_check();
 }
 
 void MainWindow:: measure_count_check()
 {
-    ui->textEdit->append("Measurement count is  " +(QString::number(measure_coount))+ "  times");
+    ui->textEdit->append("Measurement count is  " + (QString::number(measure_coount)));
 
-    if(measure_coount < 500)
+    if(measure_coount < 1000)
+    {
         emit measure_start();
+    }
+    else if(measure_coount == 1000)
+    {
+        disconnect(this, SIGNAL(measure_start()), this, SLOT(measurement()));
+        disconnect(this, SIGNAL(measure_stop()), this, SLOT(measure_count_check()));
+    }
 }
+
+

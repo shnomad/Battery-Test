@@ -46,7 +46,7 @@ private slots:
 
 signals:
     void measure_start();
-    void measure_stop();
+    void measure_check();
 
 private:
     Ui::MainWindow *ui = nullptr;    
