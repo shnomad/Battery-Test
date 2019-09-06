@@ -39,18 +39,19 @@ private slots:
     void work_on();
     void third_on();
     void detect_off();
-    void port_reset();
+    void measure_port_reset();
+    void comm_port_reset();
     void measure_count_check();
-
     void on_test_stop_clicked();
 
 signals:
     void measure_start();
     void measure_check();
+    void measure_end();
 
 private:
     Ui::MainWindow *ui = nullptr;    
-    QTimer *camera_timer;
+    QTimer *camera_timer, *detect_on_timer, *work_on_timer, *third_on_timer, *detect_off_timer, *port_reset_timer;
     VideoCapture cap;
     Mat frame;
     QImage qt_image;

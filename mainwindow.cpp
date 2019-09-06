@@ -8,16 +8,36 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), relay(new seed_relay)
 {
     ui->setupUi(this);
-  //QTextEdit *textEdit = new QTextEdit(this);
-//  seed_relay *relay = new seed_relay;
-    relay->port_reset();
+
+    measure_port_reset();
+    comm_port_reset();
 
     QPalette palette = ui->label->palette();
     palette.setColor(QPalette::WindowText, Qt::yellow);
     palette.setColor(QPalette::Window, Qt::black);
 
     camera_timer = new QTimer(this);
- // ui->test_start->setEnabled(false);
+    detect_on_timer = new QTimer(this);
+    work_on_timer = new QTimer(this);
+    third_on_timer = new QTimer(this);
+    detect_off_timer = new QTimer(this);
+    port_reset_timer = new QTimer(this);
+
+    detect_on_timer->setSingleShot(true);
+    work_on_timer->setSingleShot(true);
+    third_on_timer->setSingleShot(true);
+    detect_off_timer->setSingleShot(true);
+    port_reset_timer->setSingleShot(true);
+
+    //detect -> (5 sec) -> work_on -> (1 sec) -> third on -> (8 sec) -> detect off -> (20 sec)
+
+    detect_on_timer->setInterval(0);
+    work_on_timer->setInterval(5000);
+    third_on_timer->setInterval(6000);
+    detect_off_timer->setInterval(14000);
+    port_reset_timer->setInterval(34000);
+
+  // ui->test_start->setEnabled(false);
 
     ui->textEdit->setStyleSheet("background-color:black;");
     ui->textEdit->setTextColor("yellow");
@@ -28,9 +48,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->label->setAutoFillBackground(true);
     ui->label->setPalette(palette);
     ui->label->setText("Camera is Closed");
-
-    connect(this, SIGNAL(measure_start()), this, SLOT(measurement()));
-    connect(this, SIGNAL(measure_check()), this, SLOT(measure_count_check()));
 }
 
 MainWindow::~MainWindow()
@@ -44,11 +61,21 @@ void MainWindow::on_device_check_clicked()
 }
 
 void MainWindow::on_test_start_clicked()
-{
+{    
+    connect(this, SIGNAL(measure_start()), this, SLOT(measurement()));
+    connect(this, SIGNAL(measure_check()), this, SLOT(measure_count_check()));
+    connect(this, SIGNAL(measure_end()), this, SLOT(on_test_stop_clicked()));
+
+    connect(detect_on_timer, SIGNAL(timeout()),SLOT(detect_on()));
+    connect(work_on_timer, SIGNAL(timeout()),SLOT(work_on()));
+    connect(third_on_timer, SIGNAL(timeout()),SLOT(third_on()));
+    connect(detect_off_timer, SIGNAL(timeout()),SLOT(detect_off()));
+    connect(port_reset_timer, SIGNAL(timeout()),SLOT(port_reset()));
+
     ui->textEdit->clear();
     ui->textEdit->append("measure start");
-
     ui->test_start->setEnabled(false);
+    ui->device_check->setEnabled(false);
 
     emit measure_start();
 }
@@ -57,12 +84,27 @@ void MainWindow::on_test_stop_clicked()
 {   
     disconnect(this, SIGNAL(measure_start()), this, SLOT(measurement()));
     disconnect(this, SIGNAL(measure_check()), this, SLOT(measure_count_check()));
+    disconnect(this, SIGNAL(measure_end()), this, SLOT(on_test_stop_clicked()));
 
-    measure_coount = 0;
+    detect_on_timer->stop();
+    work_on_timer->stop();
+    third_on_timer->stop();
+    detect_off_timer->stop();
+    port_reset_timer->stop();
+
+    disconnect(detect_on_timer, SIGNAL(timeout()),this,SLOT(detect_on()));
+    disconnect(work_on_timer, SIGNAL(timeout()),this,SLOT(work_on()));
+    disconnect(third_on_timer, SIGNAL(timeout()),this,SLOT(third_on()));
+    disconnect(detect_off_timer, SIGNAL(timeout()),this,SLOT(detect_off()));
+    disconnect(port_reset_timer, SIGNAL(timeout()),this,SLOT(measure_port_reset()));
+
+    measure_coount = 0;    
 
     ui->test_start->setEnabled(true);
+    ui->device_check->setEnabled(true);
 
-    port_reset();
+    measure_port_reset();
+    comm_port_reset();
 
     ui->textEdit->clear();
     ui->textEdit->append("measure stopped");
@@ -80,6 +122,7 @@ void MainWindow::on_camera_start_clicked()
     }
     else
     {
+        ui->camera_start->setEnabled(false);
         ui->camera_stop->setEnabled(true);
         connect(camera_timer, SIGNAL(timeout()), this, SLOT(update_camera()));
         camera_timer->start(20);
@@ -89,6 +132,7 @@ void MainWindow::on_camera_start_clicked()
 void MainWindow::on_camera_stop_clicked()
 {
     disconnect(camera_timer, SIGNAL(timeout()), this, SLOT(update_camera()));
+    ui->camera_start->setEnabled(true);
     cap.release();
     Mat image = Mat::zeros(frame.size(), CV_8UC3);
     qt_image = QImage((const unsigned char*)(image.data), image.cols, image.rows, QImage::Format_RGB888);
@@ -110,59 +154,50 @@ void MainWindow::update_camera()
 
 void MainWindow::measurement()
 {
-    //relay->work(CH1_DETECT, CH_ON);
-    //delay 3 sec
-    //QThread::msleep(3000);
+     detect_on_timer->start();
+     work_on_timer->start();
+     third_on_timer->start();
+     detect_off_timer->start();
+     port_reset_timer->start();
 
-    //relay->work(CH2_WORK, CH_ON);
-    //delay 1 sec
-    //QThread::msleep(1000);
-
-    //relay->work(CH3_THIRD, CH_ON);
-    //delay 8 sec
-    //QThread::msleep(5000);
-
-     QTimer::singleShot(0, this, SLOT(detect_on()));
-       //5 Sec
-     QTimer::singleShot(5000, this, SLOT(work_on()));
-       //1 Sec
-     QTimer::singleShot(6000, this, SLOT(third_on()));
-       //9 Sec
-     QTimer::singleShot(15000, this, SLOT(detect_off()));
-       //14 Sec
-     QTimer::singleShot(30000, this, SLOT(port_reset()));
-
-     measure_coount++;
+//     measure_coount++;
 }
 
 void MainWindow::detect_on()
 {
-   relay->work(CH1_DETECT, CH_ON);
+   relay->work(relay->fd_measure, CH1_DETECT, CH_ON);
 }
 
 void MainWindow::work_on()
 {
-    relay->work(CH2_WORK, CH_ON);
+    relay->work(relay->fd_measure, CH2_WORK, CH_ON);
 }
 
 void MainWindow::third_on()
 {
-    relay->work(CH3_THIRD, CH_ON);
+    relay->work(relay->fd_measure, CH3_THIRD, CH_ON);
 }
 
 void MainWindow::detect_off()
 {
-   relay->work(CH1_DETECT, CH_OFF);
+   relay->work(relay->fd_measure, CH1_DETECT, CH_OFF);
 }
 
-void MainWindow::port_reset()
+void MainWindow::measure_port_reset()
 {
-    relay->port_reset();
+    relay->port_reset(relay->fd_measure);
     emit measure_check();
+}
+
+void MainWindow::comm_port_reset()
+{
+   relay->port_reset(relay->fd_comm);
 }
 
 void MainWindow:: measure_count_check()
 {
+    measure_coount++;
+
     ui->textEdit->append("Measurement count is  " + (QString::number(measure_coount)));
 
     if(measure_coount < 1000)
@@ -171,9 +206,6 @@ void MainWindow:: measure_count_check()
     }
     else if(measure_coount == 1000)
     {
-        disconnect(this, SIGNAL(measure_start()), this, SLOT(measurement()));
-        disconnect(this, SIGNAL(measure_stop()), this, SLOT(measure_count_check()));
+        emit measure_end();
     }
 }
-
-
