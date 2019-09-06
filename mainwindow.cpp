@@ -71,7 +71,7 @@ void MainWindow::on_test_start_clicked()
     connect(work_on_timer, SIGNAL(timeout()),SLOT(work_on()));
     connect(third_on_timer, SIGNAL(timeout()),SLOT(third_on()));
     connect(detect_off_timer, SIGNAL(timeout()),SLOT(detect_off()));
-    connect(port_reset_timer, SIGNAL(timeout()),SLOT(port_reset()));
+    connect(port_reset_timer, SIGNAL(timeout()),SLOT(measure_port_reset()));
 
     ui->textEdit->clear();
     ui->textEdit->append("measure start");
@@ -192,7 +192,7 @@ void MainWindow::measure_port_reset()
 
 void MainWindow:: measure_count_check()
 {
-    measure_coount++;
+      measure_coount++;
 
 //    ui->textEdit->setTextCursor();
       ui->textEdit->setText("Measurement count is  " + (QString::number(measure_coount)));
