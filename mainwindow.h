@@ -31,6 +31,7 @@ public:
 private slots:
     void on_device_check_clicked();
     void on_test_start_clicked();
+    void on_test_stop_clicked();
     void on_camera_start_clicked();
     void on_camera_stop_clicked();
     void update_camera();
@@ -40,14 +41,15 @@ private slots:
     void third_on();
     void detect_off();
     void measure_port_reset();
-    void comm_port_reset();
     void measure_count_check();
-    void on_test_stop_clicked();
+    void comm_connect();
+    void comm_port_reset();
 
 signals:
     void measure_start();
     void measure_check();
     void measure_end();
+    void comm_check();
 
 private:
     Ui::MainWindow *ui = nullptr;    

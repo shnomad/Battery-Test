@@ -18,11 +18,8 @@ seed_relay::~seed_relay()
 
 void seed_relay::port_reset(quint32 fd)
 {
-    for(quint8 Channel=0; Channel<0x4; Channel++)
-    {
+    for(quint8 Channel=0x1; Channel<0x5; Channel++)
         wiringPiI2CWriteReg8(fd, Channel, CH_OFF);
-    }
-
 }
 
 void seed_relay::work(quint32 fd, quint8 Channel, quint8 OnOff)

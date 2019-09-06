@@ -9,12 +9,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     ui->setupUi(this);
 
+    QPalette palette = ui->label->palette();
+
     measure_port_reset();
     comm_port_reset();
-
-    QPalette palette = ui->label->palette();
-    palette.setColor(QPalette::WindowText, Qt::yellow);
-    palette.setColor(QPalette::Window, Qt::black);
 
     camera_timer = new QTimer(this);
     detect_on_timer = new QTimer(this);
@@ -37,17 +35,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     detect_off_timer->setInterval(14000);
     port_reset_timer->setInterval(34000);
 
-  // ui->test_start->setEnabled(false);
-
-    ui->textEdit->setStyleSheet("background-color:black;");
-    ui->textEdit->setTextColor("yellow");
-
-//  ui->textEdit->append("First Checking the Device Conntection");
+    palette.setColor(QPalette::WindowText, Qt::yellow);
+    palette.setColor(QPalette::Window, Qt::black);
 
     ui->label->setAlignment(Qt::AlignCenter);
     ui->label->setAutoFillBackground(true);
     ui->label->setPalette(palette);
     ui->label->setText("Camera is Closed");
+
+    ui->textEdit->setStyleSheet("background-color:black;");
+    ui->textEdit->setTextColor("yellow");
 }
 
 MainWindow::~MainWindow()
@@ -58,6 +55,10 @@ MainWindow::~MainWindow()
 void MainWindow::on_device_check_clicked()
 {
     ui->textEdit->clear();
+    comm_connect();
+
+    //Test for USB connection
+    QTimer::singleShot(2000, this, SLOT(comm_port_reset()));
 }
 
 void MainWindow::on_test_start_clicked()
@@ -189,16 +190,13 @@ void MainWindow::measure_port_reset()
     emit measure_check();
 }
 
-void MainWindow::comm_port_reset()
-{
-   relay->port_reset(relay->fd_comm);
-}
-
 void MainWindow:: measure_count_check()
 {
     measure_coount++;
 
-    ui->textEdit->append("Measurement count is  " + (QString::number(measure_coount)));
+//    ui->textEdit->setTextCursor();
+      ui->textEdit->setText("Measurement count is  " + (QString::number(measure_coount)));
+//    ui->textEdit->append("Measurement count is  " + (QString::number(measure_coount)));
 
     if(measure_coount < 1000)
     {
@@ -208,4 +206,15 @@ void MainWindow:: measure_count_check()
     {
         emit measure_end();
     }
+}
+
+void MainWindow::comm_connect()
+{
+    for(quint8 channel=0x5; channel>0; channel--)
+        relay->work(relay->fd_comm, channel ,CH_ON);
+}
+
+void MainWindow::comm_port_reset()
+{
+   relay->port_reset(relay->fd_comm);
 }
