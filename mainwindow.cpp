@@ -35,6 +35,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     detect_off_timer->setInterval(14000);
     port_reset_timer->setInterval(34000);
 
+    ui->test_stop->setEnabled(false);
+    ui->camera_stop->setEnabled(false);
+
     palette.setColor(QPalette::WindowText, Qt::yellow);
     palette.setColor(QPalette::Window, Qt::black);
 
@@ -77,6 +80,7 @@ void MainWindow::on_test_start_clicked()
     ui->textEdit->append("measure start");
     ui->test_start->setEnabled(false);
     ui->device_check->setEnabled(false);
+    ui->test_stop->setEnabled(true);
 
     emit measure_start();
 }
@@ -103,9 +107,11 @@ void MainWindow::on_test_stop_clicked()
 
     ui->test_start->setEnabled(true);
     ui->device_check->setEnabled(true);
+    ui->test_stop->setEnabled(false);
 
     measure_port_reset();
     comm_port_reset();
+
 
     ui->textEdit->clear();
     ui->textEdit->append("measure stopped");
@@ -133,7 +139,10 @@ void MainWindow::on_camera_start_clicked()
 void MainWindow::on_camera_stop_clicked()
 {
     disconnect(camera_timer, SIGNAL(timeout()), this, SLOT(update_camera()));
+
     ui->camera_start->setEnabled(true);
+    ui->camera_stop->setEnabled(false);
+
     cap.release();
     Mat image = Mat::zeros(frame.size(), CV_8UC3);
     qt_image = QImage((const unsigned char*)(image.data), image.cols, image.rows, QImage::Format_RGB888);
