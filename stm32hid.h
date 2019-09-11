@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QTimer>
-#include <libusb.h>
+#include <libusb-1.0/libusb.h>
 
 #define MAX_READ_TRY   65536
 

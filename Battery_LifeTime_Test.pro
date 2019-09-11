@@ -40,7 +40,6 @@ FORMS += \
         mainwindow.ui
 
 INCLUDEPATH += /opt/qt5pi/sysroot/usr/include \
-               /opt/qt5pi/sysroot/usr/include/libusb-1.0 \
                /opt/qt5pi/sysroot/usr/local/include/opencv4
 
 LIBS += -L/opt/qt5pi/sysroot/usr/lib -lwiringPi \
