@@ -12,7 +12,7 @@ class STMHIDPort : public QObject
     Q_OBJECT
 
 //  hid_device *m_hid_device;
-
+    libusb_device_handle *m_hid_device;
     QByteArray m_buffer;
     int buffer_len;
     QTimer *recv_timer;
@@ -28,7 +28,8 @@ public:
     qint64 writeWithPaddingData(QByteArray data_array); // 0x01 [byte] ...
 
     void ReceiveData();
-    void Append(BYTE *data, DWORD len);
+//    void Append(BYTE *data, DWORD len);
+    void Append(quint8 *data, quint32 len);
     QByteArray readAll();
     void close();
 

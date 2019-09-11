@@ -16,6 +16,9 @@ class MainWindow;
 }
 QT_END_NAMESPACE
 
+
+#define TEST_CAPTURE 1
+
 class seed_relay;
 
 class MainWindow : public QMainWindow
@@ -57,7 +60,6 @@ private:
     VideoCapture cap;
     Mat frame;
     QImage qt_image;
-
     seed_relay *relay;
 };
 

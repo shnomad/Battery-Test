@@ -26,7 +26,8 @@ void STMHIDPort::checkReceived()
     //Log() << "checkReceived(out)";
 }
 
-void STMHIDPort::Append(BYTE *data, DWORD len)
+//void STMHIDPort::Append(BYTE *data, DWORD len)
+void STMHIDPort::Append(quint8 *data, quint32 len)
 {
     Q_UNUSED(data);
     Q_UNUSED(len);
@@ -70,14 +71,15 @@ void STMHIDPort::ReceiveData()
     unsigned char buf[65];
     #define MAX_STR 255
     wchar_t wstr[MAX_STR];
-    DWORD totalBytesRead_ActualData = 0;
+    quint8 totalBytesRead_ActualData = 0;
+//    DWORD totalBytesRead_ActualData = 0;
 
     // Set the hid_read() function to be non-blocking.
 //    hid_set_nonblocking(m_hid_device, 1);
 
     // Read requested state
     for(int j=0; j<MAX_READ_TRY; j++) {
-        numberOfBytesRead = hid_read(m_hid_device, buf, 64);
+//        numberOfBytesRead = hid_read(m_hid_device, buf, 64);
 
         if (numberOfBytesRead <= 0) {
             count_ReceiveData_ZeroByte ++;
@@ -106,7 +108,7 @@ void STMHIDPort::ReceiveData()
 
     if(m_hid_device==NULL) return;
 
-    hid_set_nonblocking(m_hid_device, 0);
+//    hid_set_nonblocking(m_hid_device, 0);
 
     if (totalBytesRead_ActualData > 0)
     {
@@ -149,7 +151,8 @@ qint64 STMHIDPort::writeWithPaddingData(QByteArray data_array)
     unsigned char buf[64];
     #define MAX_STR 255
     wchar_t wstr[MAX_STR];
-    DWORD totalBytesWritten = 0;
+    quint32 totalBytesWritten = 0;
+    //DWORD totalBytesWritten = 0;
 
     buf[0] = 0x01;
     buf[1] = data_array.length();
@@ -160,7 +163,7 @@ qint64 STMHIDPort::writeWithPaddingData(QByteArray data_array)
         logchar(buf[i]);
     }
 
-    numberOfBytesWritten = hid_write(m_hid_device, buf, 64);
+//    numberOfBytesWritten = hid_write(m_hid_device, buf, 64);
     totalBytesWritten += numberOfBytesWritten;
     if (totalBytesWritten > 0)
     {
@@ -193,9 +196,10 @@ void STMHIDPort::close()
         recv_timer->stop();
         recv_timer = Q_NULLPTR;
     }
+
     if(m_hid_device != NULL)
     {
-        hid_close(m_hid_device);
+//        hid_close(m_hid_device);
         m_hid_device = NULL;
     }
 }
