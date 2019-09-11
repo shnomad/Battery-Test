@@ -5,6 +5,7 @@
 #include <QTextEdit>
 #include <QThread>
 #include <QDateTime>
+#include <QApplication>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), relay(new seed_relay)
 {
@@ -238,4 +239,9 @@ void MainWindow::comm_connect()
 void MainWindow::comm_port_reset()
 {
    relay->port_reset(relay->fd_comm);
+}
+
+void MainWindow::on_quit_clicked()
+{
+   QCoreApplication::quit();
 }

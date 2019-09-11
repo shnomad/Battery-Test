@@ -47,6 +47,7 @@ private slots:
     void measure_count_check();
     void comm_connect();
     void comm_port_reset();
+    void on_quit_clicked();
 
 signals:
     void measure_start();
