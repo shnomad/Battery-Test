@@ -25,16 +25,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-        seed_relay.cpp
+        seed_relay.cpp \
+        stm32hid.cpp
 
 HEADERS += \
         mainwindow.h \
-        seed_relay.h
+        seed_relay.h \
+        serial_protocol.h \
+        glucose_download_progress.h \
+        serial_definition.h \
+        stm32hid.h
 
 FORMS += \
         mainwindow.ui
 
 INCLUDEPATH += /opt/qt5pi/sysroot/usr/include \
+               /opt/qt5pi/sysroot/usr/include/libusb-1.0 \
                /opt/qt5pi/sysroot/usr/local/include/opencv4
 
 LIBS += -L/opt/qt5pi/sysroot/usr/lib -lwiringPi \
@@ -53,7 +59,9 @@ LIBS += -L/opt/qt5pi/sysroot/usr/lib -lwiringPi \
          -lopencv_superres \
          -lopencv_video \
          -lopencv_videoio \
-         -lopencv_videostab
+         -lopencv_videostab \
+        -L/opt/qt5pi/sysroot/lib/arm-linux-gnueabihf -lusb-1.0
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
