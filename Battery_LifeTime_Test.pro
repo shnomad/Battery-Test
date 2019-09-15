@@ -25,16 +25,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-        seed_relay.cpp \
-        stm32hid.cpp
+        seed_relay.cpp
 
 HEADERS += \
         mainwindow.h \
         seed_relay.h \
         serial_protocol.h \
-        glucose_download_progress.h \
-        serial_definition.h \
-        stm32hid.h
+        serial_definition.h
 
 FORMS += \
         mainwindow.ui
