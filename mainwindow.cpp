@@ -4,6 +4,8 @@
 #include "seed_relay.h"
 #include <QTextEdit>
 #include <QThread>
+#include <QDateTime>
+#include <QApplication>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), relay(new seed_relay)
 {
@@ -132,7 +134,9 @@ void MainWindow::on_camera_start_clicked()
         ui->camera_start->setEnabled(false);
         ui->camera_stop->setEnabled(true);
         connect(camera_timer, SIGNAL(timeout()), this, SLOT(update_camera()));
-        camera_timer->start(20);
+//      camera_timer->start(20);
+        camera_timer->start(50);
+
     }
 }
 
@@ -154,9 +158,18 @@ void MainWindow::on_camera_stop_clicked()
 }
 
 void MainWindow::update_camera()
-{
+{    
     cap >> frame;
     cvtColor(frame, frame, COLOR_BGR2RGB);
+
+#ifdef TEST_CAPTURE
+
+     QDateTime Current_Time = QDateTime::currentDateTime();
+     QString filename = "/home/pi/capture_file/" + Current_Time.toString("yyyyMMddhhmmsszzz") + ".jpg";
+     imwrite(filename.toStdString(),frame);
+
+#endif
+
     qt_image = QImage((const unsigned char*)(frame.data), frame.cols, frame.rows, QImage::Format_RGB888);
     ui->label->setPixmap(QPixmap::fromImage(qt_image));
 //  ui->label->resize(ui->label->pixmap()->size());       //resize the camera display
@@ -226,4 +239,9 @@ void MainWindow::comm_connect()
 void MainWindow::comm_port_reset()
 {
    relay->port_reset(relay->fd_comm);
+}
+
+void MainWindow::on_quit_clicked()
+{
+   QCoreApplication::quit();
 }

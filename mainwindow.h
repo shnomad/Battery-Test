@@ -16,6 +16,9 @@ class MainWindow;
 }
 QT_END_NAMESPACE
 
+
+#define TEST_CAPTURE 1
+
 class seed_relay;
 
 class MainWindow : public QMainWindow
@@ -44,6 +47,7 @@ private slots:
     void measure_count_check();
     void comm_connect();
     void comm_port_reset();
+    void on_quit_clicked();
 
 signals:
     void measure_start();
@@ -57,7 +61,6 @@ private:
     VideoCapture cap;
     Mat frame;
     QImage qt_image;
-
     seed_relay *relay;
 };
 

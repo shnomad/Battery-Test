@@ -29,7 +29,13 @@ SOURCES += \
 
 HEADERS += \
         mainwindow.h \
+<<<<<<< HEAD
         seed_relay.h
+=======
+        seed_relay.h \
+        serial_protocol.h \
+        serial_definition.h
+>>>>>>> ce4846d0ab4723d0ec3dd2ee7daf9a9108dfcec6
 
 FORMS += \
         mainwindow.ui
