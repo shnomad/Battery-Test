@@ -2,7 +2,6 @@
 #define GLUCOSE_DOWNLOAD_PROGRESS_H
 
 #include <QObject>
-#include "serial_protocol.h"
 #include <QDateTime>
 
 class GlucoseDownloadProgress : public QObject
