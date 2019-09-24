@@ -16,10 +16,8 @@ class MainWindow;
 }
 QT_END_NAMESPACE
 
-
-#define TEST_CAPTURE 1
-
-class seed_relay;
+class relay_seed;
+class relay_waveshare;
 
 class MainWindow : public QMainWindow
 {
@@ -28,6 +26,7 @@ class MainWindow : public QMainWindow
     quint16 measure_coount=0;
 
 public:
+    quint8 capture_flag=0x0;
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
@@ -48,6 +47,10 @@ private slots:
     void comm_connect();
     void comm_port_reset();
     void on_quit_clicked();
+    void on_Capture_on_clicked();
+    void on_Capture_off_clicked();
+    void on_device_open_clicked();
+    void on_device_close_clicked();
 
 signals:
     void measure_start();
@@ -61,7 +64,8 @@ private:
     VideoCapture cap;
     Mat frame;
     QImage qt_image;
-    seed_relay *relay;
+    relay_waveshare *measure_relay;
+    relay_seed *comm_relay;
 };
 
 #endif // MAINWINDOW_H

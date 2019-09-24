@@ -1,13 +1,15 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "seed_relay.h"
+#include "relay_waveshare.h"
+#include "relay_seed.h"
+#include <iostream>
 #include <QTextEdit>
 #include <QThread>
 #include <QDateTime>
 #include <QApplication>
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), relay(new seed_relay)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), measure_relay(new relay_waveshare), comm_relay(new relay_seed)
 {
     ui->setupUi(this);
 
@@ -29,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     detect_off_timer->setSingleShot(true);
     port_reset_timer->setSingleShot(true);
 
-    //detect -> (5 sec) -> work_on -> (1 sec) -> third on -> (8 sec) -> detect off -> (20 sec)
+    //detect -> (5 sec) -> work_on -> (1 sec) -> third on -> (8 sec) -> detect off -> (10 sec)
 
     detect_on_timer->setInterval(0);
     work_on_timer->setInterval(5000);
@@ -39,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ui->test_stop->setEnabled(false);
     ui->camera_stop->setEnabled(false);
+    ui->device_close->setEnabled(false);
 
     palette.setColor(QPalette::WindowText, Qt::yellow);
     palette.setColor(QPalette::Window, Qt::black);
@@ -63,7 +66,7 @@ void MainWindow::on_device_check_clicked()
     comm_connect();
 
     //Test for USB connection
-    QTimer::singleShot(2000, this, SLOT(comm_port_reset()));
+//    QTimer::singleShot(2000, this, SLOT(comm_port_reset()));
 }
 
 void MainWindow::on_test_start_clicked()
@@ -81,7 +84,7 @@ void MainWindow::on_test_start_clicked()
     ui->textEdit->clear();
     ui->textEdit->append("measure start");
     ui->test_start->setEnabled(false);
-    ui->device_check->setEnabled(false);
+    ui->device_close->setEnabled(false);
     ui->test_stop->setEnabled(true);
 
     emit measure_start();
@@ -105,15 +108,16 @@ void MainWindow::on_test_stop_clicked()
     disconnect(detect_off_timer, SIGNAL(timeout()),this,SLOT(detect_off()));
     disconnect(port_reset_timer, SIGNAL(timeout()),this,SLOT(measure_port_reset()));
 
+    if(measure_coount ==1000)
+        ui->textEdit->append("Measurement count is  " + (QString::number(measure_coount)));
+
     measure_coount = 0;    
 
     ui->test_start->setEnabled(true);
-    ui->device_check->setEnabled(true);
     ui->test_stop->setEnabled(false);
 
     measure_port_reset();
     comm_port_reset();
-
 
     ui->textEdit->clear();
     ui->textEdit->append("measure stopped");
@@ -162,13 +166,12 @@ void MainWindow::update_camera()
     cap >> frame;
     cvtColor(frame, frame, COLOR_BGR2RGB);
 
-#ifdef TEST_CAPTURE
-
-     QDateTime Current_Time = QDateTime::currentDateTime();
-     QString filename = "/home/pi/capture_file/" + Current_Time.toString("yyyyMMddhhmmsszzz") + ".jpg";
-     imwrite(filename.toStdString(),frame);
-
-#endif
+    if(capture_flag)
+    {
+         QDateTime Current_Time = QDateTime::currentDateTime();
+         QString filename = "/home/pi/capture_file/" + Current_Time.toString("yyyyMMddhhmmsszzz") + ".jpg";
+         imwrite(filename.toStdString(),frame);
+    }
 
     qt_image = QImage((const unsigned char*)(frame.data), frame.cols, frame.rows, QImage::Format_RGB888);
     ui->label->setPixmap(QPixmap::fromImage(qt_image));
@@ -188,27 +191,32 @@ void MainWindow::measurement()
 
 void MainWindow::detect_on()
 {
-   relay->work(relay->fd_measure, CH1_DETECT, CH_ON);
+    cout<<"detect on"<<endl;
+    measure_relay->measure_work(measure_relay->relay_channel::DETECT, CH_ON);
 }
 
 void MainWindow::work_on()
 {
-    relay->work(relay->fd_measure, CH2_WORK, CH_ON);
+     cout<<"work on"<<endl;
+     measure_relay->measure_work(measure_relay->relay_channel::WORK, CH_ON);
 }
 
 void MainWindow::third_on()
 {
-    relay->work(relay->fd_measure, CH3_THIRD, CH_ON);
+    cout<<"third on"<<endl;
+    measure_relay->measure_work(measure_relay->relay_channel::THIRD, CH_ON);
 }
 
 void MainWindow::detect_off()
 {
-   relay->work(relay->fd_measure, CH1_DETECT, CH_OFF);
+    cout<<"detect off"<<endl;
+    measure_relay->measure_work(measure_relay->relay_channel::DETECT, CH_OFF);
 }
 
 void MainWindow::measure_port_reset()
 {
-    relay->port_reset(relay->fd_measure);
+    cout<<"measure port reset"<<endl;
+    measure_relay->measure_port_reset();
     emit measure_check();
 }
 
@@ -232,16 +240,41 @@ void MainWindow:: measure_count_check()
 
 void MainWindow::comm_connect()
 {
-    for(quint8 channel=0x5; channel>0; channel--)
-        relay->work(relay->fd_comm, channel ,CH_ON);
+//    for(quint8 channel=0x5; channel>0; channel--)
+//        relay->work(relay->fd_comm, channel ,CH_ON);
+    comm_relay->comm_port_open();
 }
 
 void MainWindow::comm_port_reset()
 {
-   relay->port_reset(relay->fd_comm);
+     comm_relay->comm_port_reset();
 }
 
 void MainWindow::on_quit_clicked()
 {
    QCoreApplication::quit();
+}
+
+void MainWindow::on_Capture_on_clicked()
+{
+    capture_flag = 0x1;
+}
+
+void MainWindow::on_Capture_off_clicked()
+{
+    capture_flag = 0x0;
+}
+
+void MainWindow::on_device_open_clicked()
+{
+    ui->device_open->setEnabled(false);
+    ui->device_close->setEnabled(true);
+    comm_connect();
+}
+
+void MainWindow::on_device_close_clicked()
+{
+    ui->device_open->setEnabled(true);
+    ui->device_close->setEnabled(false);
+    comm_port_reset();
 }

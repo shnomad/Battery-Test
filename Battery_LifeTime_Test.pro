@@ -25,17 +25,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-        seed_relay.cpp
+        relay_waveshare.cpp \
+        relay_seed.cpp
+
 
 HEADERS += \
         mainwindow.h \
-<<<<<<< HEAD
-        seed_relay.h
-=======
-        seed_relay.h \
-        serial_protocol.h \
-        serial_definition.h
->>>>>>> ce4846d0ab4723d0ec3dd2ee7daf9a9108dfcec6
+        relay_waveshare.h \
+        relay_seed.h
+
 
 FORMS += \
         mainwindow.ui
