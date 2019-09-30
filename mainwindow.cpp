@@ -42,6 +42,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->test_stop->setEnabled(false);
     ui->camera_stop->setEnabled(false);
     ui->device_close->setEnabled(false);
+    ui->Capture_on->setEnabled(false);
+    ui->Capture_off->setEnabled(false);
 
     palette.setColor(QPalette::WindowText, Qt::yellow);
     palette.setColor(QPalette::Window, Qt::black);
@@ -137,6 +139,7 @@ void MainWindow::on_camera_start_clicked()
     {
         ui->camera_start->setEnabled(false);
         ui->camera_stop->setEnabled(true);
+        ui->Capture_on->setEnabled(true);
         connect(camera_timer, SIGNAL(timeout()), this, SLOT(update_camera()));
 //      camera_timer->start(20);
         camera_timer->start(50);
@@ -150,6 +153,9 @@ void MainWindow::on_camera_stop_clicked()
 
     ui->camera_start->setEnabled(true);
     ui->camera_stop->setEnabled(false);
+
+    ui->Capture_on->setEnabled(false);
+    ui->Capture_off->setEnabled(false);
 
     cap.release();
     Mat image = Mat::zeros(frame.size(), CV_8UC3);
@@ -258,11 +264,15 @@ void MainWindow::on_quit_clicked()
 void MainWindow::on_Capture_on_clicked()
 {
     capture_flag = 0x1;
+    ui->Capture_on->setEnabled(false);
+    ui->Capture_off->setEnabled(true);
 }
 
 void MainWindow::on_Capture_off_clicked()
 {
     capture_flag = 0x0;
+    ui->Capture_on->setEnabled(true);
+    ui->Capture_off->setEnabled(false);
 }
 
 void MainWindow::on_device_open_clicked()
