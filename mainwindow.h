@@ -17,7 +17,9 @@ class MainWindow;
 QT_END_NAMESPACE
 
 class relay_seed;
+class relay_seed_ddl;
 class relay_waveshare;
+class QElapsedTimer;
 
 class MainWindow : public QMainWindow
 {
@@ -31,7 +33,7 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_device_check_clicked();
+//  void on_device_check_clicked();
     void on_test_start_clicked();
     void on_test_stop_clicked();
     void on_camera_start_clicked();
@@ -65,7 +67,9 @@ private:
     Mat frame;
     QImage qt_image;
     relay_waveshare *measure_relay;
-    relay_seed *comm_relay;
+    relay_seed_ddl *comm_relay;
+    relay_seed *relay_measure_i2c;
+    QElapsedTimer *mesure_time_check;
 };
 
 #endif // MAINWINDOW_H

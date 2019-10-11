@@ -3,9 +3,9 @@
 
 relay_seed::relay_seed()
 {
-    fd_comm = wiringPiI2CSetup(DEVICE_ID_COMM);
+    fd_measure = wiringPiI2CSetup(DEVICE_ID_MEASURE);
 
-    if(!fd_comm)
+    if(!fd_measure)
         exit(0);
 }
 
@@ -14,14 +14,22 @@ relay_seed::~relay_seed()
 
 }
 
-void relay_seed::comm_port_reset()
+void relay_seed::measure_port_reset()
 {
-    for(quint8 Channel=0x1; Channel<0x5; Channel++)
-        wiringPiI2CWriteReg8(fd_comm, Channel, 0x00);
+    wiringPiI2CWriteReg8(fd_measure, REG_MODE, REG_DATA);
 }
 
-void relay_seed::comm_port_open()
+void relay_seed::measure_work(relay_seed::relay_channel channel, quint8 OnOff)
 {
-   for(quint8 Channel=0x5; Channel>0x0; Channel--)
-       wiringPiI2CWriteReg8(fd_comm, Channel, 0xff);
+
+    if(OnOff)
+    {
+        reg_data &= ~(0x1 << channel);
+    }
+    else
+    {
+        reg_data |= (0x1 << channel);
+    }
+
+    wiringPiI2CWriteReg8(fd_measure, REG_MODE, reg_data);
 }

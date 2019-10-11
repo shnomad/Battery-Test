@@ -2,16 +2,22 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "relay_waveshare.h"
+#include "relay_seed_ddl.h"
 #include "relay_seed.h"
 #include <iostream>
 #include <QTextEdit>
 #include <QThread>
 #include <QDateTime>
 #include <QApplication>
+#include <QElapsedTimer>
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), measure_relay(new relay_waveshare), comm_relay(new relay_seed)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), measure_relay(new relay_waveshare), comm_relay(new relay_seed_ddl)
 {
     ui->setupUi(this);
+
+    relay_measure_i2c = new relay_seed;
+
+    mesure_time_check = new QElapsedTimer;
 
     QPalette palette = ui->label->palette();
 
@@ -37,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     work_on_timer->setInterval(5000);
     third_on_timer->setInterval(6000);
     detect_off_timer->setInterval(14000);
-    port_reset_timer->setInterval(34000);
+    port_reset_timer->setInterval(38000);
 
     ui->test_stop->setEnabled(false);
     ui->camera_stop->setEnabled(false);
@@ -55,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ui->textEdit->setStyleSheet("background-color:black;");
     ui->textEdit->setTextColor("yellow");
+    ui->build_date->setText("V0.0.8");
 }
 
 MainWindow::~MainWindow()
@@ -62,14 +69,16 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+#if 0
 void MainWindow::on_device_check_clicked()
 {
     ui->textEdit->clear();
     comm_connect();
 
-    //Test for USB connection
+//    Test for USB connection
 //    QTimer::singleShot(2000, this, SLOT(comm_port_reset()));
 }
+#endif
 
 void MainWindow::on_test_start_clicked()
 {    
@@ -192,36 +201,38 @@ void MainWindow::measurement()
      detect_off_timer->start();
      port_reset_timer->start();
 
+     mesure_time_check->start();
+
 //     measure_coount++;
 }
 
 void MainWindow::detect_on()
 {
-    cout<<"detect on"<<endl;
+    cout<<"detect on : "<< mesure_time_check->elapsed()<<endl;
     measure_relay->measure_work(measure_relay->relay_channel::DETECT, CH_ON);
 }
 
 void MainWindow::work_on()
 {
-     cout<<"work on"<<endl;
+     cout<<"work on : "<< mesure_time_check->elapsed() <<endl;
      measure_relay->measure_work(measure_relay->relay_channel::WORK, CH_ON);
 }
 
 void MainWindow::third_on()
 {
-    cout<<"third on"<<endl;
+    cout<<"third on : "<< mesure_time_check->elapsed() <<endl;
     measure_relay->measure_work(measure_relay->relay_channel::THIRD, CH_ON);
 }
 
 void MainWindow::detect_off()
 {
-    cout<<"detect off"<<endl;
+    cout<<"detect off : "<< mesure_time_check->elapsed() <<endl;
     measure_relay->measure_work(measure_relay->relay_channel::DETECT, CH_OFF);
 }
 
 void MainWindow::measure_port_reset()
 {
-    cout<<"measure port reset"<<endl;
+    cout<<"measure port reset : "<< mesure_time_check->elapsed() <<endl;
     measure_relay->measure_port_reset();
     emit measure_check();
 }

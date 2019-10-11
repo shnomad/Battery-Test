@@ -173,7 +173,7 @@
     <widget class="QPushButton" name="test_start">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>30</x>
        <y>30</y>
        <width>140</width>
        <height>41</height>
@@ -191,7 +191,7 @@
     <widget class="QPushButton" name="test_stop">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>30</x>
        <y>80</y>
        <width>140</width>
        <height>40</height>
@@ -262,6 +262,24 @@
       <string>Close</string>
      </property>
     </widget>
+   </widget>
+   <widget class="QLabel" name="build_date">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>500</y>
+      <width>291</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">

@@ -32,9 +32,9 @@ relay_waveshare::~relay_waveshare()
 
 void relay_waveshare::measure_port_reset()
 {
-    digitalWrite(relay_channel::DETECT, HIGH);         //DETECT^M
+    digitalWrite(relay_channel::DETECT, HIGH);       //DETECT^M
     digitalWrite(relay_channel::WORK, HIGH);         //DETECT^M
-    digitalWrite(relay_channel::THIRD, HIGH);         //DETECT^M
+    digitalWrite(relay_channel::THIRD, HIGH);        //DETECT^M
 }
 
 void relay_waveshare::measure_work(relay_waveshare::relay_channel channel, quint8 OnOff)
