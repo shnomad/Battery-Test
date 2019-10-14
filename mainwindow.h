@@ -68,7 +68,7 @@ private:
     QImage qt_image;
     relay_waveshare *measure_relay;
     relay_seed_ddl *comm_relay;
-    relay_seed *relay_measure_i2c;
+    relay_seed *measure_relay_i2c;
     QElapsedTimer *mesure_time_check;
 };
 

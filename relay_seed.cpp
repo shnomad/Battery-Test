@@ -16,7 +16,7 @@ relay_seed::~relay_seed()
 
 void relay_seed::measure_port_reset()
 {
-    wiringPiI2CWriteReg8(fd_measure, REG_MODE, REG_DATA);
+     wiringPiI2CWriteReg8(fd_measure, REG_MODE, REG_DATA);
 }
 
 void relay_seed::measure_work(relay_seed::relay_channel channel, quint8 OnOff)
@@ -32,4 +32,5 @@ void relay_seed::measure_work(relay_seed::relay_channel channel, quint8 OnOff)
     }
 
     wiringPiI2CWriteReg8(fd_measure, REG_MODE, reg_data);
+
 }

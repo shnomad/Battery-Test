@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     ui->setupUi(this);
 
-    relay_measure_i2c = new relay_seed;
+    measure_relay_i2c = new relay_seed;
 
     mesure_time_check = new QElapsedTimer;
 
@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     work_on_timer->setInterval(5000);
     third_on_timer->setInterval(6000);
     detect_off_timer->setInterval(14000);
-    port_reset_timer->setInterval(38000);
+    port_reset_timer->setInterval(34000);
 
     ui->test_stop->setEnabled(false);
     ui->camera_stop->setEnabled(false);
@@ -130,9 +130,10 @@ void MainWindow::on_test_stop_clicked()
     measure_port_reset();
     comm_port_reset();
 
-    ui->textEdit->clear();
-    ui->textEdit->append("measure stopped");
+    if(measure_coount < 1000)
+        ui->textEdit->clear();
 
+    ui->textEdit->append("measure stopped");
 }
 
 void MainWindow::on_camera_start_clicked()
@@ -210,30 +211,36 @@ void MainWindow::detect_on()
 {
     cout<<"detect on : "<< mesure_time_check->elapsed()<<endl;
     measure_relay->measure_work(measure_relay->relay_channel::DETECT, CH_ON);
+    measure_relay_i2c->measure_work(measure_relay_i2c->relay_channel::DETECT, Relay_On);
 }
 
 void MainWindow::work_on()
 {
      cout<<"work on : "<< mesure_time_check->elapsed() <<endl;
      measure_relay->measure_work(measure_relay->relay_channel::WORK, CH_ON);
+     measure_relay_i2c->measure_work(measure_relay_i2c->relay_channel::WORK, Relay_On);
 }
 
 void MainWindow::third_on()
 {
     cout<<"third on : "<< mesure_time_check->elapsed() <<endl;
     measure_relay->measure_work(measure_relay->relay_channel::THIRD, CH_ON);
+    measure_relay_i2c->measure_work(measure_relay_i2c->relay_channel::THIRD, Relay_On);
 }
 
 void MainWindow::detect_off()
 {
     cout<<"detect off : "<< mesure_time_check->elapsed() <<endl;
     measure_relay->measure_work(measure_relay->relay_channel::DETECT, CH_OFF);
+    measure_relay_i2c->measure_work(measure_relay_i2c->relay_channel::DETECT, Relay_Off);
+    measure_relay_i2c->reg_data = 0xff;
 }
 
 void MainWindow::measure_port_reset()
 {
     cout<<"measure port reset : "<< mesure_time_check->elapsed() <<endl;
     measure_relay->measure_port_reset();
+    measure_relay_i2c->measure_port_reset();
     emit measure_check();
 }
 

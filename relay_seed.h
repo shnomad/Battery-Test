@@ -13,6 +13,9 @@
 #define CH3_THIRD		0x03
 #define CH4_NONE		0x04
 
+#define Relay_On        0x1
+#define Relay_Off       0x0
+
 class relay_seed : public QObject
 {
     Q_OBJECT
