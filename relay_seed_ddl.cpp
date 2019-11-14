@@ -25,3 +25,8 @@ void relay_seed_ddl::comm_port_open()
    for(quint8 Channel=0x5; Channel>0x0; Channel--)
        wiringPiI2CWriteReg8(fd_comm, Channel, 0xff);
 }
+
+void relay_seed_ddl::comm_port_control(relay_seed_ddl::relay_channel Channel, quint8 OnOff)
+{
+       wiringPiI2CWriteReg8(fd_comm, Channel, OnOff);
+}

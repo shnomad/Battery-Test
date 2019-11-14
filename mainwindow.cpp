@@ -37,19 +37,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     detect_off_timer->setSingleShot(true);
     port_reset_timer->setSingleShot(true);
 
-    //detect -> (5 sec) -> work_on -> (1 sec) -> third on -> (8 sec) -> detect off -> (10 sec)
-
-    detect_on_timer->setInterval(0);
-    work_on_timer->setInterval(5000);
-    third_on_timer->setInterval(6000);
-    detect_off_timer->setInterval(14000);
-    port_reset_timer->setInterval(34000);
-
     ui->test_stop->setEnabled(false);
     ui->camera_stop->setEnabled(false);
     ui->device_close->setEnabled(false);
     ui->Capture_on->setEnabled(false);
     ui->Capture_off->setEnabled(false);
+
+    ui->bluetooth_sel->setEnabled(true);
 
     palette.setColor(QPalette::WindowText, Qt::yellow);
     palette.setColor(QPalette::Window, Qt::black);
@@ -82,6 +76,18 @@ void MainWindow::on_device_check_clicked()
 
 void MainWindow::on_test_start_clicked()
 {    
+    if(ui->bluetooth_sel->isChecked())
+    {
+        bluetooth_time = 25000;         //add
+    }
+
+    //detect -> (5 sec) -> work_on -> (1 sec) -> third on -> (8 sec) -> detect off -> (10 sec)
+    detect_on_timer->setInterval(detect_on_time);
+    work_on_timer->setInterval(work_on_time);
+    third_on_timer->setInterval(third_on_time);
+    detect_off_timer->setInterval(detect_off_time);
+    port_reset_timer->setInterval(port_reset_time + bluetooth_time);
+
     connect(this, SIGNAL(measure_start()), this, SLOT(measurement()));
     connect(this, SIGNAL(measure_check()), this, SLOT(measure_count_check()));
     connect(this, SIGNAL(measure_end()), this, SLOT(on_test_stop_clicked()));
@@ -97,6 +103,7 @@ void MainWindow::on_test_start_clicked()
     ui->test_start->setEnabled(false);
     ui->device_close->setEnabled(false);
     ui->test_stop->setEnabled(true);
+    ui->bluetooth_sel->setEnabled(false);
 
     emit measure_start();
 }
@@ -122,10 +129,11 @@ void MainWindow::on_test_stop_clicked()
     if(measure_coount ==1000)
         ui->textEdit->append("Measurement count is  " + (QString::number(measure_coount)));
 
-    measure_coount = 0;    
+    measure_coount = 0;
 
     ui->test_start->setEnabled(true);
     ui->test_stop->setEnabled(false);
+    ui->bluetooth_sel->setEnabled(true);
 
     measure_port_reset();
     comm_port_reset();
@@ -210,37 +218,43 @@ void MainWindow::measurement()
 void MainWindow::detect_on()
 {
     cout<<"detect on : "<< mesure_time_check->elapsed()<<endl;
-    measure_relay->measure_work(measure_relay->relay_channel::DETECT, CH_ON);
-    measure_relay_i2c->measure_work(measure_relay_i2c->relay_channel::DETECT, Relay_On);
+//    measure_relay->measure_work(measure_relay->relay_channel::DETECT, CH_ON);
+//    measure_relay_i2c->measure_work(measure_relay_i2c->relay_channel::DETECT, Relay_On);
+      comm_relay->comm_port_control(comm_relay->relay_channel::CH_1, DDL_CH_ON);
 }
 
 void MainWindow::work_on()
 {
      cout<<"work on : "<< mesure_time_check->elapsed() <<endl;
-     measure_relay->measure_work(measure_relay->relay_channel::WORK, CH_ON);
-     measure_relay_i2c->measure_work(measure_relay_i2c->relay_channel::WORK, Relay_On);
+//     measure_relay->measure_work(measure_relay->relay_channel::WORK, CH_ON);
+//     measure_relay_i2c->measure_work(measure_relay_i2c->relay_channel::WORK, Relay_On);
+       comm_relay->comm_port_control(comm_relay->relay_channel::CH_2, DDL_CH_ON);
 }
 
 void MainWindow::third_on()
 {
     cout<<"third on : "<< mesure_time_check->elapsed() <<endl;
-    measure_relay->measure_work(measure_relay->relay_channel::THIRD, CH_ON);
-    measure_relay_i2c->measure_work(measure_relay_i2c->relay_channel::THIRD, Relay_On);
+//    measure_relay->measure_work(measure_relay->relay_channel::THIRD, CH_ON);
+//    measure_relay_i2c->measure_work(measure_relay_i2c->relay_channel::THIRD, Relay_On);
+      comm_relay->comm_port_control(comm_relay->relay_channel::CH_3, DDL_CH_ON);
 }
 
 void MainWindow::detect_off()
 {
     cout<<"detect off : "<< mesure_time_check->elapsed() <<endl;
-    measure_relay->measure_work(measure_relay->relay_channel::DETECT, CH_OFF);
-    measure_relay_i2c->measure_work(measure_relay_i2c->relay_channel::DETECT, Relay_Off);
-    measure_relay_i2c->reg_data = 0xff;
+//    measure_relay->measure_work(measure_relay->relay_channel::DETECT, CH_OFF);
+//    measure_relay_i2c->measure_work(measure_relay_i2c->relay_channel::DETECT, Relay_Off);
+//    measure_relay_i2c->reg_data = 0xff;
+    comm_relay->comm_port_control(comm_relay->relay_channel::CH_1, DDL_CH_OFF);
 }
 
 void MainWindow::measure_port_reset()
 {
     cout<<"measure port reset : "<< mesure_time_check->elapsed() <<endl;
-    measure_relay->measure_port_reset();
-    measure_relay_i2c->measure_port_reset();
+//    measure_relay->measure_port_reset();
+//    measure_relay_i2c->measure_port_reset();
+      comm_relay->comm_port_reset();
+
     emit measure_check();
 }
 
@@ -266,12 +280,12 @@ void MainWindow::comm_connect()
 {
 //    for(quint8 channel=0x5; channel>0; channel--)
 //        relay->work(relay->fd_comm, channel ,CH_ON);
-    comm_relay->comm_port_open();
+      comm_relay->comm_port_open();
 }
 
 void MainWindow::comm_port_reset()
 {
-     comm_relay->comm_port_reset();
+      comm_relay->comm_port_reset();
 }
 
 void MainWindow::on_quit_clicked()

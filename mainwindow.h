@@ -32,6 +32,14 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    quint32 detect_on_time = 0;
+    quint32 work_on_time = 5000;
+    quint32 third_on_time = 6000;
+    quint32 detect_off_time = 14000;
+    quint32 port_reset_time = 20000;
+    quint32 bluetooth_time = 0;
+//    quint32 bluetooth_time = 25000;
+
 private slots:
 //  void on_device_check_clicked();
     void on_test_start_clicked();
