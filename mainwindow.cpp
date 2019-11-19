@@ -126,7 +126,7 @@ void MainWindow::on_test_stop_clicked()
     disconnect(detect_off_timer, SIGNAL(timeout()),this,SLOT(detect_off()));
     disconnect(port_reset_timer, SIGNAL(timeout()),this,SLOT(measure_port_reset()));
 
-    if(measure_coount ==1000)
+    if(measure_coount == 1000)
         ui->textEdit->append("Measurement count is  " + (QString::number(measure_coount)));
 
     measure_coount = 0;
@@ -138,8 +138,8 @@ void MainWindow::on_test_stop_clicked()
     measure_port_reset();
     comm_port_reset();
 
-    if(measure_coount < 1000)
-        ui->textEdit->clear();
+//    if(measure_coount < 1000)
+//        ui->textEdit->clear();
 
     ui->textEdit->append("measure stopped");
 }
@@ -228,7 +228,8 @@ void MainWindow::work_on()
      cout<<"work on : "<< mesure_time_check->elapsed() <<endl;
 //     measure_relay->measure_work(measure_relay->relay_channel::WORK, CH_ON);
 //     measure_relay_i2c->measure_work(measure_relay_i2c->relay_channel::WORK, Relay_On);
-       comm_relay->comm_port_control(comm_relay->relay_channel::CH_2, DDL_CH_ON);
+//     comm_relay->comm_port_control(comm_relay->relay_channel::CH_2, DDL_CH_ON);
+       comm_relay->comm_port_control(comm_relay->relay_channel::CH_3, DDL_CH_ON);
 }
 
 void MainWindow::third_on()
@@ -236,16 +237,17 @@ void MainWindow::third_on()
     cout<<"third on : "<< mesure_time_check->elapsed() <<endl;
 //    measure_relay->measure_work(measure_relay->relay_channel::THIRD, CH_ON);
 //    measure_relay_i2c->measure_work(measure_relay_i2c->relay_channel::THIRD, Relay_On);
-      comm_relay->comm_port_control(comm_relay->relay_channel::CH_3, DDL_CH_ON);
+//   comm_relay->comm_port_control(comm_relay->relay_channel::CH_3, DDL_CH_ON);
+     comm_relay->comm_port_control(comm_relay->relay_channel::CH_4, DDL_CH_ON);
 }
 
 void MainWindow::detect_off()
 {
-    cout<<"detect off : "<< mesure_time_check->elapsed() <<endl;
+      cout<<"detect off : "<< mesure_time_check->elapsed() <<endl;
 //    measure_relay->measure_work(measure_relay->relay_channel::DETECT, CH_OFF);
 //    measure_relay_i2c->measure_work(measure_relay_i2c->relay_channel::DETECT, Relay_Off);
 //    measure_relay_i2c->reg_data = 0xff;
-    comm_relay->comm_port_control(comm_relay->relay_channel::CH_1, DDL_CH_OFF);
+      comm_relay->comm_port_control(comm_relay->relay_channel::CH_1, DDL_CH_OFF);
 }
 
 void MainWindow::measure_port_reset()
