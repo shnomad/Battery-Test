@@ -10,21 +10,18 @@
 #include <QDateTime>
 #include <QApplication>
 #include <QElapsedTimer>
+#include <QProcess>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), measure_relay(new relay_waveshare), comm_relay(new relay_seed_ddl)
 {
     ui->setupUi(this);
 
     measure_relay_i2c = new relay_seed;
-
     mesure_time_check = new QElapsedTimer;
-
-    QPalette palette = ui->label->palette();
 
     measure_port_reset();
     comm_port_reset();
 
-    camera_timer = new QTimer(this);
     detect_on_timer = new QTimer(this);
     work_on_timer = new QTimer(this);
     third_on_timer = new QTimer(this);
@@ -38,23 +35,26 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     port_reset_timer->setSingleShot(true);
 
     ui->test_stop->setEnabled(false);
-    ui->camera_stop->setEnabled(false);
+    ui->device_open->setEnabled(true);
     ui->device_close->setEnabled(false);
-    ui->Capture_on->setEnabled(false);
-    ui->Capture_off->setEnabled(false);
 
     ui->bluetooth_sel->setEnabled(true);
+    ui->times->setEnabled(true);
+    ui->sec->setEnabled(true);
 
-    palette.setColor(QPalette::WindowText, Qt::yellow);
-    palette.setColor(QPalette::Window, Qt::black);
+    /*Test Interval*/
+    ui->sec->setRange(0.0, 180.0);
+    ui->sec->setSingleStep(1.0);
+    ui->sec->setValue(0.0);
 
-    ui->label->setAlignment(Qt::AlignCenter);
-    ui->label->setAutoFillBackground(true);
-    ui->label->setPalette(palette);
-    ui->label->setText("Camera is Closed");
+    /*Test capacity*/
+    ui->times->setRange(100.0, 5000.0);
+    ui->times->setSingleStep(100.0);
+    ui->times->setValue(1000.0);
 
     ui->textEdit->setStyleSheet("background-color:black;");
     ui->textEdit->setTextColor("yellow");
+    ui->textEdit->setFontPointSize(20);
     ui->build_date->setText("V0.0.8");
 }
 
@@ -62,17 +62,6 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-
-#if 0
-void MainWindow::on_device_check_clicked()
-{
-    ui->textEdit->clear();
-    comm_connect();
-
-//    Test for USB connection
-//    QTimer::singleShot(2000, this, SLOT(comm_port_reset()));
-}
-#endif
 
 void MainWindow::on_test_start_clicked()
 {    
@@ -86,7 +75,7 @@ void MainWindow::on_test_start_clicked()
     work_on_timer->setInterval(work_on_time);
     third_on_timer->setInterval(third_on_time);
     detect_off_timer->setInterval(detect_off_time);
-    port_reset_timer->setInterval(port_reset_time + bluetooth_time);
+    port_reset_timer->setInterval(port_reset_time + changed_interval + bluetooth_time);
 
     connect(this, SIGNAL(measure_start()), this, SLOT(measurement()));
     connect(this, SIGNAL(measure_check()), this, SLOT(measure_count_check()));
@@ -101,9 +90,13 @@ void MainWindow::on_test_start_clicked()
     ui->textEdit->clear();
     ui->textEdit->append("measure start");
     ui->test_start->setEnabled(false);
+    ui->device_open->setEnabled(false);
     ui->device_close->setEnabled(false);
     ui->test_stop->setEnabled(true);
+
     ui->bluetooth_sel->setEnabled(false);
+    ui->times->setEnabled(false);
+    ui->sec->setEnabled(false);
 
     emit measure_start();
 }
@@ -133,73 +126,17 @@ void MainWindow::on_test_stop_clicked()
 
     ui->test_start->setEnabled(true);
     ui->test_stop->setEnabled(false);
+
     ui->bluetooth_sel->setEnabled(true);
+    ui->times->setEnabled(true);
+    ui->sec->setEnabled(true);
+
+    ui->device_open->setEnabled(true);
 
     measure_port_reset();
     comm_port_reset();
 
-//    if(measure_coount < 1000)
-//        ui->textEdit->clear();
-
     ui->textEdit->append("measure stopped");
-}
-
-void MainWindow::on_camera_start_clicked()
-{
-    cap.open(0);
-
-    if(!cap.isOpened())
-    {
-        ui->label->setText("camera is not open");
-        ui->camera_stop->setEnabled(false);
-    }
-    else
-    {
-        ui->camera_start->setEnabled(false);
-        ui->camera_stop->setEnabled(true);
-        ui->Capture_on->setEnabled(true);
-        connect(camera_timer, SIGNAL(timeout()), this, SLOT(update_camera()));
-//      camera_timer->start(20);
-        camera_timer->start(50);
-
-    }
-}
-
-void MainWindow::on_camera_stop_clicked()
-{
-    disconnect(camera_timer, SIGNAL(timeout()), this, SLOT(update_camera()));
-
-    ui->camera_start->setEnabled(true);
-    ui->camera_stop->setEnabled(false);
-
-    ui->Capture_on->setEnabled(false);
-    ui->Capture_off->setEnabled(false);
-
-    cap.release();
-    Mat image = Mat::zeros(frame.size(), CV_8UC3);
-    qt_image = QImage((const unsigned char*)(image.data), image.cols, image.rows, QImage::Format_RGB888);
-    ui->label->setPixmap(QPixmap::fromImage(qt_image));
-//  ui->label->resize(ui->label->pixmap()->size());       //resize the camera display
-//  ui->label->setStyleSheet("color: yellow");            //font color
-    ui->label->setAlignment(Qt::AlignCenter);
-    ui->label->setText("Camera is Closed");
-}
-
-void MainWindow::update_camera()
-{    
-    cap >> frame;
-    cvtColor(frame, frame, COLOR_BGR2RGB);
-
-    if(capture_flag)
-    {
-         QDateTime Current_Time = QDateTime::currentDateTime();
-         QString filename = "/home/pi/capture_file/" + Current_Time.toString("yyyyMMddhhmmsszzz") + ".jpg";
-         imwrite(filename.toStdString(),frame);
-    }
-
-    qt_image = QImage((const unsigned char*)(frame.data), frame.cols, frame.rows, QImage::Format_RGB888);
-    ui->label->setPixmap(QPixmap::fromImage(qt_image));
-//  ui->label->resize(ui->label->pixmap()->size());       //resize the camera display
 }
 
 void MainWindow::measurement()
@@ -268,11 +205,11 @@ void MainWindow:: measure_count_check()
       ui->textEdit->setText("Measurement count is  " + (QString::number(measure_coount)));
 //    ui->textEdit->append("Measurement count is  " + (QString::number(measure_coount)));
 
-    if(measure_coount < 1000)
+    if(measure_coount < measure_capacity)
     {
         emit measure_start();
     }
-    else if(measure_coount == 1000)
+    else if(measure_coount == measure_capacity)
     {
         emit measure_end();
     }
@@ -281,32 +218,20 @@ void MainWindow:: measure_count_check()
 void MainWindow::comm_connect()
 {
 //    for(quint8 channel=0x5; channel>0; channel--)
-//        relay->work(relay->fd_comm, channel ,CH_ON);
-      comm_relay->comm_port_open();
+//    relay->work(relay->fd_comm, channel ,CH_ON);
+//    comm_relay->comm_port_open();
 }
 
 void MainWindow::comm_port_reset()
 {
-      comm_relay->comm_port_reset();
+//    comm_relay->comm_port_reset();
 }
 
 void MainWindow::on_quit_clicked()
 {
-   QCoreApplication::quit();
-}
-
-void MainWindow::on_Capture_on_clicked()
-{
-    capture_flag = 0x1;
-    ui->Capture_on->setEnabled(false);
-    ui->Capture_off->setEnabled(true);
-}
-
-void MainWindow::on_Capture_off_clicked()
-{
-    capture_flag = 0x0;
-    ui->Capture_on->setEnabled(true);
-    ui->Capture_off->setEnabled(false);
+   //QCoreApplication::quit();
+    QProcess process;
+    process.startDetached("sudo poweroff");
 }
 
 void MainWindow::on_device_open_clicked()
@@ -321,4 +246,14 @@ void MainWindow::on_device_close_clicked()
     ui->device_open->setEnabled(true);
     ui->device_close->setEnabled(false);
     comm_port_reset();
+}
+
+void MainWindow::on_times_valueChanged(const QString &arg1)
+{
+     measure_capacity = arg1.toInt(0,10);
+}
+
+void MainWindow::on_sec_valueChanged(const QString &arg1)
+{
+    changed_interval = arg1.toInt(0,10)*1000;
 }

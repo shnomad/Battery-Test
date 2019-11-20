@@ -3,13 +3,10 @@
 
 #include <QMainWindow>
 #include <QTimer>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
 
 QT_BEGIN_NAMESPACE
 
 using namespace std;
-using namespace cv;
 
 namespace Ui {
 class MainWindow;
@@ -26,9 +23,10 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
     quint16 measure_coount=0;
+    quint16 measure_capacity=0;
+    quint16 changed_interval=0;
 
 public:
-    quint8 capture_flag=0x0;
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
@@ -36,17 +34,12 @@ public:
     quint32 work_on_time = 5000;
     quint32 third_on_time = 6000;
     quint32 detect_off_time = 14000;
-    quint32 port_reset_time = 20000;
+    quint32 port_reset_time = 18000;
     quint32 bluetooth_time = 0;
-//    quint32 bluetooth_time = 25000;
 
 private slots:
-//  void on_device_check_clicked();
     void on_test_start_clicked();
     void on_test_stop_clicked();
-    void on_camera_start_clicked();
-    void on_camera_stop_clicked();
-    void update_camera();
     void measurement();
     void detect_on();
     void work_on();
@@ -57,10 +50,12 @@ private slots:
     void comm_connect();
     void comm_port_reset();
     void on_quit_clicked();
-    void on_Capture_on_clicked();
-    void on_Capture_off_clicked();
     void on_device_open_clicked();
     void on_device_close_clicked();
+
+    void on_times_valueChanged(const QString &arg1);
+
+    void on_sec_valueChanged(const QString &arg1);
 
 signals:
     void measure_start();
@@ -71,8 +66,6 @@ signals:
 private:
     Ui::MainWindow *ui = nullptr;    
     QTimer *camera_timer, *detect_on_timer, *work_on_timer, *third_on_timer, *detect_off_timer, *port_reset_timer;
-    VideoCapture cap;
-    Mat frame;
     QImage qt_image;
     relay_waveshare *measure_relay;
     relay_seed_ddl *comm_relay;
