@@ -15,7 +15,7 @@ QT_END_NAMESPACE
 
 class relay_seed;
 class relay_seed_ddl;
-class relay_waveshare;
+//class relay_waveshare;
 class QElapsedTimer;
 
 class MainWindow : public QMainWindow
@@ -52,9 +52,7 @@ private slots:
     void on_quit_clicked();
     void on_device_open_clicked();
     void on_device_close_clicked();
-
     void on_times_valueChanged(const QString &arg1);
-
     void on_sec_valueChanged(const QString &arg1);
 
 signals:
@@ -67,9 +65,9 @@ private:
     Ui::MainWindow *ui = nullptr;    
     QTimer *camera_timer, *detect_on_timer, *work_on_timer, *third_on_timer, *detect_off_timer, *port_reset_timer;
     QImage qt_image;
-    relay_waveshare *measure_relay;
+//    relay_waveshare *measure_relay;
     relay_seed_ddl *comm_relay;
-    relay_seed *measure_relay_i2c;
+//    relay_seed *measure_relay_i2c;
     QElapsedTimer *mesure_time_check;
 };
 

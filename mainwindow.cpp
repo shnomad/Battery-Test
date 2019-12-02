@@ -12,11 +12,11 @@
 #include <QElapsedTimer>
 #include <QProcess>
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), measure_relay(new relay_waveshare), comm_relay(new relay_seed_ddl)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), comm_relay(new relay_seed_ddl)
 {
     ui->setupUi(this);
 
-    measure_relay_i2c = new relay_seed;
+//  measure_relay_i2c = new relay_seed;
     mesure_time_check = new QElapsedTimer;
 
     measure_port_reset();
@@ -48,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->sec->setValue(0.0);
 
     /*Test capacity*/
-    ui->times->setRange(100.0, 5000.0);
+    ui->times->setRange(0.0, 5000.0);
     ui->times->setSingleStep(100.0);
     ui->times->setValue(1000.0);
 
@@ -134,7 +134,7 @@ void MainWindow::on_test_stop_clicked()
     ui->device_open->setEnabled(true);
 
     measure_port_reset();
-    comm_port_reset();
+//  comm_port_reset();
 
     ui->textEdit->append("measure stopped");
 }

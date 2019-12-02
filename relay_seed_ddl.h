@@ -2,7 +2,7 @@
 #define RELAY_SEED_DDL_H
 
 #include <QObject>
-#define DEVICE_ID_COMM		0x10		//USB connection
+#define DEVICE_ID_COMM		0x13
 
 #define CH1_GND		0x01
 #define CH2_VCC		0x02
