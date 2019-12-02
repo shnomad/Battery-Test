@@ -3,9 +3,9 @@
 
 relay_seed_ddl::relay_seed_ddl()
 {
-    fd_comm = wiringPiI2CSetup(DEVICE_ID_COMM);
+    fd_seed_ddl = wiringPiI2CSetup(DEVICE_ID_COMM);
 
-    if(!fd_comm)
+    if(!fd_seed_ddl)
         exit(0);
 }
 
@@ -14,19 +14,19 @@ relay_seed_ddl::~relay_seed_ddl()
 
 }
 
-void relay_seed_ddl::comm_port_reset()
+void relay_seed_ddl::measure_port_reset()
 {
     for(quint8 Channel=0x1; Channel<0x5; Channel++)
-        wiringPiI2CWriteReg8(fd_comm, Channel, 0x00);
+        wiringPiI2CWriteReg8(fd_seed_ddl, Channel, 0x00);
 }
 
-void relay_seed_ddl::comm_port_open()
+void relay_seed_ddl::measure_port_open()
 {
    for(quint8 Channel=0x5; Channel>0x0; Channel--)
-       wiringPiI2CWriteReg8(fd_comm, Channel, 0xff);
+       wiringPiI2CWriteReg8(fd_seed_ddl, Channel, 0xff);
 }
 
-void relay_seed_ddl::comm_port_control(relay_seed_ddl::relay_channel Channel, quint8 OnOff)
+void relay_seed_ddl::measure_port_control(relay_seed_ddl::relay_channel Channel, quint8 OnOff)
 {
-       wiringPiI2CWriteReg8(fd_comm, Channel, OnOff);
+       wiringPiI2CWriteReg8(fd_seed_ddl, Channel, OnOff);
 }

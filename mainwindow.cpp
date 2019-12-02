@@ -12,11 +12,10 @@
 #include <QElapsedTimer>
 #include <QProcess>
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), comm_relay(new relay_seed_ddl)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), measure_relay(new relay_seed_ddl)
 {
     ui->setupUi(this);
 
-//  measure_relay_i2c = new relay_seed;
     mesure_time_check = new QElapsedTimer;
 
     measure_port_reset();
@@ -134,7 +133,7 @@ void MainWindow::on_test_stop_clicked()
     ui->device_open->setEnabled(true);
 
     measure_port_reset();
-//  comm_port_reset();
+    comm_port_reset();
 
     ui->textEdit->append("measure stopped");
 }
@@ -146,53 +145,40 @@ void MainWindow::measurement()
      third_on_timer->start();
      detect_off_timer->start();
      port_reset_timer->start();
-
      mesure_time_check->start();
-
-//     measure_coount++;
 }
 
 void MainWindow::detect_on()
 {
     cout<<"detect on : "<< mesure_time_check->elapsed()<<endl;
-//    measure_relay->measure_work(measure_relay->relay_channel::DETECT, CH_ON);
-//    measure_relay_i2c->measure_work(measure_relay_i2c->relay_channel::DETECT, Relay_On);
-      comm_relay->comm_port_control(comm_relay->relay_channel::CH_1, DDL_CH_ON);
+
+    measure_relay->measure_port_control(measure_relay->relay_channel::CH_1, DDL_CH_ON);
 }
 
 void MainWindow::work_on()
 {
-     cout<<"work on : "<< mesure_time_check->elapsed() <<endl;
-//     measure_relay->measure_work(measure_relay->relay_channel::WORK, CH_ON);
-//     measure_relay_i2c->measure_work(measure_relay_i2c->relay_channel::WORK, Relay_On);
-//     comm_relay->comm_port_control(comm_relay->relay_channel::CH_2, DDL_CH_ON);
-       comm_relay->comm_port_control(comm_relay->relay_channel::CH_3, DDL_CH_ON);
+     cout<<"work on : "<< mesure_time_check->elapsed()<<"msec"<<endl;
+
+     measure_relay->measure_port_control(measure_relay->relay_channel::CH_3, DDL_CH_ON);
 }
 
 void MainWindow::third_on()
 {
-    cout<<"third on : "<< mesure_time_check->elapsed() <<endl;
-//    measure_relay->measure_work(measure_relay->relay_channel::THIRD, CH_ON);
-//    measure_relay_i2c->measure_work(measure_relay_i2c->relay_channel::THIRD, Relay_On);
-//   comm_relay->comm_port_control(comm_relay->relay_channel::CH_3, DDL_CH_ON);
-     comm_relay->comm_port_control(comm_relay->relay_channel::CH_4, DDL_CH_ON);
+    cout<<"third on : "<< mesure_time_check->elapsed()<<"msec"<<endl;
+
+    measure_relay->measure_port_control(measure_relay->relay_channel::CH_4, DDL_CH_ON);
 }
 
 void MainWindow::detect_off()
 {
-      cout<<"detect off : "<< mesure_time_check->elapsed() <<endl;
-//    measure_relay->measure_work(measure_relay->relay_channel::DETECT, CH_OFF);
-//    measure_relay_i2c->measure_work(measure_relay_i2c->relay_channel::DETECT, Relay_Off);
-//    measure_relay_i2c->reg_data = 0xff;
-      comm_relay->comm_port_control(comm_relay->relay_channel::CH_1, DDL_CH_OFF);
+    cout<<"detect off : "<< mesure_time_check->elapsed()<<"msec"<<endl;
+    measure_relay->measure_port_control(measure_relay->relay_channel::CH_1, DDL_CH_OFF);
 }
 
 void MainWindow::measure_port_reset()
 {
-    cout<<"measure port reset : "<< mesure_time_check->elapsed() <<endl;
-//    measure_relay->measure_port_reset();
-//    measure_relay_i2c->measure_port_reset();
-      comm_relay->comm_port_reset();
+    cout<<"measure port reset : "<< mesure_time_check->elapsed() <<"msec"<<endl;
+    measure_relay->measure_port_reset();
 
     emit measure_check();
 }
@@ -201,9 +187,7 @@ void MainWindow:: measure_count_check()
 {
       measure_coount++;
 
-//    ui->textEdit->setTextCursor();
       ui->textEdit->setText("Measurement count is  " + (QString::number(measure_coount)));
-//    ui->textEdit->append("Measurement count is  " + (QString::number(measure_coount)));
 
     if(measure_coount < measure_capacity)
     {
@@ -217,19 +201,16 @@ void MainWindow:: measure_count_check()
 
 void MainWindow::comm_connect()
 {
-//    for(quint8 channel=0x5; channel>0; channel--)
-//    relay->work(relay->fd_comm, channel ,CH_ON);
-//    comm_relay->comm_port_open();
+
 }
 
 void MainWindow::comm_port_reset()
 {
-//    comm_relay->comm_port_reset();
+
 }
 
 void MainWindow::on_quit_clicked()
 {
-   //QCoreApplication::quit();
     QProcess process;
     process.startDetached("sudo poweroff");
 }

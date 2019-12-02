@@ -13,9 +13,8 @@ class MainWindow;
 }
 QT_END_NAMESPACE
 
-class relay_seed;
+//class relay_seed;
 class relay_seed_ddl;
-//class relay_waveshare;
 class QElapsedTimer;
 
 class MainWindow : public QMainWindow
@@ -65,9 +64,7 @@ private:
     Ui::MainWindow *ui = nullptr;    
     QTimer *camera_timer, *detect_on_timer, *work_on_timer, *third_on_timer, *detect_off_timer, *port_reset_timer;
     QImage qt_image;
-//    relay_waveshare *measure_relay;
-    relay_seed_ddl *comm_relay;
-//    relay_seed *measure_relay_i2c;
+    relay_seed_ddl *measure_relay;
     QElapsedTimer *mesure_time_check;
 };
 

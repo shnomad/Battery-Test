@@ -25,14 +25,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-        relay_seed_ddl.cpp \
-    relay_seed.cpp
+        relay_seed_ddl.cpp
+#    relay_seed.cpp
 
 
 HEADERS += \
         mainwindow.h \
-        relay_seed_ddl.h \
-        relay_seed.h
+        relay_seed_ddl.h
+#        relay_seed.h
 
 
 FORMS += \
