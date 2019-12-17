@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.5.1, 2019-12-02T08:29:27. -->
+<!-- Written by QtCreator 4.5.1, 2019-12-16T18:14:39. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -268,18 +268,38 @@
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">RemoteLinux.DirectUploadStep</value>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedFiles">
        <value type="QString">/home/cwryu/dev/QtApp/build-Battery_LifeTime_Test-RPi3-Debug/Battery_LifeTime_Test</value>
+       <value type="QString">/home/cwryu/dev/QtApp/build-Battery_LifeTime_Test-RPi3-Debug/Battery_LifeTime_Test</value>
+       <value type="QString">/home/cwryu/dev/QtApp/build-Battery_LifeTime_Test-RPi3-Debug/Battery_LifeTime_Test</value>
+       <value type="QString">/home/cwryu/dev/QtApp/build-Battery_LifeTime_Test-RPi3-Debug/Battery_LifeTime_Test</value>
+       <value type="QString">/home/cwryu/dev/QtApp/build-Battery_LifeTime_Test-RPi3-Debug/Battery_LifeTime_Test</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedHosts">
+       <value type="QString">192.168.137.2</value>
        <value type="QString">192.168.137.7</value>
+       <value type="QString">192.168.137.15</value>
+       <value type="QString">192.168.137.15</value>
+       <value type="QString">192.168.137.181</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedRemotePaths">
+       <value type="QString">/home/pi/Battery_LifeTime_Test/bin</value>
+       <value type="QString">/home/pi/Battery_LifeTime_Test/bin</value>
+       <value type="QString">/home/pi/Battery_LifeTime_Test/bin</value>
+       <value type="QString">/home/pi/Battery_LifeTime_Test/bin</value>
        <value type="QString">/home/pi/Battery_LifeTime_Test/bin</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedSysroots">
        <value type="QString">/opt/qt5pi/sysroot</value>
+       <value type="QString">/opt/qt5pi/sysroot</value>
+       <value type="QString">/opt/qt5pi-buster/sysroot</value>
+       <value type="QString">/opt/qt5pi/sysroot</value>
+       <value type="QString">/opt/qt5pi/sysroot</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedTimes">
-       <value type="QDateTime">2019-11-21T16:13:30</value>
+       <value type="QDateTime">2019-12-09T17:57:37</value>
+       <value type="QDateTime">2019-12-16T18:01:07</value>
+       <value type="QDateTime">2019-12-12T18:13:06</value>
+       <value type="QDateTime">2019-12-11T16:03:52</value>
+       <value type="QDateTime">2019-12-16T17:23:04</value>
       </valuelist>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.IgnoreMissingFiles">false</value>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.Incremental">true</value>

@@ -47,6 +47,7 @@ private slots:
     void measure_port_reset();
     void measure_count_check();
     void comm_connect();
+    void comm_close();
     void comm_port_reset();
     void on_quit_clicked();
     void on_device_open_clicked();

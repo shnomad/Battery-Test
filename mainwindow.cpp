@@ -4,6 +4,7 @@
 #include "relay_waveshare.h"
 #include "relay_seed_ddl.h"
 #include "relay_seed.h"
+#include <stdlib.h>
 #include <iostream>
 #include <QTextEdit>
 #include <QThread>
@@ -19,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     mesure_time_check = new QElapsedTimer;
 
     measure_port_reset();
-    comm_port_reset();
+//  comm_port_reset();
 
     detect_on_timer = new QTimer(this);
     work_on_timer = new QTimer(this);
@@ -159,14 +160,14 @@ void MainWindow::work_on()
 {
      cout<<"work on : "<< mesure_time_check->elapsed()<<"msec"<<endl;
 
-     measure_relay->measure_port_control(measure_relay->relay_channel::CH_3, DDL_CH_ON);
+     measure_relay->measure_port_control(measure_relay->relay_channel::CH_2, DDL_CH_ON);
 }
 
 void MainWindow::third_on()
 {
     cout<<"third on : "<< mesure_time_check->elapsed()<<"msec"<<endl;
 
-    measure_relay->measure_port_control(measure_relay->relay_channel::CH_4, DDL_CH_ON);
+    measure_relay->measure_port_control(measure_relay->relay_channel::CH_3, DDL_CH_ON);
 }
 
 void MainWindow::detect_off()
@@ -201,12 +202,19 @@ void MainWindow:: measure_count_check()
 
 void MainWindow::comm_connect()
 {
+    comm_port_reset();
+}
 
+void MainWindow::comm_close()
+{
+    system("uhubctl -a off -p 2-5");
 }
 
 void MainWindow::comm_port_reset()
 {
-
+    system("uhubctl -a off -p 2-5");
+    QThread::msleep(300);
+    system("uhubctl -a on -p 2-5");
 }
 
 void MainWindow::on_quit_clicked()
@@ -226,7 +234,7 @@ void MainWindow::on_device_close_clicked()
 {
     ui->device_open->setEnabled(true);
     ui->device_close->setEnabled(false);
-    comm_port_reset();
+    system("uhubctl -a off -p 2-5");
 }
 
 void MainWindow::on_times_valueChanged(const QString &arg1)
