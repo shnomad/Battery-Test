@@ -25,13 +25,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-        relay_seed_ddl.cpp
+        relay_seed_ddl.cpp \
+        usb_hid_comm.cpp
 #    relay_seed.cpp
 
 
 HEADERS += \
         mainwindow.h \
-        relay_seed_ddl.h
+        relay_seed_ddl.h \
+        usb_hid_comm.h
 #        relay_seed.h
 
 
@@ -41,7 +43,7 @@ FORMS += \
 INCLUDEPATH += /opt/qt5pi/sysroot/usr/include
 
 LIBS += -L/opt/qt5pi/sysroot/usr/lib -lwiringPi \
-        -L/opt/qt5pi/sysroot/lib/arm-linux-gnueabihf -lusb-1.0
+        -L/opt/qt5pi/sysroot/usr/lib -lhidapi-hidraw
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

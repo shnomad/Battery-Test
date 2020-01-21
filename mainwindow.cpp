@@ -134,7 +134,7 @@ void MainWindow::on_test_stop_clicked()
     ui->device_open->setEnabled(true);
 
     measure_port_reset();
-    comm_port_reset();
+//  comm_port_reset();
 
     ui->textEdit->append("measure stopped");
 }

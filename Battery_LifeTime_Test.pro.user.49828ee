@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.5.1, 2020-01-13T18:20:13. -->
+<!-- Written by QtCreator 4.5.1, 2019-12-16T18:14:39. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
-  <value type="QByteArray">{9f1c86e5-a4ad-41c6-9d91-e420007a770c}</value>
+  <value type="QByteArray">{49828ee1-cf4d-4e35-9d61-c7c00757c460}</value>
  </data>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
@@ -59,14 +59,14 @@
  <data>
   <variable>ProjectExplorer.Project.Target.0</variable>
   <valuemap type="QVariantMap">
-   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Rpi3</value>
-   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">Rpi3</value>
-   <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">{0b0f6480-349f-442b-9258-747ae48464cb}</value>
+   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">RPi3</value>
+   <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">RPi3</value>
+   <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">{e4ba2393-1bf4-4969-9e34-f47542bb4005}</value>
    <value type="int" key="ProjectExplorer.Target.ActiveBuildConfiguration">0</value>
    <value type="int" key="ProjectExplorer.Target.ActiveDeployConfiguration">0</value>
    <value type="int" key="ProjectExplorer.Target.ActiveRunConfiguration">0</value>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.0">
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/home/cwryu/dev/Qtapp/build-Battery_LifeTime_Test-Rpi3-Debug</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/home/cwryu/dev/QtApp/build-Battery_LifeTime_Test-RPi3-Debug</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
@@ -126,7 +126,7 @@
     <value type="bool" key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild">true</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.1">
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/home/cwryu/dev/Qtapp/build-Battery_LifeTime_Test-Rpi3-Release</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/home/cwryu/dev/QtApp/build-Battery_LifeTime_Test-RPi3-Release</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
@@ -186,7 +186,7 @@
     <value type="bool" key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild">true</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.2">
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/home/cwryu/dev/Qtapp/build-Battery_LifeTime_Test-Rpi3-Profile</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/home/cwryu/dev/QtApp/build-Battery_LifeTime_Test-RPi3-Profile</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
@@ -267,19 +267,39 @@
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">RemoteLinux.DirectUploadStep</value>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedFiles">
-       <value type="QString">/home/cwryu/dev/Qtapp/build-Battery_LifeTime_Test-Rpi3-Debug/Battery_LifeTime_Test</value>
+       <value type="QString">/home/cwryu/dev/QtApp/build-Battery_LifeTime_Test-RPi3-Debug/Battery_LifeTime_Test</value>
+       <value type="QString">/home/cwryu/dev/QtApp/build-Battery_LifeTime_Test-RPi3-Debug/Battery_LifeTime_Test</value>
+       <value type="QString">/home/cwryu/dev/QtApp/build-Battery_LifeTime_Test-RPi3-Debug/Battery_LifeTime_Test</value>
+       <value type="QString">/home/cwryu/dev/QtApp/build-Battery_LifeTime_Test-RPi3-Debug/Battery_LifeTime_Test</value>
+       <value type="QString">/home/cwryu/dev/QtApp/build-Battery_LifeTime_Test-RPi3-Debug/Battery_LifeTime_Test</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedHosts">
+       <value type="QString">192.168.137.2</value>
        <value type="QString">192.168.137.7</value>
+       <value type="QString">192.168.137.15</value>
+       <value type="QString">192.168.137.15</value>
+       <value type="QString">192.168.137.181</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedRemotePaths">
+       <value type="QString">/home/pi/Battery_LifeTime_Test/bin</value>
+       <value type="QString">/home/pi/Battery_LifeTime_Test/bin</value>
+       <value type="QString">/home/pi/Battery_LifeTime_Test/bin</value>
+       <value type="QString">/home/pi/Battery_LifeTime_Test/bin</value>
        <value type="QString">/home/pi/Battery_LifeTime_Test/bin</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedSysroots">
        <value type="QString">/opt/qt5pi/sysroot</value>
+       <value type="QString">/opt/qt5pi/sysroot</value>
+       <value type="QString">/opt/qt5pi-buster/sysroot</value>
+       <value type="QString">/opt/qt5pi/sysroot</value>
+       <value type="QString">/opt/qt5pi/sysroot</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedTimes">
-       <value type="QDateTime">2020-01-02T16:07:48</value>
+       <value type="QDateTime">2019-12-09T17:57:37</value>
+       <value type="QDateTime">2019-12-16T18:01:07</value>
+       <value type="QDateTime">2019-12-12T18:13:06</value>
+       <value type="QDateTime">2019-12-11T16:03:52</value>
+       <value type="QDateTime">2019-12-16T17:23:04</value>
       </valuelist>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.IgnoreMissingFiles">false</value>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.Incremental">true</value>
