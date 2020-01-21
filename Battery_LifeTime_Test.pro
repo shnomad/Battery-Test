@@ -26,14 +26,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
         relay_seed_ddl.cpp \
-        usb_hid_comm.cpp
+#        usb_hid_comm.cpp
 #    relay_seed.cpp
 
 
 HEADERS += \
         mainwindow.h \
         relay_seed_ddl.h \
-        usb_hid_comm.h
+#        usb_hid_comm.h
 #        relay_seed.h
 
 
@@ -42,8 +42,8 @@ FORMS += \
 
 INCLUDEPATH += /opt/qt5pi/sysroot/usr/include
 
-LIBS += -L/opt/qt5pi/sysroot/usr/lib -lwiringPi \
-        -L/opt/qt5pi/sysroot/usr/lib -lhidapi-hidraw
+LIBS += -L/opt/qt5pi/sysroot/usr/lib -lwiringPi
+#        -L/opt/qt5pi/sysroot/usr/lib -lhidapi-hidraw
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
