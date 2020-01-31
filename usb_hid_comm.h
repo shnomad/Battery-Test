@@ -28,6 +28,7 @@ public:
     qint32 result;
     hid_device *handle;
     wchar_t manufacture[MAX_STR];
+    quint8 hid_buf[256];
     struct hid_device_info *devs, *cur_dev;
     quint16 vid, pid;
 
@@ -56,9 +57,10 @@ public slots:
     qint8 usb_hid_get_manufacturer(hid_device *handle, wchar_t *str);
     void usb_hid_enumerate(void);
     void usb_hid_free_enumerate(void);
-    qint8 usb_hid_get_product(hid_device *handle, wchar_t *str);
-    qint8 usb_hid_data_transfer(quint8 hid_tx_size, quint8 hid_rx_size);
+    qint8 usb_hid_get_product(hid_device *handle, wchar_t *str);   
+    qint8 usb_hid_data_transfer(quint8 *cmd_buffer, quint8 *resp_buffer, quint8 tx_length, quint8 rx_length, quint32 timeout);
     qint8 usb_hid_close(void);
+    void usb_hid_data_test(void);
 };
 
 #endif // USB_HID_COMM_H

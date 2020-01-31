@@ -5,6 +5,7 @@
 #include "relay_seed_ddl.h"
 #include "relay_seed.h"
 #include "usb_hid_comm.h"
+#include "bgm_comm_protocol.h"
 #include <stdlib.h>
 #include <iostream>
 #include <QTextEdit>
@@ -20,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     mesure_time_check = new QElapsedTimer;
     meter_comm_usb = new usb_comm;
+    meter_cmd = new bgm_comm_protocol;
 
     measure_port_reset();
 //  comm_port_reset();
@@ -229,10 +231,12 @@ void MainWindow::on_device_open_clicked()
 {
     ui->device_open->setEnabled(false);
     ui->device_close->setEnabled(true);
+
     comm_connect();
 
     meter_comm_usb->usb_hid_init();
     meter_comm_usb->usb_hid_device_open(meter_comm_usb->COMM_TYPE::STM32);
+    meter_comm_usb->usb_hid_data_test();
 }
 
 void MainWindow::on_device_close_clicked()

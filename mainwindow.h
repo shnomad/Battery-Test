@@ -17,6 +17,7 @@ QT_END_NAMESPACE
 class relay_seed_ddl;
 class QElapsedTimer;
 class usb_comm;
+class bgm_comm_protocol;
 
 class MainWindow : public QMainWindow
 {
@@ -69,6 +70,7 @@ private:
     relay_seed_ddl *measure_relay;
     QElapsedTimer *mesure_time_check;
     usb_comm *meter_comm_usb;
+    bgm_comm_protocol *meter_cmd;
 };
 
 #endif // MAINWINDOW_H
