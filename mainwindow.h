@@ -16,6 +16,7 @@ QT_END_NAMESPACE
 //class relay_seed;
 class relay_seed_ddl;
 class QElapsedTimer;
+class usb_comm;
 
 class MainWindow : public QMainWindow
 {
@@ -67,6 +68,7 @@ private:
     QImage qt_image;
     relay_seed_ddl *measure_relay;
     QElapsedTimer *mesure_time_check;
+    usb_comm *meter_comm_usb;
 };
 
 #endif // MAINWINDOW_H
