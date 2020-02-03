@@ -56,6 +56,7 @@ private slots:
     void on_device_close_clicked();
     void on_times_valueChanged(const QString &arg1);
     void on_sec_valueChanged(const QString &arg1);
+    void UpdateTime();
 
 signals:
     void measure_start();
@@ -65,7 +66,7 @@ signals:
 
 private:
     Ui::MainWindow *ui = nullptr;    
-    QTimer *camera_timer, *detect_on_timer, *work_on_timer, *third_on_timer, *detect_off_timer, *port_reset_timer;
+    QTimer *camera_timer, *detect_on_timer, *work_on_timer, *third_on_timer, *detect_off_timer, *port_reset_timer, *timer_sec;
     QImage qt_image;
     relay_seed_ddl *measure_relay;
     QElapsedTimer *mesure_time_check;
