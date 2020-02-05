@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <QTextEdit>
+#include <QTextCursor>
 #include <QThread>
 #include <QDateTime>
 #include <QTime>
@@ -23,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     mesure_time_check = new QElapsedTimer;
     meter_comm_usb = new usb_comm;
     meter_cmd = new bgm_comm_protocol;
+
+//    status_cursor = new QTextCursor;
 
     measure_port_reset();
 //  comm_port_reset();
@@ -58,10 +61,23 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->times->setSingleStep(100.0);
     ui->times->setValue(1000.0);
 
-    ui->start_time->setStyleSheet("background-color:black;");
-    ui->start_time->setTextColor("yellow");
-    ui->start_time->setFontPointSize(15);
+    /*Display Test status*/
+//     QTextCursor textCursor = ui->status->textCursor();
 
+//    QChar posi = textCursor.position();
+
+//  textCursor.setPosition(0);
+//  textCursor.insertText("version 0.0.8");
+//  textCursor.setVerticalMovementX(3);
+//    textCursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, 3);
+//    textCursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 0);
+
+//      ui->status->setTextCursor(textCursor);
+//      ui->status->setStyleSheet("background-color:white;");
+//      ui->status->setTextColor("black");
+//      ui->status->setFontPointSize(13);
+
+#if 0
     ui->measure_count->setStyleSheet("background-color:black;");
     ui->measure_count->setTextColor("yellow");
     ui->measure_count->setFontPointSize(15);
@@ -76,10 +92,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->system_time->setTextColor("yellow");
     ui->system_time->setFontPointSize(15);
 
+#endif
+
     QObject::connect(timer_sec, SIGNAL(timeout()), this, SLOT(UpdateTime()));
     timer_sec->start(1000);
 
-    ui->build_date->setText("V0.0.8");
+//   ui->status->setText("V0.0.8");
 }
 
 MainWindow::~MainWindow()
@@ -89,6 +107,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_test_start_clicked()
 {    
+
     if(ui->bluetooth_sel->isChecked())
     {
         bluetooth_time = 25000;         //add
@@ -111,8 +130,9 @@ void MainWindow::on_test_start_clicked()
     connect(detect_off_timer, SIGNAL(timeout()),SLOT(detect_off()));
     connect(port_reset_timer, SIGNAL(timeout()),SLOT(measure_port_reset()));
 
-    ui->measure_count->clear();
-    ui->current_step->append("start");
+//    ui->status->clear();
+//    ui->status->append("start");
+    //ui->status->setTextCursor("start");
     ui->test_start->setEnabled(false);
     ui->device_open->setEnabled(false);
     ui->device_close->setEnabled(false);
@@ -122,7 +142,8 @@ void MainWindow::on_test_start_clicked()
     ui->times->setEnabled(false);
     ui->sec->setEnabled(false);
 
-    ui->start_time->setText(QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap"));
+//    ui->status->setText("\n Test start :" + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap"));
+    ui->test_start_time->setText("Test start time:" + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap"));
 
     emit measure_start();
 }
@@ -145,8 +166,8 @@ void MainWindow::on_test_stop_clicked()
     disconnect(detect_off_timer, SIGNAL(timeout()),this,SLOT(detect_off()));
     disconnect(port_reset_timer, SIGNAL(timeout()),this,SLOT(measure_port_reset()));
 
-    if(measure_coount == 1000)
-         ui->measure_count->append((QString::number(measure_coount)));
+//    if(measure_coount == 1000)
+//         ui->status->setText("/r/r/r" + (QString::number(measure_coount)));
 
     measure_coount = 0;
 
@@ -162,7 +183,8 @@ void MainWindow::on_test_stop_clicked()
     measure_port_reset();
 //  comm_port_reset();
 
-    ui->current_step->append("stopped");
+//  ui->status->setText("\n\n action : stopped");
+    ui->test_step->setText("Action : stopped");
 }
 
 void MainWindow::measurement()
@@ -178,35 +200,40 @@ void MainWindow::measurement()
 void MainWindow::detect_on()
 {
     cout<<"detect on : "<< mesure_time_check->elapsed()<<endl;
-    ui->current_step->append("detect on");
+//    ui->status->setText("\n\n action : detect on");
+      ui->test_step->setText("Action : detect on");
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_1, DDL_CH_ON);
 }
 
 void MainWindow::work_on()
 {
-     cout<<"work on : "<< mesure_time_check->elapsed()<<"msec"<<endl;
-    ui->current_step->append("work on");
-     measure_relay->measure_port_control(measure_relay->relay_channel::CH_2, DDL_CH_ON);
+    cout<<"work on : "<< mesure_time_check->elapsed()<<"msec"<<endl;
+//    ui->status->setText("\n\n action : work on");
+     ui->test_step->setText("Action : work on");
+    measure_relay->measure_port_control(measure_relay->relay_channel::CH_2, DDL_CH_ON);
 }
 
 void MainWindow::third_on()
 {
     cout<<"third on : "<< mesure_time_check->elapsed()<<"msec"<<endl;
-    ui->current_step->append("third on");
+//    ui->status->setText("\n\n action : third on");
+    ui->test_step->setText("Action : third on");
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_3, DDL_CH_ON);
 }
 
 void MainWindow::detect_off()
 {
     cout<<"detect off : "<< mesure_time_check->elapsed()<<"msec"<<endl;
-    ui->current_step->append("detect off");
+//  ui->status->setText("\n\n action : detect off");
+   ui->test_step->setText("Action : detect off");
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_1, DDL_CH_OFF);
 }
 
 void MainWindow::measure_port_reset()
 {
     cout<<"measure port reset : "<< mesure_time_check->elapsed() <<"msec"<<endl;
-    ui->current_step->append("port reset");
+//  ui->status->setText("\n\n action : port reset");
+    ui->test_step->setText("Action : port reset");
     measure_relay->measure_port_reset();
 
     emit measure_check();
@@ -216,7 +243,8 @@ void MainWindow:: measure_count_check()
 {
       measure_coount++;
 
-      ui->measure_count->setText((QString::number(measure_coount)));
+//    ui->status->setText("\n\n\n Test Count is " + (QString::number(measure_coount)));
+      ui->test_count->setText("Test Count is " + (QString::number(measure_coount)));
 
     if(measure_coount < measure_capacity)
     {
@@ -282,6 +310,6 @@ void MainWindow::on_sec_valueChanged(const QString &arg1)
 
 void MainWindow::UpdateTime()
 {
-//     ui->system_time->setText(QTime::currentTime().toString("h:m:s ap"));
-       ui->system_time->setText(QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap"));
+//    ui->status->setText("System Time: " + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap"));
+      ui->system_time->setText("System Time: " + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap"));
 }
