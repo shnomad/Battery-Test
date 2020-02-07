@@ -16,8 +16,8 @@ QT_END_NAMESPACE
 //class relay_seed;
 class relay_seed_ddl;
 class QElapsedTimer;
-class usb_comm;
-class bgm_comm_protocol;
+//class usb_comm;
+//class bgm_comm_protocol;
 
 class MainWindow : public QMainWindow
 {
@@ -48,9 +48,9 @@ private slots:
     void detect_off();
     void measure_port_reset();
     void measure_count_check();
-    void comm_connect();
-    void comm_close();
-    void comm_port_reset();
+    void hub_port_open();
+    void hub_port_close();
+    void hub_port_reset();
     void on_quit_clicked();
     void on_device_open_clicked();
     void on_device_close_clicked();
@@ -70,8 +70,8 @@ private:
     QImage qt_image;
     relay_seed_ddl *measure_relay;
     QElapsedTimer *mesure_time_check;
-    usb_comm *meter_comm_usb;
-    bgm_comm_protocol *meter_cmd;
+//    usb_comm *meter_comm_usb;
+//    bgm_comm_protocol *meter_cmd;
 };
 
 #endif // MAINWINDOW_H

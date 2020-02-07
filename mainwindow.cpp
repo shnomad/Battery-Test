@@ -22,10 +22,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->setupUi(this);
 
     mesure_time_check = new QElapsedTimer;
-    meter_comm_usb = new usb_comm;
-    meter_cmd = new bgm_comm_protocol;
+//  meter_comm_usb = new usb_comm;
+//  meter_cmd = new bgm_comm_protocol;
 
-//    status_cursor = new QTextCursor;
+//  status_cursor = new QTextCursor;
 
     measure_port_reset();
 //  comm_port_reset();
@@ -256,17 +256,17 @@ void MainWindow:: measure_count_check()
     }
 }
 
-void MainWindow::comm_connect()
+void MainWindow::hub_port_open()
 {
-    comm_port_reset();
+    hub_port_reset();
 }
 
-void MainWindow::comm_close()
+void MainWindow::hub_port_close()
 {
     system("uhubctl -a off -p 2-5");
 }
 
-void MainWindow::comm_port_reset()
+void MainWindow::hub_port_reset()
 {
     system("uhubctl -a off -p 2-5");
     QThread::msleep(300);
@@ -284,11 +284,11 @@ void MainWindow::on_device_open_clicked()
     ui->device_open->setEnabled(false);
     ui->device_close->setEnabled(true);
 
-    comm_connect();
+    hub_port_open();
 
-    meter_comm_usb->usb_hid_init();
-    meter_comm_usb->usb_hid_device_open(meter_comm_usb->COMM_TYPE::STM32);
-    meter_comm_usb->usb_hid_data_test();
+//    meter_comm_usb->usb_hid_init();
+//    meter_comm_usb->usb_hid_device_open(meter_comm_usb->COMM_TYPE::STM32);
+//    meter_comm_usb->usb_hid_data_test();
 }
 
 void MainWindow::on_device_close_clicked()

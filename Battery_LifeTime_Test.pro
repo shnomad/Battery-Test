@@ -25,17 +25,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-        relay_seed_ddl.cpp \
-        usb_hid_comm.cpp \
-    bgm_comm_protocol.cpp
+        relay_seed_ddl.cpp
 #    relay_seed.cpp
 
 
 HEADERS += \
         mainwindow.h \
-        relay_seed_ddl.h \
-        usb_hid_comm.h \
-    bgm_comm_protocol.h
+        relay_seed_ddl.h
 #        relay_seed.h
 
 
