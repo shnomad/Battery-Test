@@ -78,7 +78,6 @@ void STMHIDTester::readResponse()
 
         if(protocol != Sp::CommProtocolUnknown)
         {
-
             disconnect(selectstmport, SIGNAL(readyRead()), this, SLOT(readResponse()));
             disconnect(selectstmport, SIGNAL(timeoutErrorFromPort()), this, SLOT(timeoutErrorFromPort()));
             connect(selectstmport, SIGNAL(readyRead()), this, SLOT(checkResponse()));

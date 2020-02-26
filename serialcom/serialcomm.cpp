@@ -66,14 +66,17 @@ void SerialComm::unsetCheckState()
 }
 
 
-void SerialComm::open()
+bool SerialComm::open()
 {
 //    Settings::Instance()->setQcStringValue("hid_pid", "");
     if(checkStmPort() == false)
     {
         // connectionError!!!
         Log() << "Failed to open port!";
+        return false;
     }
+
+    return true;
 }
 
 bool SerialComm::checkStmPort()

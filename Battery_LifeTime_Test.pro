@@ -25,14 +25,30 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-        relay_seed_ddl.cpp
-#    relay_seed.cpp
+        relay_seed_ddl.cpp \
+        serialcom/serialcomm.cpp \
+        serialcom/serialprotocol3.cpp \
+        serialcom/serialprotocolabstract.cpp \
+        serialcom/stmhidport.cpp \
+        serialcom/stmhidtester.cpp \
+    settings.cpp
 
 
 HEADERS += \
         mainwindow.h \
-        relay_seed_ddl.h
-#        relay_seed.h
+        relay_seed_ddl.h \
+        serialcom/serialcomm.h \
+        serialcom/serialdefinition.h \
+        serialcom/serialprotocol.h \
+        serialcom/serialprotocol3.h \
+        serialcom/serialprotocolabstract.h \
+        serialcom/stmhidport.h \
+        serialcom/stmhidtester.h \
+        commondefinition.h \
+    settings.h \
+    setting_flagname_definition.h \
+    serialcom/glucosedownloadprogress.h
+
 
 
 FORMS += \

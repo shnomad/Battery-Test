@@ -299,6 +299,19 @@
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
+    <widget class="QCheckBox" name="ketone_sel">
+     <property name="geometry">
+      <rect>
+       <x>194</x>
+       <y>36</y>
+       <width>111</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>KETONE</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
@@ -362,6 +375,19 @@
      </property>
      <property name="text">
       <string>Device Information</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="device_status">
+     <property name="geometry">
+      <rect>
+       <x>16</x>
+       <y>153</y>
+       <width>351</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>N/A</string>
      </property>
     </widget>
    </widget>

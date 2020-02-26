@@ -36,13 +36,13 @@ void SerialProtocol3::setCommObject(SerialComm *serialComm) {
 void SerialProtocol3::connectSignals() {
     if(comm) {
         connect(comm, SIGNAL(readyRead()), this, SLOT(readyRead()));
-        connect(comm, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(error(QSerialPort::SerialPortError)));
+//        connect(comm, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(error(QSerialPort::SerialPortError)));
     }
 }
 void SerialProtocol3::disconnectSignals() {
     if(comm) {
         disconnect(comm, SIGNAL(readyRead()), this, SLOT(readyRead()));
-        disconnect(comm, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(error(QSerialPort::SerialPortError)));
+//        disconnect(comm, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(error(QSerialPort::SerialPortError)));
     }
 }
 

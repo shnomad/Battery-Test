@@ -15,7 +15,6 @@ enum PortType {
     PORT_HID_STM32L       // STM32L USB HID
 };
 
-
 class SerialComm : public QObject
 {
     Q_OBJECT
@@ -34,7 +33,7 @@ public:
     ~SerialComm();
 
     Sp::CommProtocolType protocol();
-    void open();
+    bool open();
     void close();
     void check();
     void unsetCheckState();

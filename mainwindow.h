@@ -1,8 +1,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+
 #include <QMainWindow>
 #include <QTimer>
+#include "commondefinition.h"
+#include "serialcom/serialprotocol.h"
+#include "serialcom/serialcomm.h"
+#include "serialcom/serialprotocol3.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -16,12 +21,15 @@ QT_END_NAMESPACE
 //class relay_seed;
 class relay_seed_ddl;
 class QElapsedTimer;
+class SerialProtocolAbstract;
 //class usb_comm;
 //class bgm_comm_protocol;
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+    SerialComm *serialComm;
+    SerialProtocolAbstract *protocol;
 
     quint16 measure_coount=0;
     quint16 measure_capacity=0;
@@ -33,10 +41,11 @@ public:
 
     quint32 detect_on_time = 0;
     quint32 work_on_time = 5000;
-    quint32 third_on_time = 6000;
-    quint32 detect_off_time = 14000;
-    quint32 port_reset_time = 18000;
+    quint32 third_on_time =1000; // 6000;
+    quint32 detect_off_time = 8000; //14000;
+    quint32 port_reset_time = 4000; //18000;
     quint32 bluetooth_time = 0;
+    quint32 hub_port_delay_time = 2000;
 
 private slots:
     void on_test_start_clicked();
@@ -54,24 +63,40 @@ private slots:
     void on_quit_clicked();
     void on_device_open_clicked();
     void on_device_close_clicked();
+    void meter_comm_start();
+    void meter_comm_end();
     void on_times_valueChanged(const QString &arg1);
     void on_sec_valueChanged(const QString &arg1);
     void UpdateTime();
+    void comm_polling_event();          //periodical polling for device
+    void comm_polling_event_start();          //periodical polling for device
+    void comm_polling_event_stop();          //periodical polling for device
+
+private Q_SLOTS:
+    void portReady();
+    void connectionError();
+    void textMessage(QString text);
+    // 다운로드 과정에서 protocol에서 보내오는 시그널과 연결되는 함수
+    void timeoutError(Sp::ProtocolCommand command);
+    void maintainConnection(bool isOK);
 
 signals:
     void measure_start();
-    void measure_check();
+    void measure_cnt_check();
     void measure_end();
     void comm_check();
 
 private:
     Ui::MainWindow *ui = nullptr;    
-    QTimer *camera_timer, *detect_on_timer, *work_on_timer, *third_on_timer, *detect_off_timer, *port_reset_timer, *timer_sec;
+    QTimer *camera_timer, *detect_on_timer, *work_on_timer, *third_on_timer, *detect_off_timer, *port_reset_timer, *timer_sec, *hub_port_delay_timer, *comm_polling_timer;
     QImage qt_image;
     relay_seed_ddl *measure_relay;
     QElapsedTimer *mesure_time_check;
-//    usb_comm *meter_comm_usb;
-//    bgm_comm_protocol *meter_cmd;
+
+    bool bAutoSetSN;    //각 단말의 연결 상태를 위한 필드
+    bool checkProtocol();
+    void doCommands(QList<Sp::ProtocolCommand> list);
+
 };
 
 #endif // MAINWINDOW_H

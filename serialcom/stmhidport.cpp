@@ -1,8 +1,7 @@
 ﻿#include "stmhidport.h"
 #include "serialdefinition.h"
 
-STMHIDPort::STMHIDPort(hid_device *hiddevice, QObject *parent) : QObject(parent),
-    m_hid_device(hiddevice)
+STMHIDPort::STMHIDPort(hid_device *hiddevice, QObject *parent) : QObject(parent), m_hid_device(hiddevice)
 {
     recv_timer = new QTimer(this);
     connect(recv_timer, SIGNAL(timeout()), this, SLOT(checkReceived()));
@@ -91,7 +90,9 @@ void STMHIDPort::ReceiveData()
         if (numberOfBytesRead <= 0)
         {
             count_ReceiveData_ZeroByte ++;
-            if(count_ReceiveData_ZeroByte > ((float)TESTER_TIMER_INTERVAL_STM32*2)/(float)RECV_TIMER_INTERVAL ) {
+
+            if(count_ReceiveData_ZeroByte > ((float)TESTER_TIMER_INTERVAL_STM32*2)/(float)RECV_TIMER_INTERVAL )
+            {
                 // STM32_DEBUG
                 // 읽다 말고 멈춤 1 (회색화면)
                 close();
