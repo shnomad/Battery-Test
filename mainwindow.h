@@ -1,7 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-
 #include <QMainWindow>
 #include <QTimer>
 #include "commondefinition.h"
@@ -30,6 +29,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
     SerialComm *serialComm;
     SerialProtocolAbstract *protocol;
+    QString m_qcType;
 
     quint16 measure_coount=0;
     quint16 measure_capacity=0;
@@ -78,7 +78,14 @@ private Q_SLOTS:
     void textMessage(QString text);
     // 다운로드 과정에서 protocol에서 보내오는 시그널과 연결되는 함수
     void timeoutError(Sp::ProtocolCommand command);
+    void errorOccurred(Sp::ProtocolCommand command, Sp::ProtocolCommand preCommand);  // 미터에서 보내온 오류
+    void errorCrc();                                    // 수신데이터 CRC 오류
+    void errorUnresolvedCommand(Sp::ProtocolCommand command);     // 다운로드 과정에서 수행하지 않는 커맨드 패킷 수신
+    void packetReceived();
+    void finishReadingQcData();
+    void finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand);
     void maintainConnection(bool isOK);
+    void needReopenSerialComm();                                            // 시리얼 포트 오류로 인해 다시 포트를 열어 복구가 필요한 경우
 
 signals:
     void measure_start();
@@ -94,8 +101,19 @@ private:
     QElapsedTimer *mesure_time_check;
 
     bool bAutoSetSN;    //각 단말의 연결 상태를 위한 필드
+
+    QHash<QString, QVariant> m_settings;
+    bool isEnableBLE;
+    void EnableBLEControls(bool value);
+    bool isCaresensC(); //V176.110.x.x
+
     bool checkProtocol();
     void doCommands(QList<Sp::ProtocolCommand> list);
+
+    void InsertListLog(QString str);
+    void InsertListStateLog(int state, QString str);
+    void ClearListLog();
+    bool isOtgModeVisible(); //CareSens N Premier BLE – V89.110.x.x, CareSens N(N-ISO) – V39.200.x.x, CareSens N(N-ISO) Notch – V129.100.x.x
 
 };
 

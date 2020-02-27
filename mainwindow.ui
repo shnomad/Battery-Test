@@ -318,7 +318,7 @@
      <rect>
       <x>13</x>
       <y>190</y>
-      <width>411</width>
+      <width>381</width>
       <height>201</height>
      </rect>
     </property>
@@ -330,12 +330,12 @@
       <rect>
        <x>14</x>
        <y>43</y>
-       <width>360</width>
+       <width>341</width>
        <height>17</height>
       </rect>
      </property>
      <property name="text">
-      <string>Test Start Time</string>
+      <string>Test Start :</string>
      </property>
     </widget>
     <widget class="QLabel" name="test_step">
@@ -348,7 +348,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Action</string>
+      <string>Action :</string>
      </property>
     </widget>
     <widget class="QLabel" name="test_count">
@@ -361,33 +361,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Test Count</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="serial_number">
-     <property name="geometry">
-      <rect>
-       <x>13</x>
-       <y>127</y>
-       <width>340</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Device Information</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="device_status">
-     <property name="geometry">
-      <rect>
-       <x>16</x>
-       <y>153</y>
-       <width>351</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>N/A</string>
+      <string>Test Count :</string>
      </property>
     </widget>
    </widget>
@@ -412,15 +386,25 @@
    <widget class="QGroupBox" name="groupBox_4">
     <property name="geometry">
      <rect>
-      <x>464</x>
+      <x>414</x>
       <y>187</y>
-      <width>311</width>
+      <width>361</width>
       <height>201</height>
      </rect>
     </property>
     <property name="title">
-     <string>Camera</string>
+     <string>Device Information</string>
     </property>
+    <widget class="QTextEdit" name="meter_info">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>341</width>
+       <height>161</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
    <widget class="QLabel" name="system_time">
     <property name="geometry">
