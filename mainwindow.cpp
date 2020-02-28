@@ -18,6 +18,7 @@
 #include <QApplication>
 #include <QElapsedTimer>
 #include <QProcess>
+#include <QtNetwork/QNetworkInterface>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), measure_relay(new relay_seed_ddl)
 {
@@ -67,7 +68,25 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     connect(comm_polling_timer, SIGNAL(timeout()), this, SLOT(comm_polling_event()));
 
-    //comm_polling_event_start();
+    //Print local machine's IP address
+    QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
+
+    for (int i = 0; i < interfaces.count(); i++)
+    {
+        QList<QNetworkAddressEntry> entries = interfaces.at(i).addressEntries();
+
+        for (int j = 0; j < entries.count(); j++)
+        {
+            if (entries.at(j).ip().protocol() == QAbstractSocket::IPv4Protocol)
+            {
+                qDebug() << entries.at(j).ip().toString();
+                qDebug() << entries.at(j).netmask().toString();
+
+                ui->ip_address->setText("IP Address : " + entries.at(j).ip().toString());
+            }
+        }
+    }
+
 }
 
 MainWindow::~MainWindow()
@@ -107,9 +126,6 @@ void MainWindow::on_test_start_clicked()
     connect(detect_off_timer, SIGNAL(timeout()),SLOT(detect_off()));
     connect(port_reset_timer, SIGNAL(timeout()),SLOT(measure_port_reset()));
 
-//    ui->status->clear();
-//    ui->status->append("start");
-    //ui->status->setTextCursor("start");
     ui->test_start->setEnabled(false);
     ui->device_open->setEnabled(false);
     ui->device_close->setEnabled(false);
@@ -119,7 +135,6 @@ void MainWindow::on_test_start_clicked()
     ui->times->setEnabled(false);
     ui->sec->setEnabled(false);
 
-//    ui->status->setText("\n Test start :" + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap"));
     ui->test_start_time->setText("Test start :" + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap"));
 
     emit measure_start();
@@ -160,7 +175,6 @@ void MainWindow::on_test_stop_clicked()
     measure_port_reset();
 //  comm_port_reset();
 
-//  ui->status->setText("\n\n action : stopped");
     ui->test_step->setText("Action : stopped");
 }
 
@@ -187,7 +201,6 @@ void MainWindow::detect_on()
         measure_relay->measure_port_control(measure_relay->relay_channel::CH_4, DDL_CH_ON);
     }
 
-//  ui->status->setText("\n\n action : detect on");
     ui->test_step->setText("Action : detect on");
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_1, DDL_CH_ON);
 
@@ -197,18 +210,16 @@ void MainWindow::detect_on()
 void MainWindow::work_on()
 {
     cout<<"work on : "<< mesure_time_check->elapsed()<<"msec"<<endl;
-//    ui->status->setText("\n\n action : work on");
-     ui->test_step->setText("Action : work on");
+    ui->test_step->setText("Action : work on");
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_2, DDL_CH_ON);
 
     third_on_timer->start();
-
 }
 
 void MainWindow::third_on()
 {
     cout<<"third on : "<< mesure_time_check->elapsed()<<"msec"<<endl;
-//    ui->status->setText("\n\n action : third on");
+
     ui->test_step->setText("Action : third on");
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_3, DDL_CH_ON);
 
@@ -218,7 +229,7 @@ void MainWindow::third_on()
 void MainWindow::detect_off()
 {
     cout<<"detect off : "<< mesure_time_check->elapsed()<<"msec"<<endl;
-//  ui->status->setText("\n\n action : detect off");
+
     ui->test_step->setText("Action : detect off");
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_1, DDL_CH_OFF);
 
@@ -229,7 +240,7 @@ void MainWindow::detect_off()
 void MainWindow::measure_port_reset()
 {
     cout<<"measure port reset : "<< mesure_time_check->elapsed() <<"msec"<<endl;
-//  ui->status->setText("\n\n action : port reset");
+
     ui->test_step->setText("Action : port reset");
     measure_relay->measure_port_reset();
 
@@ -242,7 +253,6 @@ void MainWindow:: measure_count_check()
 
       measure_coount++;
 
-//    ui->status->setText("\n\n\n Test Count is " + (QString::number(measure_coount)));
       ui->test_count->setText("Test Count is " + (QString::number(measure_coount)));
 
     if(measure_coount < measure_capacity)
@@ -312,8 +322,7 @@ void MainWindow::on_sec_valueChanged(const QString &arg1)
 
 void MainWindow::UpdateTime()
 {
-//    ui->status->setText("System Time: " + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap"));
-      ui->system_time->setText("System Time: " + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap"));
+      ui->system_time->setText("Time: " + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap"));
 }
 
 void MainWindow::meter_comm_start()
@@ -381,14 +390,17 @@ void MainWindow::portReady()
         {
             break;
         }
+
         case Sp::CommProtocol1:
         {
             break;
         }
+
         case Sp::CommProtocol2:
         {
             break;
         }
+
         case Sp::CommProtocol3:
         {
             disconnect(serialComm, SIGNAL(portReady()), this, SLOT(portReady()));
@@ -442,8 +454,6 @@ void MainWindow::connectionError()
     Log();
     if(serialComm)
         delete serialComm;
-
-    serialComm = Q_NULLPTR;
 }
 
 void MainWindow::textMessage(QString text)
@@ -460,9 +470,6 @@ void MainWindow::timeoutError(Sp::ProtocolCommand command)
     if(command == Sp::GetGlucoseDataFlag)
         {
             Log() << "No Flag Settings" << command;
-
-//            ClearListLog();
-//            InsertListStateLog(0,"Flag 설정이 구현되지 않은 기기입니다. 모델명을 확인하세요.");
         }
         else if(command == Sp::Unlock)
         {
@@ -473,9 +480,6 @@ void MainWindow::timeoutError(Sp::ProtocolCommand command)
         else if(command == Sp::SetAvgDays || command == Sp::GetAvgDays)
         {
             Log() << "No Average Days settings" << command;
-
-//            ClearListLog();
-//            InsertListStateLog(0,"평균 일수 설정이 구현되지 않은 기기입니다. 모델명을 확인하세요.");
         }
         else
         {
@@ -524,7 +528,6 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
 
         if(lastcommand == Sp::ReadTemperature)
         {
-  //        startTimer();
             comm_polling_event_start();
             Log() << "read temperature";
             QString temperaturestr = "현재 미터의 온도: " + Settings::Instance()->getTemperature() + "℃";
@@ -538,7 +541,6 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
         }
         else
         {
-//           startTimer();
              comm_polling_event_start();
 
             if(lastcommand == Sp::ReadSerialNumber)
@@ -547,16 +549,11 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
 
                 if(temp_sn == "")
                 {
-//                    ui->label_sn->setText(MSG_NoSN);
-                    Log() << "temp_sn = " <<MSG_NoSN;
-                  //ui->test_step->setText("Action : third on");
-                  //ui->serial_number->setText("Serial Number : Read Fail!!");
+                    Log() << "temp_sn = " <<MSG_NoSN;                
                     ui->meter_info->append("Read Fail!!");
                 }
                 else
                 {
-//                    ui->label_sn->setText(temp_sn);
-//                    Log() << "temp_sn = " <<temp_sn;
                     ui->meter_info->append("Serial Number :" + temp_sn);
                 }
 
@@ -668,7 +665,6 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
             else if(lastcommand == Sp::SetJIGMode)
             {
                 ClearListLog();
-//                startTimer();
                 comm_polling_event_start();
                 //ui->centralWidget->setEnabled(true);
                 if(m_qcType == QC_TYPE_DEL) {
@@ -682,7 +678,6 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
             else if(lastcommand == Sp::SetBLELog)
             {
                 ClearListLog();
-//                startTimer();
                  comm_polling_event_start();
                 //ui->centralWidget->setEnabled(true);
                 if(m_qcType == QC_TYPE_DEL) {
@@ -947,7 +942,7 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
             }
             else if(lastcommand == Sp::CurrentIndexOfGluecose)      //Display result number in the meter
             {
-                  ui->meter_info->append("number of measured data: " + Settings::Instance()->getSaveDataCnt());
+                 ui->meter_info->append("number of measured data is " + (QString::number(Settings::Instance()->getNumberofCurrentGlucoseData())));
             }
             else
             {

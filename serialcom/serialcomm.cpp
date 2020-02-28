@@ -93,7 +93,8 @@ bool SerialComm::checkStmPort()
     // Enumerate and print the HID devices on the system
     struct hid_device_info *devs, *cur_dev;
 
-    devs = hid_enumerate(VID_STM32L, PID_STM32L);
+ //   devs = hid_enumerate(VID_STM32L, PID_STM32L);
+       devs = hid_enumerate(VID_CP2110, PID_CP2110);
     cur_dev = devs;
     while (cur_dev) {
 
@@ -111,8 +112,8 @@ bool SerialComm::checkStmPort()
 
     // Open the device using the VID, PID,
     // and optionally the Serial number.  // vid_0483&pid_a18b
-      handle = hid_open(VID_STM32L, PID_STM32L, NULL);
-    //handle = hid_open(VID_CP2110, PID_ISENS, NULL);
+   //  handle = hid_open(VID_STM32L, PID_STM32L, NULL);
+      handle = hid_open(VID_CP2110, PID_CP2110, NULL);
     //selectedStmPort->open(VID_STM32L, PID_STM32L,handle);
 
     if(handle) {

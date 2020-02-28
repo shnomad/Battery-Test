@@ -162,5 +162,9 @@
 #define SFD_u_setAudioSettings      "u_setaudiosettings"
 #define SFD_u_setavgdays          "u_setavgdays "
 
+//for JIG Program
+
+#define SFD_v_saveglucosedata_count "v_current_saved_glucose_data"
+
 #endif // SETTING_FLAGNAME_DEFINITION
 

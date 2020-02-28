@@ -57,7 +57,8 @@ FORMS += \
 INCLUDEPATH += /opt/qt5pi/sysroot/usr/include
 
 LIBS += -L/opt/qt5pi/sysroot/usr/lib -lwiringPi \
-        -L/opt/qt5pi/sysroot/usr/lib -lhidapi-hidraw
+        -L/opt/qt5pi/sysroot/usr/lib -lhidapi-hidraw \
+        -L/opt/qt5pi/sysroot/usr/local/qt5pi/lib -lQt5Network
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

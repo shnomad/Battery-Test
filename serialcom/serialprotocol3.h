@@ -23,7 +23,6 @@ public:
     ~SerialProtocol3();
 
     void setCommObject(SerialComm *serialComm);
-
     Sp::ProtocolState startDownload();
     Sp::ProtocolState syncTime();
     Sp::ProtocolState readTime();

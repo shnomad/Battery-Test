@@ -88,6 +88,10 @@ public:
     bool isSetAudioSettings();
     bool isSetAvgDays();
 
+    //Adding for JIG Program
+    void setNumberofCurrentGlucoseData(quint16 NofGluData);
+    quint16 getNumberofCurrentGlucoseData();
+
 signals:
 
 public slots:

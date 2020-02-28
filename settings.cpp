@@ -512,3 +512,13 @@ QString Settings::getComponentStyleSheet()
             }";
     return styleSheet;
 }
+
+void Settings::setNumberofCurrentGlucoseData(quint16 NofGluData)
+{
+    setValue(SFD_v_saveglucosedata_count, QVariant(NofGluData));
+}
+
+quint16 Settings::getNumberofCurrentGlucoseData()
+{
+   return value(SFD_v_saveglucosedata_count).toInt();
+}

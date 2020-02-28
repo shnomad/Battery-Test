@@ -317,9 +317,9 @@
     <property name="geometry">
      <rect>
       <x>13</x>
-      <y>190</y>
+      <y>187</y>
       <width>381</width>
-      <height>201</height>
+      <height>121</height>
      </rect>
     </property>
     <property name="title">
@@ -329,7 +329,7 @@
      <property name="geometry">
       <rect>
        <x>14</x>
-       <y>43</y>
+       <y>34</y>
        <width>341</width>
        <height>17</height>
       </rect>
@@ -342,7 +342,7 @@
      <property name="geometry">
       <rect>
        <x>13</x>
-       <y>71</y>
+       <y>62</y>
        <width>340</width>
        <height>17</height>
       </rect>
@@ -355,7 +355,7 @@
      <property name="geometry">
       <rect>
        <x>13</x>
-       <y>100</y>
+       <y>91</y>
        <width>340</width>
        <height>17</height>
       </rect>
@@ -387,13 +387,13 @@
     <property name="geometry">
      <rect>
       <x>414</x>
-      <y>187</y>
+      <y>194</y>
       <width>361</width>
       <height>201</height>
      </rect>
     </property>
     <property name="title">
-     <string>Device Information</string>
+     <string>Meter Information</string>
     </property>
     <widget class="QTextEdit" name="meter_info">
      <property name="geometry">
@@ -409,16 +409,43 @@
    <widget class="QLabel" name="system_time">
     <property name="geometry">
      <rect>
-      <x>437</x>
-      <y>402</y>
+      <x>24</x>
+      <y>346</y>
       <width>340</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>TextLabel</string>
+     <string>Time :</string>
     </property>
    </widget>
+   <widget class="QGroupBox" name="groupBox_5">
+    <property name="geometry">
+     <rect>
+      <x>15</x>
+      <y>315</y>
+      <width>381</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>System Information</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ip_address">
+    <property name="geometry">
+     <rect>
+      <x>23</x>
+      <y>372</y>
+      <width>340</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>IP Address :</string>
+    </property>
+   </widget>
+   <zorder>groupBox_5</zorder>
    <zorder>groupBox</zorder>
    <zorder>test_option</zorder>
    <zorder>groupBox_2</zorder>
@@ -427,6 +454,7 @@
    <zorder>quit</zorder>
    <zorder>groupBox_4</zorder>
    <zorder>system_time</zorder>
+   <zorder>ip_address</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

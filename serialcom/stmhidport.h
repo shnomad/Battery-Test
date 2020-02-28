@@ -11,6 +11,7 @@ class STMHIDPort : public QObject
     Q_OBJECT
 
     hid_device *m_hid_device;
+
     QByteArray m_buffer;
     int buffer_len;
     QTimer *recv_timer;

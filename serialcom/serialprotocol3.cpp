@@ -3498,6 +3498,21 @@ void SerialProtocol3::parseReceivedData(QByteArray rcvPacket)
 #endif
         }
     }
+    else if(cmd == Sp::CurrentIndexOfGluecose)
+    {        
+        m_dataArray = QJsonArray();
+        QJsonObject sn;
+        sn["sn"] = m_serialnumber;
+        m_dataArray.push_front(sn);
+
+        downloadInfo.setNumberOfGluecose(getIndexOfGluecose(rcvPacket));
+
+        quint16 NumOfGlu = getIndexOfGluecose(rcvPacket);
+
+        Settings::Instance()->setNumberofCurrentGlucoseData(NumOfGlu);
+
+        Log();
+    }    
 #ifdef SERIALCOM_QC
     else if(cmd == Sp::ReadBLE)
     {
@@ -3510,14 +3525,6 @@ void SerialProtocol3::parseReceivedData(QByteArray rcvPacket)
             //blename = QString(rcvPacket.mid(11,12));
         }
         Settings::Instance()->setBleName(blename);
-    }
-    else if(cmd == Sp::CurrentIndexOfGluecose)
-    {
-        m_dataArray = QJsonArray();
-        QJsonObject sn;
-        sn["sn"] = m_serialnumber;
-        m_dataArray.push_front(sn);
-        downloadInfo.setNumberOfGluecose(getIndexOfGluecose(rcvPacket));
     }
     else if(cmd == Sp::CommandPacketVerifyError)
     {

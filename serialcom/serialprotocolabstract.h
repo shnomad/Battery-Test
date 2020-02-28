@@ -15,6 +15,9 @@ class SerialProtocolAbstract : public QObject
 
 {
     Q_OBJECT
+
+    GlucoseDownloadProgress downloadInfo;
+
 protected:
     Sp::ProtocolCommand lastCommand;
     Sp::ProtocolCommand pLastCommand;
