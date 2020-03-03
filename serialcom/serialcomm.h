@@ -2,6 +2,7 @@
 #define SERIALCOM_H
 
 #include <QObject>
+#include <QtSerialPort/QSerialPort>
 #include "commondefinition.h"
 #include "serialprotocolabstract.h"
 #include "stmhidport.h"
@@ -15,25 +16,40 @@ enum PortType {
     PORT_HID_STM32L       // STM32L USB HID
 };
 
+class QSerialPortInfo;
+class SerialPortTester;
+
 class SerialComm : public QObject
 {
     Q_OBJECT
 
 private:
+    //FT230x
+    QList<SerialPortTester *> serialPortTesters;
+    SerialPortTester *selectedSerialPortTester;
+    QSerialPort *selectedSerialPort;
 
     // STM32L HID
     QList<STMHIDTester *> stmPortTesters;
     STMHIDTester *selectedStmPortTester;
     STMHIDPort *selectedStmPort;
+
     Sp::CommProtocolType selectedProtocol;
+    int m_baudrate;
     PortType portType;
 
 public:
     explicit SerialComm(QObject *parent = 0);
     ~SerialComm();
 
+    enum intercface
+    {
+        micro_usb,
+        phone_jack
+    };
+
     Sp::CommProtocolType protocol();
-    bool open();
+    bool open(intercface);
     void close();
     void check();
     void unsetCheckState();
@@ -54,19 +70,27 @@ public slots:
 
 private Q_SLOTS:
 
+    //QSerialPort, FT230x
+     void timeoutError(SerialPortTester *sender);
+    void responseUnknown(SerialPortTester *sender);
+    void responseSuccess(SerialPortTester *sender);
+
     // STM32L HID
     void timeoutError(STMHIDTester *sender);
     void responseUnknown(STMHIDTester *sender);
     void responseSuccess(STMHIDTester *sender);
-    void timeoutErrorFromPort();
-    //
+
+    void timeoutErrorFromPort();    //
     void textMessage(QString text);
 
 private:
 
-    //for STM32L HID
+    // STM32L HID
     bool checkStmPort();
 
+    //FT230x
+    bool checkSerialPort();
+    QSerialPort *openSerialPort(const QSerialPortInfo &info);
 };
 
 #endif // SERIALCOM_H

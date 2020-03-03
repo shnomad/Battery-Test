@@ -1,24 +1,28 @@
 ﻿#include "serialdefinition.h"
 #include "serialcomm.h"
+#include "serialporttester.h"
+#include "settings.h"
+#include <QtSerialPort/QSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
 #include <QList>
 
-//HID definition
-#define VID_CP2110      0x10C4
-#define PID_CP2110      0xEA80 // CP2110 default value
-#define PID_ISENS       0x8A32 // 0x8A32 (i-SENS의 HID cable에 사용할 Product ID)
 //STM32L
 #define VID_STM32L      0x483
-#define PID_STM32L      0xA18B
+#define PID_STM32L      0xa18B
 
 #define READ_TIMEOUT		0//100
 #define WRITE_TIMEOUT		100//2000
 
-SerialComm::SerialComm(QObject *parent) : QObject(parent), selectedProtocol(Sp::CommProtocolUnknown)
+SerialComm::SerialComm(QObject *parent) : QObject(parent), selectedSerialPort(Q_NULLPTR),selectedProtocol(Sp::CommProtocolUnknown)
 {
     Log() << "+SerialComm::SerialComm() " << "make serialTester = null";
     portType = PORT_HID_STM32L;
+    selectedSerialPort = Q_NULLPTR;
+    selectedSerialPortTester = Q_NULLPTR;
     selectedStmPort = Q_NULLPTR;
     selectedStmPortTester = Q_NULLPTR;
+
+    m_baudrate = Settings::Instance()->getBaudrate();
 
 }
 
@@ -47,38 +51,302 @@ void SerialComm::check()
 {
     Log() << "check()";
 
-    selectedStmPortTester->check();
-
+    if(portType == PORT_HID_STM32L)
+    {
+        if(selectedStmPortTester != Q_NULLPTR)
+        {
+            selectedStmPortTester->check();
+        }
+    }
+    else
+    {
+        if(selectedSerialPortTester != Q_NULLPTR)
+        {
+            selectedSerialPortTester->check();
+            Log() << "selectedSerialPortTester check()";
+        }
+    }
 }
 
 bool SerialComm::isAvailable()
 {
-     if(selectedStmPortTester == Q_NULLPTR)
-     {
-         return false;
-     }
-    return true;
+    if(portType == PORT_HID_STM32L)
+    {
+        if(selectedStmPortTester == Q_NULLPTR)
+        {
+            return false;
+        }
+    }
+    else
+    {
+        if(selectedSerialPortTester == Q_NULLPTR)
+        {
+           return false;
+        }
+    }
+        return true;
 }
 
 void SerialComm::unsetCheckState()
 {
-    selectedStmPortTester->unsetCheckState();
+    if(portType == PORT_HID_STM32L)
+    {
+        if(selectedStmPortTester != Q_NULLPTR)
+        {
+            selectedStmPortTester->unsetCheckState();
+        }
+    }
+    else
+    {
+        if(selectedSerialPortTester != Q_NULLPTR)
+        {
+            selectedSerialPortTester->unsetCheckState();
+        }
+
+    }
+}
+
+QSerialPort *SerialComm::openSerialPort(const QSerialPortInfo &info)
+{
+    QSerialPort *serial = new QSerialPort();
+    serial->setPort(info);
+    serial->setBaudRate(m_baudrate);
+    serial->setDataBits(QSerialPort::Data8);
+    serial->setParity(QSerialPort::NoParity);
+    serial->setStopBits(QSerialPort::OneStop);
+    serial->setFlowControl(QSerialPort::NoFlowControl);
+
+    if(serial->open(QIODevice::ReadWrite))
+    {
+        return serial;
+    }
+
+    return Q_NULLPTR;
 }
 
 
-bool SerialComm::open()
+bool SerialComm::open(SerialComm::intercface port)
 {
-//    Settings::Instance()->setQcStringValue("hid_pid", "");
-    if(checkStmPort() == false)
+
+    if(port == micro_usb)
     {
-        // connectionError!!!
-        Log() << "Failed to open port!";
-        return false;
+
+        if(checkStmPort() == false)
+        {
+            // connectionError!!!
+            Log() << "Failed to open STM32 port!";
+            return false;
+        }
+    }
+    else
+    {
+        if(checkSerialPort() == false)
+        {
+            // connectionError!!!
+            Log() << "Failed to open FT230x port!";
+        }
     }
 
     return true;
 }
 
+void SerialComm::close()
+{
+    if(portType == PORT_HID_STM32L)
+    {
+        if(selectedStmPort)
+        {
+            selectedStmPort->close();
+            selectedStmPort = Q_NULLPTR;
+        }
+    }
+    else
+    {
+        if(selectedSerialPort)
+        {
+            selectedSerialPort->close();
+            //delete selectedSerialPort;
+            selectedSerialPort = Q_NULLPTR;
+        }
+    }
+
+    deleteLater();
+}
+
+
+qint64 SerialComm::writeData(const char *data, qint64 size)
+{
+    if(portType == PORT_HID_STM32L)
+    {
+        return selectedStmPort->write(data,size);
+    }
+    else
+    {
+        return selectedSerialPort->write(data, size);
+    }
+}
+
+qint64 SerialComm::writeData(QByteArray data)
+{
+    qint64 serialComm;
+
+    if(portType == PORT_HID_STM32L)
+    {
+        serialComm = selectedStmPort->write(data);
+    }
+    else
+    {
+        serialComm = selectedSerialPort->write(data);
+    }
+
+    if(data.contains("RTIM"))
+    {
+ //       Settings::Instance()->setSystemTime(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+    }
+
+    return serialComm;
+}
+
+QByteArray SerialComm::readAll()
+{
+    if(portType == PORT_HID_STM32L)
+    {
+        return selectedStmPort->readAll();
+    }
+    else
+    {
+        return selectedSerialPort->readAll();
+    }
+}
+
+//FT230x
+bool SerialComm::checkSerialPort()
+{
+     Log() << "checkSerialPort!!";
+    QList<QSerialPortInfo> portInfos = QSerialPortInfo::availablePorts();
+
+    int valid_portnum = portInfos.count();
+
+    foreach (const QSerialPortInfo &info, portInfos)
+    {
+
+         Log() << info.portName();
+
+         if(info.portName() == "ttyUSB0")
+         {
+
+            QSerialPort *port = openSerialPort(info);
+
+            Log() << "Serial Port open success" << port->portName();
+
+            portType = PORT_SERIAL;
+
+            Log() << QString().sprintf("baudrate: %d", port->baudRate());
+            Log() << QString().sprintf("data: %d", port->dataBits());
+            Log() << QString().sprintf("parity: %d", port->parity());
+            Log() << QString().sprintf("stop bits: %d", port->stopBits());
+            Log() << QString().sprintf("flow control: %d", port->flowControl());
+
+            SerialPortTester *serialtester = new SerialPortTester(port);    // PortTester => MeterTester
+            serialPortTesters.append(serialtester);
+            connect(serialtester, SIGNAL(timeoutError(SerialPortTester *)), this, SLOT(timeoutError(SerialPortTester *)));
+            connect(serialtester, SIGNAL(responseUnknown(SerialPortTester *)), this, SLOT(responseUnknown(SerialPortTester *)));
+            connect(serialtester, SIGNAL(responseSuccess(SerialPortTester *)), this, SLOT(responseSuccess(SerialPortTester *)));
+            serialtester->start();
+            Log() << "serialTester start()~~";
+        }
+        else
+        {
+            valid_portnum--;
+        }
+    }
+
+    if(valid_portnum == 0)
+    {
+        emit connectionError();
+        return false;
+    }
+
+    if(serialPortTesters.length() > 0)
+        return true;
+    return false;
+}
+
+void SerialComm::timeoutError(SerialPortTester *sender)
+{
+    if(selectedSerialPortTester != Q_NULLPTR)
+    {
+        Log() << "timeoutError, serialTester != null, make serialTester = null";
+        selectedSerialPortTester = Q_NULLPTR;
+        //연결해제
+        emit maintainConnection(false);
+    }
+    else
+    {
+        Log() << "SerialComm::timeoutError serialTester == null, connection Error, make serialComm = null";
+        serialPortTesters.removeOne(sender);
+        sender->deleteLater();
+
+        if(serialPortTesters.count() <= 0)
+        {
+            if(selectedSerialPort == Q_NULLPTR)
+            {
+                emit connectionError();
+            }
+        }
+    }
+}
+
+
+void SerialComm::responseUnknown(SerialPortTester *sender)
+{
+    Log() << "SerialComm::responseUnknown";
+    serialPortTesters.removeOne(sender);
+    sender->deleteLater();
+    if(serialPortTesters.count() <= 0) {
+        if(selectedSerialPort == Q_NULLPTR)
+        {
+            emit connectionError();
+        }
+    }
+}
+
+void SerialComm::responseSuccess(SerialPortTester *sender)
+{
+    Log() << "responseSuccess, make selectedSerialPortTester ";
+    if(selectedSerialPortTester != Q_NULLPTR || sender->CheckState() == true)
+    {
+        Log();
+        emit maintainConnection(true);
+        return;
+    }
+
+    foreach (SerialPortTester *tester, serialPortTesters)
+    {
+        if(tester == sender)
+        {
+            // 포트가 결정되었으니 필요한 시그널을 연결한다
+            selectedSerialPort = tester->serialPort;
+            connect(selectedSerialPort, SIGNAL(readyRead()), this, SIGNAL(readyRead()));
+            connect(selectedSerialPort, SIGNAL(error(QSerialPort::SerialPortError)), this, SIGNAL(error(QSerialPort::SerialPortError)));
+
+            selectedProtocol = tester->protocol;
+            selectedSerialPortTester = tester;
+            //tester->serialPort = Q_NULLPTR;
+            //serialPortTesters.removeOne(tester);
+            //delete tester;
+        } else
+        {
+            disconnect(tester, SIGNAL(timeoutError(SerialPortTester *)), this, SLOT(timeoutError(SerialPortTester *)));
+            disconnect(tester, SIGNAL(responseUnknown(SerialPortTester *)), this, SLOT(responseUnknown(SerialPortTester *)));
+            disconnect(tester, SIGNAL(responseSuccess(SerialPortTester *)), this, SLOT(responseSuccess(SerialPortTester *)));
+            delete tester;
+        }
+    }
+    emit portReady();
+}
+
+//STM32
 bool SerialComm::checkStmPort()
 {
     Log() << "checkStmPort!!";
@@ -93,8 +361,8 @@ bool SerialComm::checkStmPort()
     // Enumerate and print the HID devices on the system
     struct hid_device_info *devs, *cur_dev;
 
- //   devs = hid_enumerate(VID_STM32L, PID_STM32L);
-       devs = hid_enumerate(VID_CP2110, PID_CP2110);
+    devs = hid_enumerate(VID_STM32L, PID_STM32L);
+
     cur_dev = devs;
     while (cur_dev) {
 
@@ -112,8 +380,8 @@ bool SerialComm::checkStmPort()
 
     // Open the device using the VID, PID,
     // and optionally the Serial number.  // vid_0483&pid_a18b
-   //  handle = hid_open(VID_STM32L, PID_STM32L, NULL);
-      handle = hid_open(VID_CP2110, PID_CP2110, NULL);
+       handle = hid_open(VID_STM32L, PID_STM32L, NULL);
+ //     handle = hid_open(VID_CP2110, PID_CP2110, NULL);
     //selectedStmPort->open(VID_STM32L, PID_STM32L,handle);
 
     if(handle) {
@@ -152,31 +420,19 @@ bool SerialComm::checkStmPort()
     return false;
 }
 
-void SerialComm::textMessage(QString text) {
+void SerialComm::textMessage(QString text)
+{
     emit textMessageSignal(text);
 }
 
 
-Sp::CommProtocolType SerialComm::protocol() {
+Sp::CommProtocolType SerialComm::protocol()
+{
     return selectedProtocol;
 }
 
-void SerialComm::close()
+void SerialComm::timeoutError(STMHIDTester *sender)
 {
-
-    if(selectedStmPort)
-    {
-        selectedStmPort->close();
-        //delete selectedStmPort;
-        selectedStmPort = Q_NULLPTR;
-    }
-
-    deleteLater();
-}
-
-
-// STM32L HID
-void SerialComm::timeoutError(STMHIDTester *sender) {
     Log();
 
     if(selectedStmPortTester != Q_NULLPTR)
@@ -201,11 +457,15 @@ void SerialComm::timeoutError(STMHIDTester *sender) {
     }
 }
 
-void SerialComm::timeoutErrorFromPort() {
+
+
+void SerialComm::timeoutErrorFromPort()
+{
     Log();
     emit connectionError();
 }
 
+// STM32 Port control
 void SerialComm::responseUnknown(STMHIDTester *sender)
 {
     stmPortTesters.removeOne(sender);
@@ -263,28 +523,4 @@ void SerialComm::responseSuccess(STMHIDTester *sender)
     }
 
     emit portReady();
-}
-
-qint64 SerialComm::writeData(const char *data, qint64 size)
-{
-    return selectedStmPort->write(data,size);
-}
-
-qint64 SerialComm::writeData(QByteArray data)
-{
-    qint64 serialComm;
-
-     serialComm = selectedStmPort->write(data);
-
-    if(data.contains("RTIM"))
-    {
-//        Settings::Instance()->setSystemTime(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
-    }
-
-    return serialComm;
-}
-
-QByteArray SerialComm::readAll()
-{
-    return selectedStmPort->readAll();
 }

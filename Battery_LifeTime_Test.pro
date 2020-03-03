@@ -31,7 +31,9 @@ SOURCES += \
         serialcom/serialprotocolabstract.cpp \
         serialcom/stmhidport.cpp \
         serialcom/stmhidtester.cpp \
-    settings.cpp
+        settings.cpp \
+    serialcom/serialporttester.cpp
+
 
 
 HEADERS += \
@@ -45,20 +47,21 @@ HEADERS += \
         serialcom/stmhidport.h \
         serialcom/stmhidtester.h \
         commondefinition.h \
-    settings.h \
-    setting_flagname_definition.h \
-    serialcom/glucosedownloadprogress.h
-
+        settings.h \
+        setting_flagname_definition.h \
+        serialcom/glucosedownloadprogress.h \
+    serialcom/serialporttester.h
 
 
 FORMS += \
         mainwindow.ui
 
-INCLUDEPATH += /opt/qt5pi/sysroot/usr/include
+INCLUDEPATH += /opt/qt5pi/sysroot/usr/include /opt/qt5pi/sysroot/usr/local/include
 
 LIBS += -L/opt/qt5pi/sysroot/usr/lib -lwiringPi \
         -L/opt/qt5pi/sysroot/usr/lib -lhidapi-hidraw \
-        -L/opt/qt5pi/sysroot/usr/local/qt5pi/lib -lQt5Network
+        -L/opt/qt5pi/sysroot/usr/local/qt5pi/lib -lQt5Network \
+        -L/opt/qt5pi/sysroot/usr/local/qt5pi/lib -lQt5SerialPort
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

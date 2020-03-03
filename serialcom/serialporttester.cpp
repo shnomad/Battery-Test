@@ -1,5 +1,5 @@
-﻿#include "serialporttester.h"
-#include <QSerialPort>
+#include "serialporttester.h"
+#include <QtSerialPort/QSerialPort>
 #include "serialprotocolabstract.h"
 #include "serialdefinition.h"
 

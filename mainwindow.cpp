@@ -63,6 +63,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->times->setSingleStep(100.0);
     ui->times->setValue(1000.0);
 
+    /*USB Interface select*/
+    ui->micro_usb->setEnabled(true);
+    ui->micro_usb->setChecked(true);
+
+    ui->phone_jack->setEnabled(true);
+    ui->micro_usb->setChecked(false);
+
     QObject::connect(timer_sec, SIGNAL(timeout()), this, SLOT(UpdateTime()));
     timer_sec->start(1000);
 
@@ -132,8 +139,13 @@ void MainWindow::on_test_start_clicked()
     ui->test_stop->setEnabled(true);
 
     ui->bluetooth_sel->setEnabled(false);
+    ui->ketone_sel->setEnabled(false);
+
     ui->times->setEnabled(false);
     ui->sec->setEnabled(false);
+
+    ui->micro_usb->setEnabled(false);
+    ui->phone_jack->setEnabled(false);
 
     ui->test_start_time->setText("Test start :" + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap"));
 
@@ -167,13 +179,17 @@ void MainWindow::on_test_stop_clicked()
     ui->test_stop->setEnabled(false);
 
     ui->bluetooth_sel->setEnabled(true);
+    ui->ketone_sel->setEnabled(true);
+
     ui->times->setEnabled(true);
     ui->sec->setEnabled(true);
 
-    ui->device_open->setEnabled(true);
+    ui->device_open->setEnabled(true);   
+
+    ui->micro_usb->setEnabled(true);
+    ui->phone_jack->setEnabled(true);
 
     measure_port_reset();
-//  comm_port_reset();
 
     ui->test_step->setText("Action : stopped");
 }
@@ -339,7 +355,19 @@ void MainWindow::meter_comm_start()
         connect(serialComm, SIGNAL(textMessageSignal(QString)), this, SLOT(textMessage(QString)));
         connect(serialComm, SIGNAL(maintainConnection(bool)), this, SLOT(maintainConnection(bool)));
 
-        serialComm->open();
+         if(ui->micro_usb->isChecked())
+         {
+            serialComm->open(serialComm->intercface::micro_usb);
+         }
+
+         if(ui->phone_jack->isChecked())
+         {
+            serialComm->open(serialComm->intercface::phone_jack);
+         }
+
+         /*USB Interface select*/
+         ui->micro_usb->setEnabled(false);
+         ui->phone_jack->setEnabled(false);
     }
 }
 
@@ -349,6 +377,10 @@ void MainWindow::meter_comm_end()
     serialComm = Q_NULLPTR;
 
     ui->meter_info->clear();
+
+    /*USB Interface select*/
+    ui->micro_usb->setEnabled(true);
+    ui->phone_jack->setEnabled(true);
 
     disconnect(serialComm, SIGNAL(portReady()), this, SLOT(portReady()));
     disconnect(serialComm, SIGNAL(connectionError()), this, SLOT(connectionError()));
