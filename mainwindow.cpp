@@ -8,6 +8,7 @@
 #include "bgm_comm_protocol.h"
 #include "settings.h"
 #include "setting_flagname_definition.h"
+#include "builddatetime.h"
 #include <stdlib.h>
 #include <iostream>
 #include <QTextEdit>
@@ -25,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->setupUi(this);
 
     mesure_time_check = new QElapsedTimer;
-    measure_port_reset();
+    measure_port_init();
 
     serialComm = Q_NULLPTR;
 
@@ -70,6 +71,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->phone_jack->setEnabled(true);
     ui->micro_usb->setChecked(false);
 
+    ui->time_sync->setEnabled(false);
+    ui->mem_delete->setEnabled(false);
+
+    /*Show Build information*/
+//  QString format = "MMM dd yyyy hh:mm:ss";
+//  QDateTime build_date = QDateTime::fromString(BUILDV, format);
+    ui->build_date->setText("build date : " + build_date);
+
     QObject::connect(timer_sec, SIGNAL(timeout()), this, SLOT(UpdateTime()));
     timer_sec->start(1000);
 
@@ -94,6 +103,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         }
     }
 
+    hub_port_close();
+
+
 }
 
 MainWindow::~MainWindow()
@@ -111,7 +123,7 @@ void MainWindow::on_test_start_clicked()
 
     if(ui->ketone_sel->isChecked())
     {
-        detect_off_time = 11000;        //case of KETONE
+        detect_off_time = 15000;        //case of KETONE
     }
 
     //Glucose : detect -> (5 sec) -> work_on -> (1 sec) -> third on -> (8 sec) -> detect off -> (4 sec)
@@ -121,10 +133,12 @@ void MainWindow::on_test_start_clicked()
     work_on_timer->setInterval(work_on_time);
     third_on_timer->setInterval(third_on_time);
     detect_off_timer->setInterval(detect_off_time);
+
+    //default teset interval      15 Sec            0 Sec              25 Sec
     port_reset_timer->setInterval(port_reset_time + changed_interval + bluetooth_time);    
 
     connect(this, SIGNAL(measure_start()), this, SLOT(measurement()));
-    connect(this, SIGNAL(measure_cnt_check()), this, SLOT(measure_count_check()));
+    connect(this, SIGNAL(measure_cnt_check(SIGNAL_SENDER)), this, SLOT(measure_count_check(SIGNAL_SENDER)));
     connect(this, SIGNAL(measure_end()), this, SLOT(on_test_stop_clicked()));
 
     connect(detect_on_timer, SIGNAL(timeout()),SLOT(detect_on()));
@@ -133,21 +147,31 @@ void MainWindow::on_test_start_clicked()
     connect(detect_off_timer, SIGNAL(timeout()),SLOT(detect_off()));
     connect(port_reset_timer, SIGNAL(timeout()),SLOT(measure_port_reset()));
 
+    //Communication with meter for check measured count
+//  connect(this, SIGNAL(meter_comm_if_start()), SLOT(meter_comm_start()));
+//  connect(this, SIGNAL(meter_comm_if_end()), SLOT(meter_comm_end()));
+
     ui->test_start->setEnabled(false);
     ui->device_open->setEnabled(false);
     ui->device_close->setEnabled(false);
     ui->test_stop->setEnabled(true);
 
+    //Test option
     ui->bluetooth_sel->setEnabled(false);
     ui->ketone_sel->setEnabled(false);
 
     ui->times->setEnabled(false);
     ui->sec->setEnabled(false);
 
+    //Comm Interface option
     ui->micro_usb->setEnabled(false);
-    ui->phone_jack->setEnabled(false);
+    ui->phone_jack->setEnabled(false);    
 
     ui->test_start_time->setText("Test start :" + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap"));
+
+    ui->test_count->setText("Test Count is " + (QString::number(current_measure_count)));
+
+    measure_test_active = true;
 
     emit measure_start();
 }
@@ -155,7 +179,7 @@ void MainWindow::on_test_start_clicked()
 void MainWindow::on_test_stop_clicked()
 {   
     disconnect(this, SIGNAL(measure_start()), this, SLOT(measurement()));
-    disconnect(this, SIGNAL(measure_check()), this, SLOT(measure_count_check()));
+    disconnect(this, SIGNAL(measure_check(SIGNAL_SENDER)), this, SLOT(measure_count_check(SIGNAL_SENDER)));
     disconnect(this, SIGNAL(measure_end()), this, SLOT(on_test_stop_clicked()));
 
     detect_on_timer->stop();
@@ -170,10 +194,7 @@ void MainWindow::on_test_stop_clicked()
     disconnect(detect_off_timer, SIGNAL(timeout()),this,SLOT(detect_off()));
     disconnect(port_reset_timer, SIGNAL(timeout()),this,SLOT(measure_port_reset()));
 
-//    if(measure_coount == 1000)
-//         ui->status->setText("/r/r/r" + (QString::number(measure_coount)));
-
-    measure_coount = 0;
+    current_measure_count = 0;
 
     ui->test_start->setEnabled(true);
     ui->test_stop->setEnabled(false);
@@ -189,9 +210,20 @@ void MainWindow::on_test_stop_clicked()
     ui->micro_usb->setEnabled(true);
     ui->phone_jack->setEnabled(true);
 
-    measure_port_reset();
+    measure_port_init();
 
     ui->test_step->setText("Action : stopped");
+
+    target_test_cycle = 0;
+    current_test_cycle = 0;
+
+    measure_test_active = false;
+}
+
+void MainWindow::measure_port_init()
+{
+    cout<<"measure port init"<<endl;
+    measure_relay->measure_port_reset();
 }
 
 void MainWindow::measurement()
@@ -214,7 +246,8 @@ void MainWindow::detect_on()
 
     if(ui->ketone_sel->isChecked())
     {
-        measure_relay->measure_port_control(measure_relay->relay_channel::CH_4, DDL_CH_ON);
+        //Second Detect port
+        measure_relay->measure_port_control(measure_relay->relay_channel::CH_3, DDL_CH_ON);
     }
 
     ui->test_step->setText("Action : detect on");
@@ -227,9 +260,12 @@ void MainWindow::work_on()
 {
     cout<<"work on : "<< mesure_time_check->elapsed()<<"msec"<<endl;
     ui->test_step->setText("Action : work on");
-    measure_relay->measure_port_control(measure_relay->relay_channel::CH_2, DDL_CH_ON);
+    measure_relay->measure_port_control(measure_relay->relay_channel::CH_2, DDL_CH_ON);        
 
-    third_on_timer->start();
+    if(ui->ketone_sel->isChecked())
+        detect_off_timer->start();
+    else
+        third_on_timer->start();
 }
 
 void MainWindow::third_on()
@@ -249,6 +285,10 @@ void MainWindow::detect_off()
     ui->test_step->setText("Action : detect off");
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_1, DDL_CH_OFF);
 
+    current_measure_count++;
+
+    ui->test_count->setText("Test Count is " + (QString::number(current_measure_count)));
+
     port_reset_timer->start();
 
 }
@@ -260,25 +300,52 @@ void MainWindow::measure_port_reset()
     ui->test_step->setText("Action : port reset");
     measure_relay->measure_port_reset();
 
-    emit measure_cnt_check();
+    emit measure_cnt_check(SIGNAL_FROM_MEASURE_PORT_RESET);
 }
 
-void MainWindow:: measure_count_check()
+void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
 {
       cout<<"measure count check : "<< mesure_time_check->elapsed() <<"msec"<<endl;
 
-      measure_coount++;
+        switch(sig_orin)
+        {
+            case SIGNAL_FROM_MEASURE_PORT_RESET:
 
-      ui->test_count->setText("Test Count is " + (QString::number(measure_coount)));
+               if(current_measure_count == target_measure_count)
+               {
+                   emit on_device_open_clicked();
+               }
+               else if(current_measure_count < target_measure_count)
+               {
+                   emit measure_start();
+               }
 
-    if(measure_coount < measure_capacity)
-    {
-        emit measure_start();
-    }
-    else if(measure_coount == measure_capacity)
-    {
-        emit measure_end();
-    }
+            break;
+
+            case SIGNAL_FROM_FINISH_DO_COMMAND:
+
+                if(current_measure_count == measure_count_read_from_meter)
+                {
+                    //ToDo: Download saved data to Host system
+                    target_measure_count_rest -=current_measure_count;
+
+                    if(!target_measure_count_rest)
+                        emit measure_end();
+                    else
+                        emit measure_start();
+                }
+                else
+                {
+                    current_measure_count = measure_count_read_from_meter;
+                    emit measure_start();
+                }
+
+            break;
+
+            default:
+                break;
+        }
+
 }
 
 void MainWindow::hub_port_open()
@@ -307,12 +374,29 @@ void MainWindow::on_quit_clicked()
 void MainWindow::on_device_open_clicked()
 {
     ui->device_open->setEnabled(false);
-    ui->device_close->setEnabled(true);
+//    ui->device_close->setEnabled(true);
+
+    //Measurement Option
+    ui->test_start->setEnabled(false);
+    ui->test_stop->setEnabled(false);
+
+    ui->bluetooth_sel->setEnabled(false);
+    ui->ketone_sel->setEnabled(false);
+
+    ui->times->setEnabled(false);
+    ui->sec->setEnabled(false);
 
     hub_port_open();
 
     hub_port_delay_timer->setInterval(hub_port_delay_time);
     connect(hub_port_delay_timer, SIGNAL(timeout()), this, SLOT(meter_comm_start()));
+
+    if(ui->phone_jack->isChecked())
+    {
+        //Phone Jack type meter PC mode enable
+        measure_relay->measure_port_control(measure_relay->relay_channel::CH_4, DDL_CH_ON);
+    }
+
     hub_port_delay_timer->start();
 }
 
@@ -320,15 +404,33 @@ void MainWindow::on_device_close_clicked()
 {
     ui->device_open->setEnabled(true);
     ui->device_close->setEnabled(false);
+    ui->time_sync->setEnabled(false);
+    ui->mem_delete->setEnabled(false);
 
     meter_comm_end();
 
+    if(ui->phone_jack->isChecked())
+    {
+        //Phone Jack type meter PC mode enable
+        measure_relay->measure_port_control(measure_relay->relay_channel::CH_4, DDL_CH_OFF);
+    }
+
     system("uhubctl -a off -p 2-5");
+
+    QThread::msleep(1000);
+
+    ui->test_start->setEnabled(true);
+    ui->bluetooth_sel->setEnabled(true);
+    ui->ketone_sel->setEnabled(true);
+    ui->times->setEnabled(true);
+    ui->sec->setEnabled(true);
 }
 
 void MainWindow::on_times_valueChanged(const QString &arg1)
 {
-     measure_capacity = arg1.toInt(0,10);
+     target_measure_count = arg1.toInt(0,10);
+     target_measure_count_rest = target_measure_count;
+     target_test_cycle = target_measure_count/meter_mem_capacity;
 }
 
 void MainWindow::on_sec_valueChanged(const QString &arg1)
@@ -368,6 +470,8 @@ void MainWindow::meter_comm_start()
          /*USB Interface select*/
          ui->micro_usb->setEnabled(false);
          ui->phone_jack->setEnabled(false);
+
+        ui->meter_info->clear();
     }
 }
 
@@ -375,8 +479,6 @@ void MainWindow::meter_comm_end()
 {
     serialComm->close();
     serialComm = Q_NULLPTR;
-
-    ui->meter_info->clear();
 
     /*USB Interface select*/
     ui->micro_usb->setEnabled(true);
@@ -446,7 +548,7 @@ void MainWindow::portReady()
             connect(protocol, SIGNAL(errorCrc()), this, SLOT(errorCrc()));
             connect(protocol, SIGNAL(errorUnresolvedCommand(Sp::ProtocolCommand)), this, SLOT(errorUnresolvedCommand(Sp::ProtocolCommand)));
             connect(protocol, SIGNAL(packetReceived()), this, SLOT(packetReceived()));
-//          connect(protocol, SIGNAL(downloadComplete(QJsonArray*)), this, SLOT(downloadComplete(QJsonArray*)));
+            connect(protocol, SIGNAL(downloadComplete(QJsonArray*)), this, SLOT(downloadComplete(QJsonArray*)));
             connect(protocol, SIGNAL(needReopenSerialComm()), this, SLOT(needReopenSerialComm()));
             connect(protocol, SIGNAL(finishReadingQcData()), this, SLOT(finishReadingQcData()));
             connect(protocol, SIGNAL(finishDoCommands(bool, Sp::ProtocolCommand )), this, SLOT(finishDoCommands(bool,Sp::ProtocolCommand)));
@@ -567,9 +669,14 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
         }
         else if(lastcommand == Sp::Unlock)
         {
-            QList<Sp::ProtocolCommand> list;
-            list.append(Sp::ReadSerialNumber);
-            doCommands(list);
+
+         if(checkProtocol() != true)
+            return;
+
+          QList<Sp::ProtocolCommand> list;
+          list.append(Sp::ReadSerialNumber);
+          doCommands(list);
+
         }
         else
         {
@@ -602,8 +709,10 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
                 {
                     if(checkProtocol() != true)
                         return;
+
                     QList<Sp::ProtocolCommand> list;
                     list.append(Sp::ReadAESKey);
+
                     if (currentIndex == 3)  //N IoT
                     {
                         list.append(Sp::ReadServerAddress);
@@ -666,6 +775,15 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
             else if(lastcommand == Sp::WriteTimeInformation)
             {
                 InsertListLog("시간 동기화 완료!");
+#if 1
+                if(checkProtocol() != true)
+                    return;
+                QList<Sp::ProtocolCommand> list;
+                list.append(Sp::ReadSerialNumber);
+                protocol->doCommands(list);
+                return;
+
+#else
                 //Read Meter Time
                 if(checkProtocol() != true)
                     return;
@@ -673,6 +791,9 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
                 list.append(Sp::ReadTimeInformation);
                 protocol->doCommands(list);
                 return;
+#endif
+
+
             }
             else if(lastcommand == Sp::DeleteData)
             {
@@ -681,6 +802,14 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
                 } else {
                     InsertListLog("메모리 삭제 완료!");
                 }
+
+                if(checkProtocol() != true)
+                    return;
+                QList<Sp::ProtocolCommand> list;
+                list.append(Sp::ReadSerialNumber);
+                protocol->doCommands(list);
+                return;
+
             }
             else if(lastcommand == Sp::SetHour12H)
             {
@@ -973,18 +1102,43 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
                  InsertListLog("Registration URL 설정 성공!!");
             }
             else if(lastcommand == Sp::CurrentIndexOfGluecose)      //Display result number in the meter
+            {                                
+                 measure_count_read_from_meter = Settings::Instance()->getNumberofCurrentGlucoseData();
+                 ui->meter_info->append("number of measured data is " + (QString::number(measure_count_read_from_meter)));
+
+                 ui->time_sync->setEnabled(true);
+                 ui->mem_delete->setEnabled(true);
+
+                 ui->device_close->setEnabled(true);
+
+
+                if(measure_test_active)
+                {
+                    if(measure_count_read_from_meter == meter_mem_capacity)
+                    {
+                            //need to download
+                    }
+                    else
+                    {
+                         emit on_device_close_clicked();
+                         emit measure_cnt_check(SIGNAL_FROM_FINISH_DO_COMMAND);
+                    }
+                }
+
+            }
+            else if(lastcommand == Sp::GluecoseResultDataTxExpanded)
             {
-                 ui->meter_info->append("number of measured data is " + (QString::number(Settings::Instance()->getNumberofCurrentGlucoseData())));
+
             }
             else
             {
                 Log() << "not yet";
             }
 
-            if(checkProtocol() != true)
-                return;
+//           if(checkProtocol() != true)
+//                return;
+//             protocol->readQcData();               //Not use this tool
 
-             protocol->readQcData();               //Not use this tool
         }
 
     }
@@ -1113,4 +1267,107 @@ void MainWindow::needReopenSerialComm()
 {
     Log();
     ClearListLog();
+}
+
+void MainWindow::on_mem_delete_clicked()
+{
+    Log();
+    if(checkProtocol() != true)
+        return;
+
+    Log();
+
+    ui->meter_info->clear();
+
+    QList<Sp::ProtocolCommand> list;
+    list.append(Sp::DeleteData);
+    protocol->doCommands(list);
+    return;
+}
+
+void MainWindow::on_time_sync_clicked()
+{
+    Log();
+
+    if(checkProtocol() != true)
+        return;
+
+    Log();
+
+    ui->meter_info->clear();
+
+    QList<Sp::ProtocolCommand> list;
+    list.append(Sp::WriteTimeInformation);
+    protocol->doCommands(list);
+    return;
+}
+
+void MainWindow::downloadProgress(float progress)
+{
+    Q_UNUSED(progress);
+    Log() <<  progress;
+}
+
+QString MainWindow::parseTime(QString timevalue)
+{
+    QDateTime datevalue = QDateTime::fromMSecsSinceEpoch(timevalue.toLongLong());
+
+    return datevalue.toString("yyyy/MM/dd AP h:mm");
+
+}
+
+static unsigned long loop_count = 0;
+void MainWindow::makeDownloadCompleteView(QJsonArray datalist)
+{
+    //ClearListLog();
+
+    QString sn = "Serial Number: ";
+    if(datalist.count() > 1)
+    {
+        sn += datalist[0].toObject()["sn"].toString();
+    }
+    int glucosedatacount = datalist.count()-1; // except sn
+
+    InsertListLog(sn);
+    InsertListLog(QString().sprintf("Count of downloaded data: %d", glucosedatacount ));
+
+    for(int i = 1; i < glucosedatacount+1; i++)
+    {
+       QString timeString= "", datastring = "";
+       timeString = parseTime(datalist[i].toObject()["dDate"].toString());
+
+       datastring += QString().sprintf("[%03d] ", i)+ timeString + ", value(";
+
+        datastring += datalist[i].toObject()["glucose_data"].toString();
+        datastring = datastring + "), HiLo(" + datalist[i].toObject()["flag_hilo"].toString() +
+                        + "), Ketone(" + datalist[i].toObject()["flag_ketone"].toString() +")";
+        InsertListLog(datastring);
+    }
+
+    QString currenttimestring = QDateTime::currentDateTime().toString("yyyy/MM/dd AP h:mm:ss");
+    QString doneString = QString().sprintf("[%ld] ", loop_count) + "Download succeeded at " + currenttimestring;
+    InsertListStateLog(m_logcount, doneString);
+    m_logcount++;
+
+    comm_polling_event_start();
+
+/// startTimer();
+}
+
+void MainWindow::downloadComplete(QJsonArray* datalist)
+{
+    Log();
+
+    if(datalist != Q_NULLPTR && datalist->count() > 0)
+    {
+        makeDownloadCompleteView(*datalist);
+    }
+
+    if(checkProtocol() != true)
+        return;
+
+    QList<Sp::ProtocolCommand> list;
+    list.append(Sp::CurrentIndexOfGluecose);
+    list.append(Sp::GluecoseResultDataTxExpanded);
+    doCommands(list);
 }

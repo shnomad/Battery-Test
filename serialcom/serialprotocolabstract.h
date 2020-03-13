@@ -41,15 +41,14 @@ public:
     virtual Sp::ProtocolState startDownload() = 0;
     virtual Sp::ProtocolState syncTime() = 0;
     virtual Sp::ProtocolState readTime() = 0;
+
     virtual void cancelDownload() = 0;
     virtual qint64 requestCommand(const Sp::ProtocolCommand &command, QByteArray *arg1 = 0, QByteArray *arg2 = 0, QByteArray *arg3 = 0) = 0;
     virtual void parseReceivedData(QByteArray rcvPacket);
     virtual const QByteArray &lastReceivePacket() = 0;
-    //
     virtual void readBleData() = 0;
     virtual void readQcData() = 0;
     virtual void doCommands(QList<Sp::ProtocolCommand> commands) = 0;
-
 
     static ushort calcCrc(const QByteArray &array);
     static bool isEqualCrc(const QByteArray &array, ushort crc);

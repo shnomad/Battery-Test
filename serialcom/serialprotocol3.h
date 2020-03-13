@@ -33,7 +33,6 @@ public:
     void readQcData();
     void doCommands(QList<Sp::ProtocolCommand> commands);
 
-
     qint64 requestCommand(const Sp::ProtocolCommand &command, QByteArray *arg1 = 0, QByteArray *arg2 = 0, QByteArray *arg3 = 0);
 
     void parseReceivedData(QByteArray rcvPacket);

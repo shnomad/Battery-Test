@@ -31,9 +31,13 @@ class MainWindow : public QMainWindow
     SerialProtocolAbstract *protocol;
     QString m_qcType;
 
-    quint16 measure_coount=0;
-    quint16 measure_capacity=0;
+    qint16 current_measure_count=0;
+    qint16 target_measure_count=0, target_measure_count_rest=0;
+    quint16 meter_mem_capacity =1000;
+    quint8 target_test_cycle = 0, current_test_cycle = 0;
     quint16 changed_interval=0;
+
+    bool measure_test_active = false;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -43,9 +47,15 @@ public:
     quint32 work_on_time = 5000;
     quint32 third_on_time =1000; // 6000;
     quint32 detect_off_time = 8000; //14000;
-    quint32 port_reset_time = 4000; //18000;
+    quint32 port_reset_time = 15000; //18000;
     quint32 bluetooth_time = 0;
     quint32 hub_port_delay_time = 2000;
+    quint32 measure_count_read_from_meter=0;
+
+    enum SIGNAL_SENDER{
+        SIGNAL_FROM_MEASURE_PORT_RESET,
+        SIGNAL_FROM_FINISH_DO_COMMAND
+    };
 
 private slots:
     void on_test_start_clicked();
@@ -56,7 +66,8 @@ private slots:
     void third_on();
     void detect_off();
     void measure_port_reset();
-    void measure_count_check();
+    void measure_port_init();
+    void measure_count_check(SIGNAL_SENDER);
     void hub_port_open();
     void hub_port_close();
     void hub_port_reset();
@@ -69,14 +80,16 @@ private slots:
     void on_sec_valueChanged(const QString &arg1);
     void UpdateTime();
     void comm_polling_event();          //periodical polling for device
-    void comm_polling_event_start();          //periodical polling for device
-    void comm_polling_event_stop();          //periodical polling for device
+    void comm_polling_event_start();    //periodical polling for device
+    void comm_polling_event_stop();     //periodical polling for device
 
 private Q_SLOTS:
     void portReady();
     void connectionError();
     void textMessage(QString text);
     // 다운로드 과정에서 protocol에서 보내오는 시그널과 연결되는 함수
+    void downloadProgress(float progress);                                  // 0~1 : 1 = 100%
+    void downloadComplete(QJsonArray* datalist);
     void timeoutError(Sp::ProtocolCommand command);
     void errorOccurred(Sp::ProtocolCommand command, Sp::ProtocolCommand preCommand);  // 미터에서 보내온 오류
     void errorCrc();                                    // 수신데이터 CRC 오류
@@ -86,10 +99,12 @@ private Q_SLOTS:
     void finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand);
     void maintainConnection(bool isOK);
     void needReopenSerialComm();                                            // 시리얼 포트 오류로 인해 다시 포트를 열어 복구가 필요한 경우
+    void on_mem_delete_clicked();
+    void on_time_sync_clicked();
 
 signals:
     void measure_start();
-    void measure_cnt_check();
+    void measure_cnt_check(SIGNAL_SENDER);
     void measure_end();
     void comm_check();
 
@@ -99,6 +114,11 @@ private:
     QImage qt_image;
     relay_seed_ddl *measure_relay;
     QElapsedTimer *mesure_time_check;
+
+
+    void makeProgressView();
+    void makeDownloadCompleteView(QJsonArray datalist);
+    QString parseTime(QString timevalue);
 
     bool bAutoSetSN;    //각 단말의 연결 상태를 위한 필드
 
@@ -114,6 +134,8 @@ private:
     void InsertListStateLog(int state, QString str);
     void ClearListLog();
     bool isOtgModeVisible(); //CareSens N Premier BLE – V89.110.x.x, CareSens N(N-ISO) – V39.200.x.x, CareSens N(N-ISO) Notch – V129.100.x.x
+
+    int m_logcount;
 
 };
 
