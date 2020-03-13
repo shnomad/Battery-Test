@@ -180,6 +180,7 @@ qint64 SerialProtocol3::requestCommand(const Sp::ProtocolCommand &command, QByte
         }
         case Sp::CurrentIndexOfGluecose:
         {
+            Log();
             Q_UNUSED(arg1); Q_UNUSED(arg2); Q_UNUSED(arg3);
             requestData.append(makeCurrentIndexOfGluecose());
             endCreatePacket((QByteArray *)&requestData);
@@ -187,6 +188,7 @@ qint64 SerialProtocol3::requestCommand(const Sp::ProtocolCommand &command, QByte
         }
         case Sp::ReadSerialNumber:
         {
+            Log();
             Q_UNUSED(arg1); Q_UNUSED(arg2); Q_UNUSED(arg3);
             requestData.append(makeReadSerialNumber());
             endCreatePacket((QByteArray *)&requestData);
@@ -201,6 +203,7 @@ qint64 SerialProtocol3::requestCommand(const Sp::ProtocolCommand &command, QByte
         }
         case Sp::ReadTimeInformation:
         {
+             Log();
             Q_UNUSED(arg1); Q_UNUSED(arg2); Q_UNUSED(arg3);
             requestData.append(makeReadTimeInformation());
             endCreatePacket((QByteArray *)&requestData);
@@ -208,6 +211,7 @@ qint64 SerialProtocol3::requestCommand(const Sp::ProtocolCommand &command, QByte
         }
         case Sp::WriteTimeInformation:
         {
+            Log();
             Q_UNUSED(arg2); Q_UNUSED(arg3);
             requestData.append(makeWriteTimeInformation());
             endCreatePacket((QByteArray *)&requestData);
@@ -222,6 +226,7 @@ qint64 SerialProtocol3::requestCommand(const Sp::ProtocolCommand &command, QByte
         }
         case Sp::DeleteData:
         {
+            Log();
             Q_UNUSED(arg1); Q_UNUSED(arg2); Q_UNUSED(arg3);
             requestData.append(makeDeleteData());
             endCreatePacket((QByteArray *)&requestData);
@@ -552,6 +557,7 @@ qint64 SerialProtocol3::requestCommand(const Sp::ProtocolCommand &command, QByte
 
         case Sp::ReadBLE:
         {
+            Log();
             isBleCmd = true;
             Q_UNUSED(arg1); Q_UNUSED(arg2); Q_UNUSED(arg3);
             requestData.append(makeReadBLE());
@@ -2125,6 +2131,43 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
         }
         else
         {
+
+#if 1
+            switch(cmd)
+            {
+                case Sp::ReadSerialNumber:
+
+                break;
+
+                case Sp::ReadTimeInformation:
+
+                break;
+
+                case Sp::CurrentIndexOfGluecose:
+
+                break;
+
+                case Sp::DeleteData:
+
+                break;
+
+                case Sp::WriteTimeInformation :
+
+                break;
+
+                case Sp::GluecoseResultDataTxExpanded:
+
+                break;
+
+                default:
+                break;
+            }
+
+            Log();
+
+            emit finishDoCommands(true, m_commands[m_current_cmd_index - 1]);
+
+#else
             if(cmd == Sp::GluecoseResultDataTxExpanded)
             {
                 Log();
@@ -2144,6 +2187,9 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
             {
                 emit finishDoCommands(true, m_commands[m_current_cmd_index - 1]);
             }
+
+#endif
+
         }
 #endif
     }
