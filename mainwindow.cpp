@@ -402,7 +402,6 @@ void MainWindow::on_device_open_clicked()
 
 void MainWindow::on_device_close_clicked()
 {
-    ui->device_open->setEnabled(true);
     ui->device_close->setEnabled(false);
     ui->time_sync->setEnabled(false);
     ui->mem_delete->setEnabled(false);
@@ -419,6 +418,7 @@ void MainWindow::on_device_close_clicked()
 
     QThread::msleep(1000);
 
+    ui->device_open->setEnabled(true);
     ui->test_start->setEnabled(true);
     ui->bluetooth_sel->setEnabled(true);
     ui->ketone_sel->setEnabled(true);
@@ -653,6 +653,7 @@ void MainWindow::packetReceived()
 void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand)
 {
     Log();
+
     if(bSuccess == true)
     {
         Log() << "성공";
@@ -696,12 +697,23 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
                     ui->meter_info->append("Serial Number :" + temp_sn);
                 }
 
+
+                /*Unused function jump*/
+
+                if(checkProtocol() != true)
+                    return;
+                QList<Sp::ProtocolCommand> list;
+                list.append(Sp::ReadTimeInformation);
+                protocol->doCommands(list);
+                return;
+
+                /*end of Unused function jump*/
+
                 Settings::Instance()->setBleName(INVALID_BLE);
                 Log() << "blename = " << Settings::Instance()->getBleName();
 
                 if(checkProtocol() != true)
                     return;
-
 //              int currentIndex = ui->comboBox_meter_type->currentIndex();
                 int currentIndex = 1;
 
@@ -841,9 +853,12 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
                 ClearListLog();
                  comm_polling_event_start();
                 //ui->centralWidget->setEnabled(true);
-                if(m_qcType == QC_TYPE_DEL) {
+                if(m_qcType == QC_TYPE_DEL)
+                {
                     InsertListStateLog(0,"A meter is NOT connected.");
-                } else {
+                }
+                else
+                {
                     InsertListStateLog(0,"기기 연결이 끊어짐 (1)");
                 }
 
@@ -1109,14 +1124,16 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
                  ui->time_sync->setEnabled(true);
                  ui->mem_delete->setEnabled(true);
 
-                 ui->device_close->setEnabled(true);
+                 ui->device_close->setEnabled(true);                                 
 
+//                 protocol->startDownload();
 
-                if(measure_test_active)
+#if 1
+              if(measure_test_active)
                 {
                     if(measure_count_read_from_meter == meter_mem_capacity)
                     {
-                            //need to download
+                         //need to download
                     }
                     else
                     {
@@ -1124,6 +1141,7 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
                          emit measure_cnt_check(SIGNAL_FROM_FINISH_DO_COMMAND);
                     }
                 }
+#endif
 
             }
             else if(lastcommand == Sp::GluecoseResultDataTxExpanded)
@@ -1358,16 +1376,15 @@ void MainWindow::downloadComplete(QJsonArray* datalist)
 {
     Log();
 
-    if(datalist != Q_NULLPTR && datalist->count() > 0)
-    {
-        makeDownloadCompleteView(*datalist);
-    }
+//    if(datalist != Q_NULLPTR && datalist->count() > 0)
+//    {
+//        makeDownloadCompleteView(*datalist);
+//    }
 
-    if(checkProtocol() != true)
-        return;
-
-    QList<Sp::ProtocolCommand> list;
-    list.append(Sp::CurrentIndexOfGluecose);
-    list.append(Sp::GluecoseResultDataTxExpanded);
-    doCommands(list);
+//    if(checkProtocol() != true)
+//        return;
+//    QList<Sp::ProtocolCommand> list;
+//    list.append(Sp::CurrentIndexOfGluecose);
+//    list.append(Sp::GluecoseResultDataTxExpanded);
+//    doCommands(list);
 }

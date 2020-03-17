@@ -18,6 +18,7 @@ SerialProtocol3::SerialProtocol3(SerialComm *serialComm, QObject *parent) : Seri
     connect(&downloadInfo, SIGNAL(downloadProgress(float)), this, SIGNAL(downloadProgress(float)));
     connectSignals();
     modeltype = Sp::DefaultMeter;
+    mOnlyReadSN = true;
 }
 
 SerialProtocol3::~SerialProtocol3()
@@ -26,23 +27,31 @@ SerialProtocol3::~SerialProtocol3()
     timerStop();
 }
 
-void SerialProtocol3::setCommObject(SerialComm *serialComm) {
-    if(comm) {
+void SerialProtocol3::setCommObject(SerialComm *serialComm)
+{
+    if(comm)
+    {
         disconnectSignals();
     }
+
     comm = serialComm;
     connectSignals();
 }
+
 void SerialProtocol3::connectSignals() {
-    if(comm) {
+    if(comm)
+    {
         connect(comm, SIGNAL(readyRead()), this, SLOT(readyRead()));
-//        connect(comm, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(error(QSerialPort::SerialPortError)));
+//      connect(comm, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(error(QSerialPort::SerialPortError)));
     }
 }
-void SerialProtocol3::disconnectSignals() {
-    if(comm) {
+
+void SerialProtocol3::disconnectSignals()
+{
+    if(comm)
+    {
         disconnect(comm, SIGNAL(readyRead()), this, SLOT(readyRead()));
-//        disconnect(comm, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(error(QSerialPort::SerialPortError)));
+//      disconnect(comm, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(error(QSerialPort::SerialPortError)));
     }
 }
 
@@ -50,12 +59,15 @@ Sp::ProtocolState SerialProtocol3::startDownload()
 {
     if(currentState == Sp::Idle)
     {
+        mOnlyReadSN = false;
         downloadInfo.setNumberOfGluecose(0);
         requestCommand(Sp::ReadSerialNumber);
-    } else
+    }
+    else
     {
         return currentState;
     }
+
     return Sp::Idle;
 }
 
@@ -175,6 +187,11 @@ qint64 SerialProtocol3::requestCommand(const Sp::ProtocolCommand &command, QByte
         {
             Q_UNUSED(arg3);
             requestData.append(makeGluecoseResultDataTxExpanded(*arg1, *arg2));
+
+//            QByteArray arg3 = argUShort(ushort(downloadInfo.index()));
+//            QByteArray arg4 = argByte(char(downloadInfo.downloadableCount()));
+//            requestData.append(makeGluecoseResultDataTxExpanded(arg3, arg4));
+
             endCreatePacket((QByteArray *)&requestData);
             break;
         }
@@ -2028,6 +2045,7 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
     QByteArray crcArray = rcvPacket.mid(rcvPacket.count()-3, 2);
     ushort rcvCrc = *(ushort *)(crcArray.data());
     rcvCrc = byteswap(rcvCrc);
+
     if((lastCommand == Sp::ReadSerialNumber && (int)rcvPacket[rcvPacket.count() - 1] == kETX) //RSNB는 CRC 체크하지 않는다.
        || isEqualCrc(checkPacket, rcvCrc)
        || lastCommand == Sp::GluecoseResultDataTxExpanded)
@@ -2131,11 +2149,17 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
         }
         else
         {
-
-#if 1
+#if 1      
             switch(cmd)
             {
-                case Sp::ReadSerialNumber:
+                case Sp::ReadSerialNumber:                
+
+                if(!mOnlyReadSN)
+                {
+                    downloadInfo.setNumberOfGluecose(0);
+                    emit downloadProgress(downloadInfo.progress());
+                    requestCommand(Sp::CurrentIndexOfGluecose);
+                }
 
                 break;
 
@@ -2144,6 +2168,19 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
                 break;
 
                 case Sp::CurrentIndexOfGluecose:
+
+                    if(!mOnlyReadSN)
+                    {
+                        downloadInfo.setNumberOfGluecose(getIndexOfGluecose(rcvPacket));
+
+                        emit downloadProgress(downloadInfo.progress());
+
+                        QByteArray arg1 = argUShort(ushort(downloadInfo.index()));
+                        QByteArray arg2 = argByte(char(downloadInfo.downloadableCount()));
+
+                        requestCommand(Sp::GluecoseResultDataTxExpanded, &arg1, &arg2);
+                        return;
+                    }
 
                 break;
 
@@ -2156,6 +2193,36 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
                 break;
 
                 case Sp::GluecoseResultDataTxExpanded:
+
+                    emit packetReceived();
+
+                    downloadInfo.setDownloadedCount(getGluecoseCount(rcvPacket));
+
+                    if(downloadInfo.downloadableCount())
+                    {
+                        currentState = Sp::GluecoseDownloading;
+                        QByteArray arg1 = argUShort(ushort(downloadInfo.index()));
+                        QByteArray arg2 = argByte(char(downloadInfo.downloadableCount()));
+                        requestCommand(Sp::GluecoseResultDataTxExpanded, &arg1, &arg2);
+
+                        return;
+                    }
+                    else
+                    {
+                        QJsonObject sn;
+                        sn["sn"] = m_serialnumber;
+                        m_dataArray.push_front(sn);
+                        Log() << "DataDownload Complete total = " << downloadInfo.getNunberOfGluecose() << m_dataArray.count();
+
+                        for(int i=0; i<m_dataArray.count(); i++)
+                        {
+                            Log() <<m_dataArray.at(i);
+                        }
+
+                        emit downloadComplete(&m_dataArray);
+
+                        return;
+                    }
 
                 break;
 
@@ -2946,15 +3013,20 @@ void SerialProtocol3::readyRead() {
         Log() << "readBuffer" << readBuffer.toHex();
         Log() << "readBuffer len" << readBuffer.length();
 
-#ifdef SERIALCOM_SMARTLOG
+//#ifdef SERIALCOM_SMARTLOG
+#if 1
         int flushIndex = 0;
-         while(readBuffer.at(flushIndex) != kSTX) {
+         while(readBuffer.at(flushIndex) != kSTX)
+         {
              flushIndex ++;
-             if(flushIndex > readBuffer.count()) {
+
+             if(flushIndex > readBuffer.count())
+             {
                  flushIndex  = readBuffer.count();
                  break;
              }
          }
+
          readBuffer.remove(0, flushIndex);
 
          // STM32_DEBUG
@@ -2969,12 +3041,16 @@ void SerialProtocol3::readyRead() {
              return;
          }
          Log();
-         if(isCompletePacketReceved()) {
+
+         if(isCompletePacketReceved())
+         {
              QByteArray rcvPacket = getReceivePacket();
              lastRcvPacket.remove(0, lastRcvPacket.count());
              lastRcvPacket.append(rcvPacket);
              processPacket(rcvPacket);
-         } else {
+         }
+         else
+         {
              timerStart();
          }
 #endif
@@ -3433,6 +3509,7 @@ void SerialProtocol3::parseReceivedData(QByteArray rcvPacket)
     else if(cmd == Sp::GluecoseResultDataTxExpanded)
     {
         int count = getGluecoseCount(rcvPacket);
+
 #ifdef SERIALCOM_QC
         downloadInfo.setDownloadedCount(count);
 #endif
@@ -3461,12 +3538,12 @@ void SerialProtocol3::parseReceivedData(QByteArray rcvPacket)
             datatime.setTime(dtime);
 
             int value = (quint8(rcvPacket[dataindex + 7]) << 8) + quint8(rcvPacket[dataindex + 8]);
-            data["glucose_data"] = QString().sprintf("%d", value);
-            data["dDate"] = QString::number(datatime.toMSecsSinceEpoch());
+            data["time"]=datatime.toString("yyyy-MM-dd hh:mm:ss");
+            data["glucose value(mg/dL)"] = QString().sprintf("%d", value);
             data["manual"] = m_serialnumber;
 #ifdef SERIALCOM_SMARTLOG
-            data["time"] = Settings::Instance()->GetDatetimestringFromMSec(QString::number(datatime.toMSecsSinceEpoch()));
-            data["update_date_time"] = QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh:mm:ss");
+              data["time"] = Settings::Instance()->GetDatetimestringFromMSec(QString::number(datatime.toMSecsSinceEpoch()));
+              data["update_date_time"] = QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh:mm:ss");
 //            data["flag_cs"] = "0";
 //            data["flag_meal"] = "0";
 //            data["flag_hilo"] = "0";
@@ -3474,9 +3551,8 @@ void SerialProtocol3::parseReceivedData(QByteArray rcvPacket)
 //            data["flag_nomark"] = "0";
 //            data["flag_ketone"] = "0";
 #endif
+
 #ifdef SERIALCOM_QC
-            data["index"] = QString().sprintf("%d", downloadInfo.index());
-            data["time"] = "";//Settings::Instance()->GetDatetimestringFromMSec(QString::number(datatime.toMSecsSinceEpoch()));
             data["flag_cs"] = "0";
             data["flag_meal"] = "0";
             data["flag_hilo"] = "0";
@@ -3546,16 +3622,21 @@ void SerialProtocol3::parseReceivedData(QByteArray rcvPacket)
                 data["flag_hilo"] = "Lo"; // "lo" // SERIALCOM_QC
             }
 
-#ifdef SERIALCOM_SMARTLOG
+//#ifdef SERIALCOM_SMARTLOG
+#if 1
             m_dataArray.push_front(data);
 #endif
-#ifdef SERIALCOM_QC
+
+//#ifdef SERIALCOM_QC
+#if 0
             m_dataArray.push_back(data);
 #endif
         }
     }
     else if(cmd == Sp::CurrentIndexOfGluecose)
     {        
+        Log();
+
         m_dataArray = QJsonArray();
         QJsonObject sn;
         sn["sn"] = m_serialnumber;
