@@ -57,6 +57,7 @@ void SerialProtocol3::disconnectSignals()
 
 Sp::ProtocolState SerialProtocol3::startDownload()
 {
+#if 0
     if(currentState == Sp::Idle)
     {
         mOnlyReadSN = false;
@@ -69,6 +70,16 @@ Sp::ProtocolState SerialProtocol3::startDownload()
     }
 
     return Sp::Idle;
+
+#else
+
+    dataDownload = true;
+    downloadInfo.setNumberOfGluecose(0);
+    requestCommand(Sp::ReadSerialNumber);
+    return Sp::GluecoseDownloading;
+
+#endif
+
 }
 
 Sp::ProtocolState SerialProtocol3::syncTime()
@@ -187,11 +198,6 @@ qint64 SerialProtocol3::requestCommand(const Sp::ProtocolCommand &command, QByte
         {
             Q_UNUSED(arg3);
             requestData.append(makeGluecoseResultDataTxExpanded(*arg1, *arg2));
-
-//            QByteArray arg3 = argUShort(ushort(downloadInfo.index()));
-//            QByteArray arg4 = argByte(char(downloadInfo.downloadableCount()));
-//            requestData.append(makeGluecoseResultDataTxExpanded(arg3, arg4));
-
             endCreatePacket((QByteArray *)&requestData);
             break;
         }
@@ -2154,12 +2160,14 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
             {
                 case Sp::ReadSerialNumber:                
 
-                if(!mOnlyReadSN)
-                {
-                    downloadInfo.setNumberOfGluecose(0);
-                    emit downloadProgress(downloadInfo.progress());
-                    requestCommand(Sp::CurrentIndexOfGluecose);
-                }
+                  if(dataDownload)
+//                    if(1)
+                    {
+                        downloadInfo.setNumberOfGluecose(0);
+                        emit downloadProgress(downloadInfo.progress());                                               
+                        requestCommand(Sp::CurrentIndexOfGluecose);                                
+                        return;
+                    }
 
                 break;
 
@@ -2169,8 +2177,9 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
 
                 case Sp::CurrentIndexOfGluecose:
 
-                    if(!mOnlyReadSN)
-                    {
+                  if(dataDownload)
+//                    if(1)
+                    {                                                
                         downloadInfo.setNumberOfGluecose(getIndexOfGluecose(rcvPacket));
 
                         emit downloadProgress(downloadInfo.progress());
@@ -2212,13 +2221,9 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
                         QJsonObject sn;
                         sn["sn"] = m_serialnumber;
                         m_dataArray.push_front(sn);
-                        Log() << "DataDownload Complete total = " << downloadInfo.getNunberOfGluecose() << m_dataArray.count();
+                        Log() << "DataDownload Complete total = " << downloadInfo.getNunberOfGluecose();
 
-                        for(int i=0; i<m_dataArray.count(); i++)
-                        {
-                            Log() <<m_dataArray.at(i);
-                        }
-
+                        dataDownload =false;
                         emit downloadComplete(&m_dataArray);
 
                         return;
@@ -3456,7 +3461,7 @@ void SerialProtocol3::parseReceivedData(QByteArray rcvPacket)
     {
 #ifdef SERIALCOM_SMARTLOG
         m_serialnumber = QString(rcvPacket.mid(11,12));
-#endif
+#endif        
 #ifdef SERIALCOM_QC
         Log() << "rcvPacket = " << QString(rcvPacket);
         if(rcvPacket.count() >= 23)
@@ -3511,7 +3516,7 @@ void SerialProtocol3::parseReceivedData(QByteArray rcvPacket)
         int count = getGluecoseCount(rcvPacket);
 
 #ifdef SERIALCOM_QC
-        downloadInfo.setDownloadedCount(count);
+//        downloadInfo.setDownloadedCount(count);
 #endif
 
         for(int i = 1; i <= count; i++)
@@ -3571,11 +3576,6 @@ void SerialProtocol3::parseReceivedData(QByteArray rcvPacket)
             {
                 data["flag_cs"] = "cs";
             }
-
-//            if((gflag & 2) == 2)
-//            {
-//                data["flag_meal"] = "af";
-//            }
 
             if((gflag & 4) == 4)
             {

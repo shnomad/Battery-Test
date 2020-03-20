@@ -62,7 +62,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /*Test capacity*/
     ui->times->setRange(0.0, 5000.0);
     ui->times->setSingleStep(100.0);
-    ui->times->setValue(1000.0);
+    ui->times->setValue(200.0);
+    //ui->times->setValue(1000.0);
 
     /*USB Interface select*/
     ui->micro_usb->setEnabled(true);
@@ -104,8 +105,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     }
 
     hub_port_close();
-
-
 }
 
 MainWindow::~MainWindow()
@@ -173,6 +172,9 @@ void MainWindow::on_test_start_clicked()
 
     measure_test_active = true;
 
+    if(target_measure_count <= meter_mem_capacity)
+        target_measure_count_rest = target_measure_count;
+
     emit measure_start();
 }
 
@@ -230,9 +232,9 @@ void MainWindow::measurement()
 {
      cout<<"measure start"<<endl;
 
-        mesure_time_check->start();
+     mesure_time_check->start();
+     detect_on_timer->start();
 
-       detect_on_timer->start();
 //     work_on_timer->start();
 //     third_on_timer->start();
 //     detect_off_timer->start();
@@ -305,39 +307,107 @@ void MainWindow::measure_port_reset()
 
 void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
 {
-      cout<<"measure count check : "<< mesure_time_check->elapsed() <<"msec"<<endl;
+        cout<<"measure count check : "<< mesure_time_check->elapsed() <<"msec"<<endl;
 
         switch(sig_orin)
         {
             case SIGNAL_FROM_MEASURE_PORT_RESET:
 
-               if(current_measure_count == target_measure_count)
-               {
-                   emit on_device_open_clicked();
-               }
-               else if(current_measure_count < target_measure_count)
-               {
-                   emit measure_start();
-               }
+                if(target_measure_count<=1000)
+                {
+                    //Target count is 1000                            //target count is under 1000
+                   if((current_measure_count == meter_mem_capacity) || (current_measure_count == target_measure_count_rest))
+                   {
+                       emit on_device_open_clicked();
+                   }
+                   else if(current_measure_count < target_measure_count)
+                   {
+                       emit measure_start();
+                   }
+                }
+                else    //over 1000
+                {
+                    quint8 th_current = current_measure_count/1000;
+                    quint8 hund_current = (current_measure_count/100)%10;
+                    quint8 tens_current = (current_measure_count/10)%10;
+                    quint8 uint_current = current_measure_count%10;
+                    quint8 hund_target = (target_measure_count/100)%10;
+
+                    //target count is reached at 1000, 2000, 3000, 4000 .....
+                    if((th_current>=1 && !hund_current && !tens_current && !uint_current) || (target_measure_count_rest<1000 && hund_current==hund_target))
+                    {
+                        emit on_device_open_clicked();
+                    }
+                    else
+                    {
+                        emit measure_start();
+                    }
+                }
 
             break;
 
             case SIGNAL_FROM_FINISH_DO_COMMAND:
 
-                if(current_measure_count == measure_count_read_from_meter)
+                if(!GluecoseResultDataExpanded)
                 {
-                    //ToDo: Download saved data to Host system
+                    if(target_measure_count<=1000)
+                    {
+                        //Target count is 1000                                       //target count is under 1000
+                        if((meter_mem_capacity == measure_count_read_from_meter) || (target_measure_count_rest <= measure_count_read_from_meter))
+                        {
+                            //ToDo: Download saved data to Host system
+                            if(checkProtocol() != true)
+                                return;
+
+                             protocol->startDownload();
+                        }
+                        else
+                        {
+                            current_measure_count = measure_count_read_from_meter;
+
+                            ui->test_count->setText("Test Count is " + (QString::number(current_measure_count)));
+
+                            emit on_device_close_clicked();
+
+                            emit measure_start();
+                        }
+                    }
+                    else
+                    {
+                        //target count is over 1000
+                       if((meter_mem_capacity == measure_count_read_from_meter) || (target_measure_count_rest == measure_count_read_from_meter))
+                       {
+                           //ToDo: Download saved data to Host system
+                           if(checkProtocol() != true)
+                               return;
+
+                            protocol->startDownload();
+                       }
+                       else
+                       {
+                           if(target_measure_count==target_measure_count_rest)          //first download is not yet start
+                                current_measure_count = measure_count_read_from_meter;
+
+                            ui->test_count->setText("Test Count is " + (QString::number(current_measure_count)));
+
+                            emit on_device_close_clicked();
+
+                            emit measure_start();
+                       }
+                    }
+                }
+                else
+                {
+                    current_measure_count += measure_count_read_from_meter;
+
                     target_measure_count_rest -=current_measure_count;
 
                     if(!target_measure_count_rest)
                         emit measure_end();
                     else
                         emit measure_start();
-                }
-                else
-                {
-                    current_measure_count = measure_count_read_from_meter;
-                    emit measure_start();
+
+                    GluecoseResultDataExpanded = false;
                 }
 
             break;
@@ -418,18 +488,23 @@ void MainWindow::on_device_close_clicked()
 
     QThread::msleep(1000);
 
-    ui->device_open->setEnabled(true);
-    ui->test_start->setEnabled(true);
-    ui->bluetooth_sel->setEnabled(true);
-    ui->ketone_sel->setEnabled(true);
-    ui->times->setEnabled(true);
-    ui->sec->setEnabled(true);
+    if(!measure_test_active)
+    {
+        ui->device_open->setEnabled(true);
+        ui->test_start->setEnabled(true);
+        ui->bluetooth_sel->setEnabled(true);
+        ui->ketone_sel->setEnabled(true);
+        ui->times->setEnabled(true);
+        ui->sec->setEnabled(true);
+    }
 }
 
 void MainWindow::on_times_valueChanged(const QString &arg1)
 {
      target_measure_count = arg1.toInt(0,10);
+
      target_measure_count_rest = target_measure_count;
+
      target_test_cycle = target_measure_count/meter_mem_capacity;
 }
 
@@ -1124,29 +1199,18 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
                  ui->time_sync->setEnabled(true);
                  ui->mem_delete->setEnabled(true);
 
-                 ui->device_close->setEnabled(true);                                 
+                 ui->device_close->setEnabled(true);
 
-//                 protocol->startDownload();
-
-#if 1
-              if(measure_test_active)
-                {
-                    if(measure_count_read_from_meter == meter_mem_capacity)
-                    {
-                         //need to download
-                    }
-                    else
-                    {
-                         emit on_device_close_clicked();
-                         emit measure_cnt_check(SIGNAL_FROM_FINISH_DO_COMMAND);
-                    }
-                }
-#endif
+                 if(measure_test_active)
+                     emit measure_cnt_check(SIGNAL_FROM_FINISH_DO_COMMAND);
 
             }
             else if(lastcommand == Sp::GluecoseResultDataTxExpanded)
-            {
+            {                 
+                 GluecoseResultDataExpanded = true;
 
+                 emit on_device_close_clicked();
+                 emit measure_cnt_check(SIGNAL_FROM_FINISH_DO_COMMAND);
             }
             else
             {
@@ -1356,10 +1420,13 @@ void MainWindow::makeDownloadCompleteView(QJsonArray datalist)
 
        datastring += QString().sprintf("[%03d] ", i)+ timeString + ", value(";
 
-        datastring += datalist[i].toObject()["glucose_data"].toString();
+        datastring += datalist[i].toObject()["glucose_data"].toString();        
+
         datastring = datastring + "), HiLo(" + datalist[i].toObject()["flag_hilo"].toString() +
                         + "), Ketone(" + datalist[i].toObject()["flag_ketone"].toString() +")";
         InsertListLog(datastring);
+
+        Log() <<datastring;
     }
 
     QString currenttimestring = QDateTime::currentDateTime().toString("yyyy/MM/dd AP h:mm:ss");
@@ -1376,15 +1443,98 @@ void MainWindow::downloadComplete(QJsonArray* datalist)
 {
     Log();
 
-//    if(datalist != Q_NULLPTR && datalist->count() > 0)
-//    {
-//        makeDownloadCompleteView(*datalist);
-//    }
+    SaveCSVFile(datalist);
 
-//    if(checkProtocol() != true)
-//        return;
-//    QList<Sp::ProtocolCommand> list;
-//    list.append(Sp::CurrentIndexOfGluecose);
-//    list.append(Sp::GluecoseResultDataTxExpanded);
-//    doCommands(list);
+#if 1
+      for(int i=0; i<datalist->count(); i++)
+        {
+            Log() <<datalist->at(i);
+        }
+#else
+     if(datalist != Q_NULLPTR && datalist->count() > 0)
+     {
+         makeDownloadCompleteView(*datalist);
+     }
+
+#endif
+
+      emit finishDoCommands(true, Sp::GluecoseResultDataTxExpanded);
+}
+
+void MainWindow::SaveCSVFile(QJsonArray* datalist)
+{
+
+    QString folderpath = ("/home/pi/raw_data/");
+    QString working_date = QDateTime::currentDateTime().toString("yyyyMMdd");
+
+    QDir fdir(folderpath);
+
+        if(fdir.exists() == false)
+        {
+            bool result = fdir.mkdir(folderpath);
+            Log() << " directory = " << result;
+        }
+
+    QDir fdir_date(folderpath + working_date);
+
+    if(fdir_date.exists() == false)
+    {
+        bool result = fdir_date.mkdir(folderpath + working_date + "/");
+        Log() << " directory = " << result;
+    }
+
+    QString filepath, meter_sn;
+
+    meter_sn = Settings::Instance()->getSerialNumber().remove(" ");
+
+    filepath = folderpath + working_date + "/" + meter_sn + "_" + QDateTime::currentDateTime().toString("yyyyMMddhhmmss")+ ".csv";
+
+    SaveCSVFile_default(filepath, datalist);
+}
+
+void MainWindow::SaveCSVFile_default(QString filepath, QJsonArray* datalist)
+{
+    int i = 0;
+
+    QFile outputFile(filepath);
+
+    if(outputFile.exists() != true)
+    {
+        QStringList tableheaderlist;
+
+        tableheaderlist << "name" << "  " << "birthday" << "sex" << "serial number" << "data unit" << "user idx" << "Insurance Number" << "date_format" <<"email" << "version";
+
+        if (!outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+            Log() << "Open file error for csv header";
+            return ;
+        }
+
+        QTextStream outstream(&outputFile);
+
+        for( i = 0 ; i < tableheaderlist.count(); i++)
+        {
+            outstream << tableheaderlist[i] << ",";
+        }
+
+        outstream << "\n";
+        outputFile.close();
+    }
+
+#if 0
+    QFile contentFile(filepath);
+
+    if(!contentFile.open(QIODevice::Append))
+    {
+        Log() << "Open file error for csv header";
+        return;
+    }
+
+    QString temp;
+    QTextCodec *codec = QTextCodec::codecForLocale();
+
+    QTextStream contentstream(&contentFile);
+
+    contentFile.close();
+#endif
 }

@@ -95,6 +95,7 @@ private:
 
     int timeoutTimerID;
     bool mOnlyReadSN;
+    bool dataDownload = false;
     void requestNextQcData();
 
     inline int headerSize() { return 5; }           // STX+iSPC

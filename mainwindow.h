@@ -31,13 +31,14 @@ class MainWindow : public QMainWindow
     SerialProtocolAbstract *protocol;
     QString m_qcType;
 
-    qint16 current_measure_count=0;
-    qint16 target_measure_count=0, target_measure_count_rest=0;
-    quint16 meter_mem_capacity =1000;
+    quint32 current_measure_count=0;
+    quint32 target_measure_count=0, target_measure_count_rest=0;
+    quint32 meter_mem_capacity =1000;
     quint8 target_test_cycle = 0, current_test_cycle = 0;
     quint16 changed_interval=0;
 
     bool measure_test_active = false;
+    bool GluecoseResultDataExpanded = false;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -101,6 +102,8 @@ private Q_SLOTS:
     void needReopenSerialComm();                                            // 시리얼 포트 오류로 인해 다시 포트를 열어 복구가 필요한 경우
     void on_mem_delete_clicked();
     void on_time_sync_clicked();
+    void SaveCSVFile(QJsonArray* datalist);
+    void SaveCSVFile_default(QString filepath, QJsonArray* datalist);
 
 signals:
     void measure_start();
