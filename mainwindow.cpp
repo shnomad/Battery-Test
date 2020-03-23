@@ -62,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     /*Test capacity*/
     ui->times->setRange(0.0, 5000.0);
     ui->times->setSingleStep(100.0);
-    ui->times->setValue(200.0);
+    ui->times->setValue(1000.0);
     //ui->times->setValue(1000.0);
 
     /*USB Interface select*/
@@ -398,14 +398,27 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                 }
                 else
                 {
-                    current_measure_count += measure_count_read_from_meter;
+                    if(target_measure_count<=1000)
+                    {
+                       current_measure_count = measure_count_read_from_meter;
+                    }
+                    else
+                    {
+                        current_measure_count += measure_count_read_from_meter;
+                    }
 
-                    target_measure_count_rest -=current_measure_count;
+                    target_measure_count_rest -=measure_count_read_from_meter;
+
+                    ui->test_count->setText("Test Count is " + (QString::number(current_measure_count)));
 
                     if(!target_measure_count_rest)
+                    {
                         emit measure_end();
+                    }
                     else
+                    {
                         emit measure_start();
+                    }
 
                     GluecoseResultDataExpanded = false;
                 }
@@ -415,7 +428,6 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
             default:
                 break;
         }
-
 }
 
 void MainWindow::hub_port_open()
@@ -1443,14 +1455,15 @@ void MainWindow::downloadComplete(QJsonArray* datalist)
 {
     Log();
 
-    SaveCSVFile(datalist);
+     SaveCSVFile(*datalist);
 
-#if 1
+#if 0
+
       for(int i=0; i<datalist->count(); i++)
         {
             Log() <<datalist->at(i);
         }
-#else
+
      if(datalist != Q_NULLPTR && datalist->count() > 0)
      {
          makeDownloadCompleteView(*datalist);
@@ -1461,7 +1474,7 @@ void MainWindow::downloadComplete(QJsonArray* datalist)
       emit finishDoCommands(true, Sp::GluecoseResultDataTxExpanded);
 }
 
-void MainWindow::SaveCSVFile(QJsonArray* datalist)
+void MainWindow::SaveCSVFile(QJsonArray datalist)
 {
 
     QString folderpath = ("/home/pi/raw_data/");
@@ -1492,17 +1505,20 @@ void MainWindow::SaveCSVFile(QJsonArray* datalist)
     SaveCSVFile_default(filepath, datalist);
 }
 
-void MainWindow::SaveCSVFile_default(QString filepath, QJsonArray* datalist)
+void MainWindow::SaveCSVFile_default(QString filepath, QJsonArray datalist)
 {
     int i = 0;
+    quint32 list_del;
 
     QFile outputFile(filepath);
 
+    //creat a CSV file with base header
     if(outputFile.exists() != true)
     {
-        QStringList tableheaderlist;
+        QStringList tableheaderlist, meter_info_list, measure_result_list;
 
-        tableheaderlist << "name" << "  " << "birthday" << "sex" << "serial number" << "data unit" << "user idx" << "Insurance Number" << "date_format" <<"email" << "version";
+        //first row
+        tableheaderlist << "name" << " " << "birthday" << "sex" << "serial number" << "data unit" << "user idx" << "Insurance Number" << "date_format" <<"email" << "version";
 
         if (!outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
         {
@@ -1517,24 +1533,80 @@ void MainWindow::SaveCSVFile_default(QString filepath, QJsonArray* datalist)
             outstream << tableheaderlist[i] << ",";
         }
 
-        outstream << "\n";
-        outputFile.close();
+         outstream << "\n";
+
+        //second row
+         meter_info_list << Settings::Instance()->getSerialNumber().remove(" ") << " " << QDateTime::currentDateTime().toString("yyyy-MM-dd") << "M" << Settings::Instance()->getSerialNumber().remove(" ") << "mg/dL" << " " << " " << "YYYY/MM/DD" << " " << "2.49";
+
+         for( i = 0 ; i < meter_info_list.count(); i++)
+         {
+             outstream << meter_info_list[i] << ",";
+         }
+
+         outstream << "\n";
+
+         //third row
+         measure_result_list << "time" << "org_glucose value(mg/dL)" << "glucose value(mg/dL)" << "manual" << "cs" << "memo" << "exercise" << "meal" << "insulin_type" << "insulin_amount";
+         measure_result_list << "flag_hilo" << "flag_fasting" << "flag_nomark" << "flag_ketone" << "flag_ext" << "cloud" << "flag_meal" << "exercise_name" << "exercise_unit" << "meal_unit";
+
+         for( i = 0 ; i < measure_result_list.count(); i++)
+         {
+             outstream << measure_result_list[i] << ",";
+         }
+
+         outstream << "\n";
+
+         outputFile.close();
+
+         QFile contentFile(filepath);
+
+        if (!contentFile.open(QIODevice::Append))
+        {
+            Log() << "Open file error for csv header";
+            return;
+        }
     }
 
-#if 0
     QFile contentFile(filepath);
 
-    if(!contentFile.open(QIODevice::Append))
+    if (!contentFile.open(QIODevice::Append))
     {
         Log() << "Open file error for csv header";
         return;
     }
+
+    //append measured results
+    quint32 glucosedatacount;
+
+    if(datalist.count())
+         glucosedatacount = datalist.count()-1;
+    else
+        return;
 
     QString temp;
     QTextCodec *codec = QTextCodec::codecForLocale();
 
     QTextStream contentstream(&contentFile);
 
+    for(quint32 result_count=1; result_count<glucosedatacount; result_count++)
+    {
+         contentstream << datalist[result_count].toObject()["time"].toString()<< ",";
+         contentstream << datalist[result_count].toObject()["glucose_value"].toString()<< ",";
+         contentstream << datalist[result_count].toObject()["glucose_value"].toString()<< ",";
+         contentstream << datalist[result_count].toObject()["manual"].toString().remove(" ") << ",";
+         contentstream << datalist[result_count].toObject()["cs"].toString()<< ",";
+         contentstream << datalist[result_count].toObject()["memo"].toString()<< ",";
+         contentstream << datalist[result_count].toObject()["exercise"].toString()<< ",";
+         contentstream << datalist[result_count].toObject()["meal"].toString()<< ",";
+         contentstream << datalist[result_count].toObject()["insulin_type"].toString()<< ",";
+         contentstream << datalist[result_count].toObject()["insulin_amount"].toString()<< ",";
+         contentstream << datalist[result_count].toObject()["flag_hilo"].toString()<< ",";
+         contentstream << datalist[result_count].toObject()["flag_fasting"].toString()<< ",";
+         contentstream << datalist[result_count].toObject()["flag_nomark"].toString()<< ",";
+         contentstream << datalist[result_count].toObject()["flag_ketone"].toString()<<"\n";
+    }
+
     contentFile.close();
-#endif
+
+    Log();
 }

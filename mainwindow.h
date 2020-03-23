@@ -102,8 +102,8 @@ private Q_SLOTS:
     void needReopenSerialComm();                                            // 시리얼 포트 오류로 인해 다시 포트를 열어 복구가 필요한 경우
     void on_mem_delete_clicked();
     void on_time_sync_clicked();
-    void SaveCSVFile(QJsonArray* datalist);
-    void SaveCSVFile_default(QString filepath, QJsonArray* datalist);
+    void SaveCSVFile(QJsonArray datalist);
+    void SaveCSVFile_default(QString filepath, QJsonArray datalist);
 
 signals:
     void measure_start();

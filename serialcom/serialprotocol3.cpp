@@ -3544,7 +3544,7 @@ void SerialProtocol3::parseReceivedData(QByteArray rcvPacket)
 
             int value = (quint8(rcvPacket[dataindex + 7]) << 8) + quint8(rcvPacket[dataindex + 8]);
             data["time"]=datatime.toString("yyyy-MM-dd hh:mm:ss");
-            data["glucose value(mg/dL)"] = QString().sprintf("%d", value);
+            data["glucose_value"] = QString().sprintf("%d", value);
             data["manual"] = m_serialnumber;
 #ifdef SERIALCOM_SMARTLOG
               data["time"] = Settings::Instance()->GetDatetimestringFromMSec(QString::number(datatime.toMSecsSinceEpoch()));
