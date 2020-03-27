@@ -10,6 +10,7 @@ Settings *Settings::Instance()
     {
         m_pInstance = new Settings();
     }
+
     return m_pInstance;
 }
 

@@ -125,7 +125,7 @@ void STMHIDPort::ReceiveData()
 
     hid_set_nonblocking(m_hid_device, 0);
 
-       Log() << "totalBytesRead_ActualData: " << totalBytesRead_ActualData;
+     Log() << "totalBytesRead_ActualData: " << totalBytesRead_ActualData;
 
     if (totalBytesRead_ActualData > 0)
     {

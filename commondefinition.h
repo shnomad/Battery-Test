@@ -2,10 +2,9 @@
 #define COMMONDEFINITION
 
 #include <QDebug>
-#include <QTime>
+#include <QDateTime>
 
-#define Log()\
-    qDebug() <<"["<<QTime::currentTime().toString("mm:ss") << __PRETTY_FUNCTION__ << __LINE__ << "]"
+#define Log() qDebug() <<"["<<QDateTime::currentDateTime().toString("MM.dd hh:mm:ss") << __PRETTY_FUNCTION__ << __LINE__ << "]"
 
 // ==========================
 // comment all for normal QC Program
