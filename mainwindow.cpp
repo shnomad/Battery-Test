@@ -17,7 +17,7 @@
 #include <QDateTime>
 #include <QTime>
 #include <QApplication>
-#include <QElapsedTimer>
+//#include <QElapsedTimer>
 #include <QProcess>
 #include <QtNetwork/QNetworkInterface>
 
@@ -172,9 +172,6 @@ void MainWindow::on_test_start_clicked()
 
     measure_test_active = true;
 
-//    if(target_measure_count <= meter_mem_capacity)
-//      target_measure_count_rest = target_measure_count;
-
     emit measure_start();
 }
 
@@ -224,29 +221,20 @@ void MainWindow::on_test_stop_clicked()
 
 void MainWindow::measure_port_init()
 {
-    //cout<<"measure port init"<<endl;
     Log();
     measure_relay->measure_port_reset();
 }
 
 void MainWindow::measurement()
 {
-     //cout<<"measure start"<<endl;
     Log();
 
      mesure_time_check->start();
      detect_on_timer->start();
-
-//     work_on_timer->start();
-//     third_on_timer->start();
-//     detect_off_timer->start();
-//     port_reset_timer->start();
-//     mesure_time_check->start();
 }
 
 void MainWindow::detect_on()
 {
-    //cout<<"detect on : "<< mesure_time_check->elapsed()<<endl;
     Log();
 
     if(ui->ketone_sel->isChecked())
@@ -263,7 +251,6 @@ void MainWindow::detect_on()
 
 void MainWindow::work_on()
 {
-//    cout<<"work on : "<< mesure_time_check->elapsed()<<"msec"<<endl;
     Log();
     ui->test_step->setText("Action : work on");
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_2, DDL_CH_ON);        
@@ -276,7 +263,6 @@ void MainWindow::work_on()
 
 void MainWindow::third_on()
 {
-//    cout<<"third on : "<< mesure_time_check->elapsed()<<"msec"<<endl;
     Log();
 
     ui->test_step->setText("Action : third on");
@@ -286,9 +272,7 @@ void MainWindow::third_on()
 }
 
 void MainWindow::detect_off()
-{
-    //cout<<"detect off : "<< mesure_time_check->elapsed()<<"msec"<<endl;
-
+{ 
     Log();
     ui->test_step->setText("Action : detect off");
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_1, DDL_CH_OFF);
@@ -303,7 +287,6 @@ void MainWindow::detect_off()
 
 void MainWindow::measure_port_reset()
 {
-    //cout<<"measure port reset : "<< mesure_time_check->elapsed() <<"msec"<<endl;
     Log();
     ui->test_step->setText("Action : port reset");
     measure_relay->measure_port_reset();
@@ -313,7 +296,8 @@ void MainWindow::measure_port_reset()
 
 void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
 {       
-        Log() <<"SIGNAL_SENDER"<< sig_orin;
+
+       Log() <<"SIGNAL_SENDER"<< sig_orin;
 
         switch(sig_orin)
         {
@@ -501,10 +485,20 @@ void MainWindow::on_quit_clicked()
     process.startDetached("sudo poweroff");
 }
 
+void MainWindow::on_reboot_clicked()
+{
+    QProcess process;
+    process.startDetached("sudo reboot");
+}
+
 void MainWindow::on_device_open_clicked()
 {
     ui->device_open->setEnabled(false);
-//    ui->device_close->setEnabled(true);
+//  ui->device_close->setEnabled(true);
+
+    /*USB Interface select*/
+    ui->micro_usb->setEnabled(false);
+    ui->phone_jack->setEnabled(false);
 
     //Measurement Option
     ui->test_start->setEnabled(false);
@@ -536,6 +530,10 @@ void MainWindow::on_device_close_clicked()
     ui->time_sync->setEnabled(false);
     ui->mem_delete->setEnabled(false);
 
+    /*USB Interface select*/
+    ui->micro_usb->setEnabled(true);
+    ui->phone_jack->setEnabled(true);
+
     meter_comm_end();
 
     if(ui->phone_jack->isChecked())
@@ -555,7 +553,7 @@ void MainWindow::on_device_close_clicked()
         ui->bluetooth_sel->setEnabled(true);
         ui->ketone_sel->setEnabled(true);
         ui->times->setEnabled(true);
-        ui->sec->setEnabled(true);
+        ui->sec->setEnabled(true);        
     }
 }
 
@@ -592,44 +590,41 @@ void MainWindow::meter_comm_start()
         connect(serialComm, SIGNAL(textMessageSignal(QString)), this, SLOT(textMessage(QString)));
         connect(serialComm, SIGNAL(maintainConnection(bool)), this, SLOT(maintainConnection(bool)));
 
-         if(ui->micro_usb->isChecked())
-         {
-            serialComm->open(serialComm->intercface::micro_usb);
-         }
+         if(ui->micro_usb->isChecked())         
+             isDeviceOpened = serialComm->open(serialComm->intercface::micro_usb);
 
          if(ui->phone_jack->isChecked())
-         {
-            serialComm->open(serialComm->intercface::phone_jack);
-         }
+             isDeviceOpened = serialComm->open(serialComm->intercface::phone_jack);
 
-         /*USB Interface select*/
-         ui->micro_usb->setEnabled(false);
-         ui->phone_jack->setEnabled(false);
-
-        ui->meter_info->clear();
+         if(!isDeviceOpened)
+             emit connectionError();
     }
 }
 
 void MainWindow::meter_comm_end()
 {
-    serialComm->close();
+
+    if(isDeviceOpened)
+        serialComm->close();
+
     serialComm = Q_NULLPTR;
 
     /*USB Interface select*/
-    ui->micro_usb->setEnabled(true);
-    ui->phone_jack->setEnabled(true);
+//    ui->micro_usb->setEnabled(true);
+//    ui->phone_jack->setEnabled(true);
 
     disconnect(serialComm, SIGNAL(portReady()), this, SLOT(portReady()));
     disconnect(serialComm, SIGNAL(connectionError()), this, SLOT(connectionError()));
     disconnect(serialComm, SIGNAL(textMessageSignal(QString)), this, SLOT(textMessage(QString)));
     disconnect(serialComm, SIGNAL(maintainConnection(bool)), this, SLOT(maintainConnection(bool)));
+
 }
 
 void MainWindow::comm_polling_event()
 {    
     if(serialComm != Q_NULLPTR)
     {
-//      Log() << "serialComm check!";
+        Log() << "serialComm check!";
         serialComm->check();
     }
 }
@@ -721,13 +716,19 @@ void MainWindow::maintainConnection(bool isOK)
 void MainWindow::connectionError()
 {
     Log();
+
+    emit serialComm->textMessageSignal("Meter connection failed!!");
+
     if(serialComm)
         delete serialComm;
+
+    on_device_close_clicked();
 }
 
 void MainWindow::textMessage(QString text)
 {
-    Log() << text;
+    ui->meter_info->clear();
+    ui->meter_info->append(text);
 }
 
 // 다운로드 과정에서 protocol에서 보내오는 시그널과 연결되는 함수
@@ -788,520 +789,12 @@ void MainWindow::packetReceived()
 void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand)
 {
 
-#if 0
-    if(bSuccess == true)
-    {
-        Log() << "성공";
-#if defined(LOOP_FOR_EMC_TEST) || defined(LOOP_FOR_XP_CRADLE)
-        ClearListLog();
-#endif
-
-        if(lastcommand == Sp::ReadTemperature)
-        {
-            comm_polling_event_start();
-            Log() << "read temperature";
-            QString temperaturestr = "현재 미터의 온도: " + Settings::Instance()->getTemperature() + "℃";
-            InsertListLog(temperaturestr);
-        }
-        else if(lastcommand == Sp::Unlock)
-        {
-
-         if(checkProtocol() != true)
-            return;
-
-          QList<Sp::ProtocolCommand> list;
-          list.append(Sp::ReadSerialNumber);
-          doCommands(list);
-
-        }
-        else
-        {
-             comm_polling_event_start();
-
-            if(lastcommand == Sp::ReadSerialNumber)
-            {
-                QString temp_sn = Settings::Instance()->getSerialNumber();
-
-                if(temp_sn == "")
-                {
-                    Log() << "temp_sn = " <<MSG_NoSN;                
-                    ui->meter_info->append("Read Fail!!");
-                }
-                else
-                {
-                    ui->meter_info->append("Serial Number :" + temp_sn);
-                }
-
-
-                /*Unused function jump*/
-
-                if(checkProtocol() != true)
-                    return;
-                QList<Sp::ProtocolCommand> list;
-                list.append(Sp::ReadTimeInformation);
-                protocol->doCommands(list);
-                return;
-
-                /*end of Unused function jump*/
-#if 0
-                Settings::Instance()->setBleName(INVALID_BLE);
-                Log() << "blename = " << Settings::Instance()->getBleName();
-
-                if(checkProtocol() != true)
-                    return;
-//              int currentIndex = ui->comboBox_meter_type->currentIndex();
-                int currentIndex = 1;
-
-                if(currentIndex == 2 || currentIndex == 3) //SMART, N IoT
-                {
-                    if(checkProtocol() != true)
-                        return;
-
-                    QList<Sp::ProtocolCommand> list;
-                    list.append(Sp::ReadAESKey);
-
-                    if (currentIndex == 3)  //N IoT
-                    {
-                        list.append(Sp::ReadServerAddress);
-                        list.append(Sp::ReadDeviceToken);
-                        list.append(Sp::ReadServiceName);
-                        list.append(Sp::ReadIMEI);
-                        list.append(Sp::ReadICCID);
-                        list.append(Sp::ReadModuleSoftwareVer);
-                        list.append(Sp::ReadIMSI);
-                        list.append(Sp::ReadSktSN);
-                        list.append(Sp::ReadRegistrationURL);
-                    }
-                    else  //SMART..
-                    {
-                        list.append(Sp::ReadAPN);
-                    }
-                    doCommands(list);
-                    return;
-                }
-                else
-                {
-                    if(currentIndex == 0)  //TI
-                    {
-                        if(checkProtocol() != true)
-                            return;
-
-                        if(isOtgModeVisible())
-                        {
-                            if(checkProtocol() != true)
-                                return;
-                            QList<Sp::ProtocolCommand> list;
-                            list.append(Sp::ReadOtgMode);
-                            protocol->doCommands(list);
-                            return;
-                        }
-                    }
-                    else if(currentIndex == 1)  //ST
-                    {
-                        if(checkProtocol() != true)
-                            return;
-
-                        QList<Sp::ProtocolCommand> list;
-                        list.append(Sp::ReadBLE);
-                        protocol->doCommands(list);
-                        return;
-                    }
-                    else if(currentIndex == 4)  //VetMate
-                    {
-                        if(checkProtocol() != true)
-                            return;
-
-                        QList<Sp::ProtocolCommand> list;
-                        list.append(Sp::ReadAnimalType);
-                        protocol->doCommands(list);
-                        return;
-                    }
-                }
-#endif
-
-            }
-            else if(lastcommand == Sp::WriteTimeInformation)
-            {
-                InsertListLog("시간 동기화 완료!");
-#if 1
-                if(checkProtocol() != true)
-                    return;
-                QList<Sp::ProtocolCommand> list;
-                list.append(Sp::ReadSerialNumber);
-                protocol->doCommands(list);
-                return;
-
-#else
-                //Read Meter Time
-                if(checkProtocol() != true)
-                    return;
-                QList<Sp::ProtocolCommand> list;
-                list.append(Sp::ReadTimeInformation);
-                protocol->doCommands(list);
-                return;
-#endif
-
-            }
-            else if(lastcommand == Sp::DeleteData)
-            {
-                if(m_qcType == QC_TYPE_DEL) {
-                    InsertListLog("All data in the meter is deleted.");
-                } else {
-                    InsertListLog("메모리 삭제 완료!");
-                }
-
-                if(checkProtocol() != true)
-                    return;
-                QList<Sp::ProtocolCommand> list;
-                list.append(Sp::ReadSerialNumber);
-                protocol->doCommands(list);
-                return;
-
-            }
-            else if(lastcommand == Sp::SetHour12H)
-            {
-                InsertListLog("12H로 설정 완료!");
-            }
-            else if(lastcommand == Sp::SetHour24H)
-            {
-                InsertListLog("24H로 설정 완료!");
-            }
-            else if(lastcommand == Sp::SetReset)
-            {
-                return;
-            }
-            else if(lastcommand == Sp::SetJIGMode)
-            {
-                ClearListLog();
-                comm_polling_event_start();
-                //ui->centralWidget->setEnabled(true);
-                if(m_qcType == QC_TYPE_DEL) {
-                    InsertListStateLog(0,"A meter is NOT connected.");
-                } else {
-                    InsertListStateLog(0,"기기 연결이 끊어짐 (1)");
-                }
-
-                return;
-            }
-            else if(lastcommand == Sp::SetBLELog)
-            {
-                ClearListLog();
-                 comm_polling_event_start();
-                //ui->centralWidget->setEnabled(true);
-                if(m_qcType == QC_TYPE_DEL)
-                {
-                    InsertListStateLog(0,"A meter is NOT connected.");
-                }
-                else
-                {
-                    InsertListStateLog(0,"기기 연결이 끊어짐 (1)");
-                }
-
-                return;
-            }
-            else if(lastcommand == Sp::ReadBLE)
-            {
-                QString blename = Settings::Instance()->getBleName();
-
-                if(blename == INVALID_BLE)
-                {
-                    //ui->lineEdit_blename->setText("");
-                    EnableBLEControls(false);
-                }
-                else
-                {
-                    //TI BLE는 자동 sn가 불가능함.
-                    //ui->lineEdit_blename->setText(blename);
-                    EnableBLEControls(true);
-                    //BLE 설정은 가능하지만 사용하지 않음일 때는 비활성화한다.
-#if 0
-                    if(ui->comboBox_bleway->currentIndex() == 2)
-                    {
-                        isEnableBLE = false;
-                    }
-
-                    ui->checkBox_setautosn->setChecked(false);
-#endif
-                    Settings::Instance()->setAutoSN(0);
-                }
-
-                //Read Meter Time
-                if(checkProtocol() != true)
-                    return;
-                QList<Sp::ProtocolCommand> list;
-                list.append(Sp::ReadTimeInformation);
-                protocol->doCommands(list);
-                return;
-            }
-            else if(lastcommand == Sp::ReadTimeInformation)
-            {
-                ui->meter_info->append("meter time : " + Settings::Instance()->getMeterTime());
-
-#if 0
-                if(Settings::Instance()->isSetdataflag() == true)
-                {
-                    if(checkProtocol() != true)
-                        return;
-                    QList<Sp::ProtocolCommand> list;
-                    list.append(Sp::GetGlucoseDataFlag);
-                    protocol->doCommands(list);
-                    return;
-                }
-
-                if(Settings::Instance()->isSetAvgDays() == true)  //평균일수 읽기
-                {
-                    if(checkProtocol() != true)
-                        return;
-                    QList<Sp::ProtocolCommand> list;
-                    list.append(Sp::GetAvgDays);
-                    protocol->doCommands(list);
-                    return;
-                }
-
-                if(isCaresensC())
-                {
-                    if(checkProtocol() != true)
-                        return;
-                    QList<Sp::ProtocolCommand> list;
-                    list.append(Sp::ReadCodingMode);
-                    protocol->doCommands(list);
-                    return;
-                }
-
-                if(isOtgModeVisible())
-                {
-                    if(checkProtocol() != true)
-                        return;
-                    QList<Sp::ProtocolCommand> list;
-                    list.append(Sp::ReadOtgMode);
-                    protocol->doCommands(list);
-                    return;
-                }
-#endif
-                Log();
-
-                //Read number of stored measured results
-                if(checkProtocol() != true)
-                    return;
-                QList<Sp::ProtocolCommand> list;
-                list.append(Sp::CurrentIndexOfGluecose);
-                protocol->doCommands(list);
-                return;
-
-            }
-#if 0
-            else if(lastcommand == Sp::GetGlucoseDataFlag)
-            {
-                if(Settings::Instance()->isSetAvgDays() == true)  //평균일수 읽기
-                {
-                    if(checkProtocol() != true)
-                        return;
-                    QList<Sp::ProtocolCommand> list;
-                    list.append(Sp::GetAvgDays);
-                    protocol->doCommands(list);
-                    return;
-                }
-            }
-            else if(lastcommand == Sp::GetAvgDays)
-            {
-                if(isCaresensC())
-                {
-                    if(checkProtocol() != true)
-                        return;
-                    QList<Sp::ProtocolCommand> list;
-                    list.append(Sp::ReadCodingMode);
-                    protocol->doCommands(list);
-                    return;
-                }
-
-                if(isOtgModeVisible())
-                {
-                    if(checkProtocol() != true)
-                        return;
-                    QList<Sp::ProtocolCommand> list;
-                    list.append(Sp::ReadOtgMode);
-                    protocol->doCommands(list);
-                    return;
-                }
-            }
-            else if(lastcommand == Sp::ReadCodingMode)
-            {
-                if(isOtgModeVisible())
-                {
-                    if(checkProtocol() != true)
-                        return;
-                    QList<Sp::ProtocolCommand> list;
-                    list.append(Sp::ReadOtgMode);
-                    protocol->doCommands(list);
-                    return;
-                }
-            }
-            else if(lastcommand == Sp::WriteCodingMode)
-            {
-                if(checkProtocol() != true)
-                    return;
-                QList<Sp::ProtocolCommand> list;
-                list.append(Sp::ReadCodingMode);
-                protocol->doCommands(list);
-                return;
-            }
-            else if(lastcommand == Sp::WriteOtgMode)
-            {
-                if(checkProtocol() != true)
-                    return;
-                QList<Sp::ProtocolCommand> list;
-                list.append(Sp::ReadOtgMode);
-                protocol->doCommands(list);
-                return;
-            }
-            else if(lastcommand == Sp::ChangeBLEMode || lastcommand == Sp::ChangeBLEMode_EXT)
-            {
-                Log() << "end changeblemode,ext";
-                //needReopenSerialComm();
-                return;
-            }
-            else if(lastcommand == Sp::TryChangeBLEMode)
-            {
-                if(checkProtocol() != true)
-                    return;
-                QList<Sp::ProtocolCommand> list;
-                list.append(Sp::ChangeBLEMode);
-                protocol->doCommands(list);
-                return;
-            }
-            else if(lastcommand == Sp::Set91)
-            {
-                ClearListLog();
-                if(Settings::Instance()->getQCValue(SFD_q_output_cal) == "PASS")
-                {
-                    InsertListLog("OUTPUT CAL Success!!");
-                }
-                else
-                {
-                    InsertListLog("OUTPUT CAL Fail!!");
-                }
-            }
-            else if(lastcommand == Sp::Set9A01 ||
-                    lastcommand == Sp::Set9A02 ||
-                    lastcommand == Sp::Set9A03)
-            {
-                ClearListLog();
-                if(Settings::Instance()->getQCValue(SFD_q_output_verification) == "PASS")
-                {
-                    InsertListLog("Verification Success!!");
-                }
-                else
-                {
-                    InsertListLog("Verification Fail!!");
-                }
-            }
-            else if(lastcommand == Sp::SetOnNet)
-            {
-                ClearListLog();
-                InsertListLog("Network ON!!");
-            }
-            else if(lastcommand == Sp::SetOffNet)
-            {
-                ClearListLog();
-                InsertListLog("Network OFF!!");
-            }
-            else if(lastcommand == Sp::ReadSetHypo)
-            {
-                ClearListLog();
-                InsertListLog("SetHypo Value = " + Settings::Instance()->getQCValue(SFD_q_sethypo));
-            }
-            else if(lastcommand == Sp::SetGlucoseDataFlag)
-            {
-                ClearListLog();
-                if(Settings::Instance()->getQCValue(SFD_q_setglucosedataflag) == "SUCCESS")
-                {
-                    InsertListLog("Verification Success!!");
-                }
-                else
-                {
-                    InsertListStateLog(0,"Verification 실패하여, Flag 값을 다시 읽습니다.");
-                    if(checkProtocol() != true)
-                        return;
-
-                    QList<Sp::ProtocolCommand> list;
-                    list.append(Sp::GetGlucoseDataFlag);
-                    doCommands(list);
-                    return;
-                }
-            }
-            else if(lastcommand == Sp::SetAvgDays)
-            {
-                ClearListLog();
-                if(Settings::Instance()->getQCValue(SFD_q_setavgdays_result) == "SUCCESS")
-                {
-                    InsertListLog("평균 일수 설정 성공!!");
-                }
-                else
-                {
-                    InsertListStateLog(0,"평균 일수 설정이 실패했습니다.");
-//                    if(checkProtocol() != true)
-//                        return;
-
-//                    QList<Sp::ProtocolCommand> list;
-//                    list.append(Sp::GetAvgDays);
-//                    doCommands(list);
-//                    return;
-                }
-            }
-            else if(lastcommand == Sp::WriteRegistrationURL)
-            {
-                 ClearListLog();
-                 InsertListLog("Registration URL 설정 성공!!");
-            }
-#endif
-            else if(lastcommand == Sp::CurrentIndexOfGluecose)      //Display result number in the meter
-            {                                
-                 measure_count_read_from_meter = Settings::Instance()->getNumberofCurrentGlucoseData();
-                 ui->meter_info->append("number of measured data is " + (QString::number(measure_count_read_from_meter)));
-
-                 ui->time_sync->setEnabled(true);
-                 ui->mem_delete->setEnabled(true);
-
-                 ui->device_close->setEnabled(true);
-
-                 if(measure_test_active)
-                     emit measure_cnt_check(SIGNAL_FROM_FINISH_DO_COMMAND);
-
-            }
-            else if(lastcommand == Sp::GluecoseResultDataTxExpanded)
-            {                 
-                 GluecoseResultDataExpanded = true;
-
-//               emit on_device_close_clicked();
-                 emit measure_cnt_check(SIGNAL_FROM_FINISH_DO_COMMAND);
-            }
-            else
-            {
-                Log() << "not yet";
-            }
-
-//           if(checkProtocol() != true)
-//                return;
-//             protocol->readQcData();               //Not use this tool
-
-        }
-
-    }
-    else
-    {
-        Log() << "성공";
-    }
-
-#else
-
     if(bSuccess == true)
     {
         Log();
 
         if(lastcommand == Sp::Unlock)
         {
-
-            QThread::msleep(500);
 
           if(checkProtocol() != true)
             return;
@@ -1332,9 +825,7 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
                 else
                 {
                     ui->meter_info->append("Serial Number :" + temp_sn);
-                }
-
-                QThread::msleep(500);
+                }             
 
                 if(checkProtocol() != true)
                     return;
@@ -1348,8 +839,6 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
                 Log()<<"ReadTimeInformation";
 
                  ui->meter_info->append("meter time : " + Settings::Instance()->getMeterTime());
-
-                 QThread::msleep(500);
 
                  //Read number of stored measured results
                  if(checkProtocol() != true)
@@ -1387,8 +876,6 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
             {
                 Log()<<"WriteTimeInformation || DeleteData" << lastcommand ;
 
-                QThread::msleep(2000);
-
                 //Read Meter Time
                 if(checkProtocol() != true)
                     return;
@@ -1405,7 +892,7 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
     {
         Log() << "Success";
     }
-#endif
+
 
 }
 
@@ -1504,7 +991,7 @@ void MainWindow::finishReadingQcData()
 
     if(m_qcType == QC_TYPE_DEL)
     {
-//        finishReadingQcData_del();
+//      finishReadingQcData_del();
         Log();
     }
     else
@@ -1512,12 +999,12 @@ void MainWindow::finishReadingQcData()
         if(modelType == 2 || modelType == 3) //SMART, N IoT
         {
             Log();
-//            finishReadingQcData_color();
+//          finishReadingQcData_color();
         }
         else
         {
             Log();
-//f         inishReadingQcData_default();
+//          finishReadingQcData_default();
         }
     }
 
@@ -1550,8 +1037,6 @@ void MainWindow::on_time_sync_clicked()
         return;
 
     Log();
-
-    ui->meter_info->clear();
 
     QList<Sp::ProtocolCommand> list;
     list.append(Sp::WriteTimeInformation);
@@ -1595,9 +1080,9 @@ void MainWindow::makeDownloadCompleteView(QJsonArray datalist)
 
        datastring += QString().sprintf("[%03d] ", i)+ timeString + ", value(";
 
-        datastring += datalist[i].toObject()["glucose_data"].toString();        
+       datastring += datalist[i].toObject()["glucose_data"].toString();
 
-        datastring = datastring + "), HiLo(" + datalist[i].toObject()["flag_hilo"].toString() +
+       datastring = datastring + "), HiLo(" + datalist[i].toObject()["flag_hilo"].toString() +
                         + "), Ketone(" + datalist[i].toObject()["flag_ketone"].toString() +")";
         InsertListLog(datastring);
 
@@ -1610,8 +1095,6 @@ void MainWindow::makeDownloadCompleteView(QJsonArray datalist)
     m_logcount++;
 
     comm_polling_event_start();
-
-/// startTimer();
 }
 
 void MainWindow::downloadComplete(QJsonArray* datalist)
@@ -1731,9 +1214,6 @@ void MainWindow::SaveCSVFile_default(QString filepath, QJsonArray datalist)
          glucosedatacount = datalist.count()-1;
     else
         return;
-
-    QString temp;
-    QTextCodec *codec = QTextCodec::codecForLocale();
 
     QTextStream contentstream(&contentFile);
 

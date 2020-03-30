@@ -39,6 +39,7 @@ class MainWindow : public QMainWindow
 
     bool measure_test_active = false;
     bool GluecoseResultDataExpanded = false;
+    bool isDeviceOpened = false;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -104,6 +105,8 @@ private Q_SLOTS:
     void on_time_sync_clicked();
     void SaveCSVFile(QJsonArray datalist);
     void SaveCSVFile_default(QString filepath, QJsonArray datalist);
+
+    void on_reboot_clicked();
 
 signals:
     void measure_start();

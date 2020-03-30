@@ -314,7 +314,7 @@
      <rect>
       <x>20</x>
       <y>407</y>
-      <width>71</width>
+      <width>81</width>
       <height>21</height>
      </rect>
     </property>
@@ -324,7 +324,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Quit</string>
+     <string>Power Off</string>
     </property>
    </widget>
    <widget class="QGroupBox" name="groupBox_4">
@@ -509,6 +509,24 @@
      </property>
     </widget>
    </widget>
+   <widget class="QPushButton" name="reboot">
+    <property name="geometry">
+     <rect>
+      <x>112</x>
+      <y>408</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Reboot</string>
+    </property>
+   </widget>
    <zorder>groupBox_5</zorder>
    <zorder>groupBox</zorder>
    <zorder>test_option</zorder>
@@ -519,6 +537,7 @@
    <zorder>system_time</zorder>
    <zorder>ip_address</zorder>
    <zorder>groupBox_3</zorder>
+   <zorder>reboot</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

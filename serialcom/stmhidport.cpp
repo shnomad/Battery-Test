@@ -77,7 +77,6 @@ void STMHIDPort::ReceiveData()
     #define MAX_STR 255
     wchar_t wstr[MAX_STR];
     quint32 totalBytesRead_ActualData = 0;
-    //DWORD totalBytesRead_ActualData = 0;
 
     // Set the hid_read() function to be non-blocking.
     hid_set_nonblocking(m_hid_device, 1);
@@ -101,11 +100,14 @@ void STMHIDPort::ReceiveData()
                 emit timeoutErrorFromPort();
                 return;
             }
+
             //Log() << "read buffer empty - exiting.";
             break;
         }
 
         count_ReceiveData_ZeroByte = 0;
+
+        Log();
 
         logchar(buf[0]);
         logchar(buf[1]);
@@ -114,6 +116,7 @@ void STMHIDPort::ReceiveData()
         {
             for(int k=0; k<buf[1]; k++ )
             {
+                Log();
                 logchar(buf[k+2]);
                 m_buffer.append(buf[k+2]);
                 totalBytesRead_ActualData += 1;
@@ -136,7 +139,6 @@ void STMHIDPort::ReceiveData()
     }
     else
     {
-//        LOG(GetStatusString(m_status) + _T("\r\n"));
         Log() << "checkReceived22 ";
     }
 
@@ -144,7 +146,7 @@ void STMHIDPort::ReceiveData()
     // and returns HID_UART_READ_TIMED_OUT if numBytesRead < numBytesToRead
     // HIDPort: if (status == HID_UART_SUCCESS || status == HID_UART_READ_TIMED_OUT)
 
-//    Log() << "busy status " << status << "len =" << numBytesRead;
+//  Log() << "busy status " << status << "len =" << numBytesRead;
     busy = false;
 }
 
@@ -166,7 +168,7 @@ qint64 STMHIDPort::writeWithPaddingData(QByteArray data_array)
     }
 
     int numberOfBytesWritten;
-    unsigned char buf[64];
+    unsigned char buf[64] ={0x0,};
     #define MAX_STR 255
     wchar_t wstr[MAX_STR];
     quint32 totalBytesWritten = 0;
@@ -178,12 +180,14 @@ qint64 STMHIDPort::writeWithPaddingData(QByteArray data_array)
     {
         buf[i+2] = data_array[i];
     }
+
     for(int i=0;i<data_array.length()+2;i++)
     {
         logchar(buf[i]);
     }
 
     numberOfBytesWritten = hid_write(m_hid_device, buf, 64);
+
     totalBytesWritten += numberOfBytesWritten;
 
     if (totalBytesWritten > 0)

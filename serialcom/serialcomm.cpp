@@ -130,11 +130,11 @@ bool SerialComm::open(SerialComm::intercface port)
 
     if(port == micro_usb)
     {
-
         if(checkStmPort() == false)
         {
             // connectionError!!!
             Log() << "Failed to open STM32 port!";
+
             return false;
         }
     }
@@ -144,6 +144,8 @@ bool SerialComm::open(SerialComm::intercface port)
         {
             // connectionError!!!
             Log() << "Failed to open FT230x port!";
+
+            return false;
         }
     }
 

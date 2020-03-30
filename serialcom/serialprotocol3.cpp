@@ -328,9 +328,9 @@ qint64 SerialProtocol3::requestCommand(const Sp::ProtocolCommand &command, QByte
         case Sp::SetReset:
         {
             requestData.clear();
-            requestData.append(0x8d);
-            requestData.append(0x10);
-            requestData.append(0x20);
+//          requestData.append(0x8d);
+//          requestData.append(0x10);
+//          requestData.append(0x20);
             break;
         }
         case Sp::SetMultichart:
@@ -1431,6 +1431,7 @@ void SerialProtocol3::endCreatePacket(QByteArray *array) {
     int count = array->count();
     array->insert(count-1, crc);
 }
+
 QByteArray SerialProtocol3::makeGluecoseResultDataTx(QByteArray indexArray) {
     QByteArray array;
     array.append("GLUC");
@@ -2161,7 +2162,6 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
                 case Sp::ReadSerialNumber:                
 
                   if(dataDownload)
-//                    if(1)
                     {
                         downloadInfo.setNumberOfGluecose(0);
                         emit downloadProgress(downloadInfo.progress());                                               
@@ -2178,7 +2178,6 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
                 case Sp::CurrentIndexOfGluecose:
 
                   if(dataDownload)
-//                    if(1)
                     {                                                
                         downloadInfo.setNumberOfGluecose(getIndexOfGluecose(rcvPacket));
 
@@ -2194,6 +2193,8 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
                 break;
 
                 case Sp::DeleteData:
+
+                    QThread::msleep(500);
 
                 break;
 
@@ -2236,6 +2237,8 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
             }
 
             Log();
+
+            QThread::msleep(500);
 
             emit finishDoCommands(true, m_commands[m_current_cmd_index - 1]);
 
