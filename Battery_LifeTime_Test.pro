@@ -31,7 +31,8 @@ SOURCES += \
         serialcom/stmhidport.cpp \
         serialcom/stmhidtester.cpp \
         settings.cpp \
-    serialcom/serialporttester.cpp
+    serialcom/serialporttester.cpp \
+    loggingcategories.cpp
 
 
 
@@ -50,7 +51,8 @@ HEADERS += \
         setting_flagname_definition.h \
         serialcom/glucosedownloadprogress.h \
     serialcom/serialporttester.h \
-    builddatetime.h
+    builddatetime.h \
+    loggingcategories.h
 
 
 #buildtimeTarget.target = builddatetime.h

@@ -21,8 +21,11 @@ QT_END_NAMESPACE
 class relay_seed_ddl;
 class QElapsedTimer;
 class SerialProtocolAbstract;
-//class usb_comm;
-//class bgm_comm_protocol;
+
+#define STM32L_GLUCOSE      0x0
+#define STM32L_KETONE       0x1
+#define STM32L_GLUCOSE_NN   0x2
+#define STM8L_GLUCOSE       0x3
 
 class MainWindow : public QMainWindow
 {
@@ -36,10 +39,13 @@ class MainWindow : public QMainWindow
     quint32 meter_mem_capacity =1000;
     quint8 target_test_cycle = 0, current_test_cycle = 0;
     quint16 changed_interval=0;
+    quint8 comm_retry_count =0;
 
     bool measure_test_active = false;
     bool GluecoseResultDataExpanded = false;
     bool isDeviceOpened = false;
+    bool meter_comm_user_request=0;
+    bool meter_comm_measure_count_check_request=0;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -55,8 +61,9 @@ public:
     quint32 measure_count_read_from_meter=0;
 
     enum SIGNAL_SENDER{
-        SIGNAL_FROM_MEASURE_PORT_RESET,
-        SIGNAL_FROM_FINISH_DO_COMMAND
+        SIGNAL_FROM_MEASURE_PORT_RESET = 0x0,
+        SIGNAL_FROM_FINISH_DO_COMMAND,
+        SIGNAL_FROM_COMM_ERROR
     };
 
 private slots:
@@ -105,14 +112,18 @@ private Q_SLOTS:
     void on_time_sync_clicked();
     void SaveCSVFile(QJsonArray datalist);
     void SaveCSVFile_default(QString filepath, QJsonArray datalist);
-
     void on_reboot_clicked();
+    void currentMeterIndexChanged(int index);
 
 signals:
     void measure_start();
     void measure_cnt_check(SIGNAL_SENDER);
     void measure_end();
     void comm_check();
+    void activated(const QString &text);
+
+Q_SIGNALS:
+    void currentIndexChanged(int index);
 
 private:
     Ui::MainWindow *ui = nullptr;    

@@ -158,6 +158,7 @@ void SerialComm::close()
     {
         if(selectedStmPort)
         {
+            Log();
             selectedStmPort->close();
             selectedStmPort = Q_NULLPTR;
         }
@@ -166,8 +167,8 @@ void SerialComm::close()
     {
         if(selectedSerialPort)
         {
+            Log();
             selectedSerialPort->close();
-            //delete selectedSerialPort;
             selectedSerialPort = Q_NULLPTR;
         }
     }
@@ -482,7 +483,6 @@ void SerialComm::responseUnknown(STMHIDTester *sender)
         }
     }
 }
-
 void SerialComm::responseSuccess(STMHIDTester *sender)
 {
     if(selectedStmPortTester != Q_NULLPTR || sender->CheckState() == true)

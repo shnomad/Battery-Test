@@ -5,6 +5,7 @@
 #include <QDateTime>
 
 #define Log() qDebug() <<"["<<QDateTime::currentDateTime().toString("MM.dd hh:mm:ss") << __PRETTY_FUNCTION__ << __LINE__ << "]"
+#define Logf() qDebug(logDebug()) <<"["<< __PRETTY_FUNCTION__ << __LINE__ << "]"
 
 // ==========================
 // comment all for normal QC Program

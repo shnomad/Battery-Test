@@ -11,15 +11,20 @@ SerialPortTester::SerialPortTester(QSerialPort *port, QObject *parent) : QObject
 {
     Q_ASSERT(port);
 
+    Log();
+
     isCheckState = false;
     connect(serialPort, SIGNAL(readyRead()), this, SLOT(readResponse()));
+
     timeoutTimerID = startTimer(TESTER_TIMER_INTERVAL);
 }
 
 SerialPortTester::~SerialPortTester()
 {
     Log() << serialPort;
-    if(serialPort) {
+
+    if(serialPort)
+    {
         disconnect(serialPort, SIGNAL(readyRead()), this, SLOT(readResponse()));
         serialPort->close();
         delete serialPort; serialPort = Q_NULLPTR;
@@ -28,6 +33,7 @@ SerialPortTester::~SerialPortTester()
 
 void SerialPortTester::start()
 {
+    Log();
     isCheckState = false;
     const char c = 0x80;
     serialPort->write(&c, 1);
@@ -35,13 +41,17 @@ void SerialPortTester::start()
 
 void SerialPortTester::check()
 {
+    Log();
     isCheckState = true;
     const char c = 0x80;
     serialPort->write(&c, 1);
-    if(timeoutTimerID) {
+
+    if(timeoutTimerID)
+    {
         Log() << "timeoutTimerID = " << timeoutTimerID;
         killTimer(timeoutTimerID); timeoutTimerID =0;
     }
+
     timeoutTimerID = startTimer(TESTER_TIMER_INTERVAL);
 }
 
@@ -55,24 +65,33 @@ void SerialPortTester::unsetCheckState()
      isCheckState = false;
 }
 
-void SerialPortTester::readResponse() {
+void SerialPortTester::readResponse()
+{
     Log() << "read response~~";
     QByteArray readed = serialPort->readAll();
     receivedData.append(readed);
     Log() << receivedData.toHex();
-    if(receivedData.length() >= 3) {
-        if(timeoutTimerID) {
+
+    if(receivedData.length() >= 3)
+    {
+        if(timeoutTimerID)
+        {
             Log() << "timeoutTimerID = " << timeoutTimerID;
             killTimer(timeoutTimerID); timeoutTimerID =0;
         }
+
         protocol = SerialProtocolAbstract::checkProtocol(receivedData);
+
         if(protocol != Sp::CommProtocolUnknown)
         {
             disconnect(serialPort, SIGNAL(readyRead()), this, SLOT(readResponse()));
             connect(serialPort, SIGNAL(readyRead()), this, SLOT(checkResponse()));
+
             emit responseSuccess(this);
+
             return;
         }
+
         emit responseUnknown(this);
     }
 }
@@ -80,18 +99,23 @@ void SerialPortTester::readResponse() {
 void SerialPortTester::checkResponse()
 {
     Log() << "check Response~`";
+
     if(isCheckState == true)
     {
         QByteArray readed = serialPort->readAll();
         receivedData.append(readed);
         Log() << receivedData.toHex();
+
         if(receivedData.length() >= 3)
         {
-            if(timeoutTimerID) {
+            if(timeoutTimerID)
+            {
                 Log() << "timeoutTimerID = " << timeoutTimerID;
                 killTimer(timeoutTimerID); timeoutTimerID =0;
             }
+
             protocol = SerialProtocolAbstract::checkProtocol(receivedData);
+
             if(protocol != Sp::CommProtocolUnknown)
             {
                 emit responseSuccess(this);
@@ -102,13 +126,16 @@ void SerialPortTester::checkResponse()
     }
 }
 
-
-void SerialPortTester::timerEvent(QTimerEvent *event) {
+void SerialPortTester::timerEvent(QTimerEvent *event)
+{
     Q_UNUSED(event);
     Log() << serialPort;
-    if(timeoutTimerID) {
+
+    if(timeoutTimerID)
+    {
         Log() << "timeoutTimerID = " << timeoutTimerID;
         killTimer(timeoutTimerID); timeoutTimerID =0;
     }
+
     emit timeoutError(this);
 }

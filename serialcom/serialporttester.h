@@ -11,9 +11,11 @@ class SerialPortTester : public QObject
 {
     Q_OBJECT
 
-public:
+public:        
     QSerialPort *serialPort;
     Sp::CommProtocolType protocol;
+
+    quint8 meter_check_retry_count=0;
 
 public:
     explicit SerialPortTester(QSerialPort *port, QObject *parent = 0);
@@ -22,6 +24,7 @@ public:
     void check();
     bool CheckState();
     void unsetCheckState();
+
 Q_SIGNALS:
     void timeoutError(SerialPortTester *sender);
     void responseUnknown(SerialPortTester *sender);
