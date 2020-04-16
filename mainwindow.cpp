@@ -284,6 +284,8 @@ void MainWindow::detect_off()
 
     ui->test_step->setText("Action : detect off");
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_1, DDL_CH_OFF);
+    measure_relay->measure_port_control(measure_relay->relay_channel::CH_2, DDL_CH_OFF);
+    measure_relay->measure_port_control(measure_relay->relay_channel::CH_3, DDL_CH_OFF);
 
     if(ui->meter_type->currentIndex() == STM32L_KETONE || ui->meter_type->currentIndex() == STM8L_GLUCOSE)
     {

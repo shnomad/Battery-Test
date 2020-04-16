@@ -50,9 +50,9 @@ HEADERS += \
         settings.h \
         setting_flagname_definition.h \
         serialcom/glucosedownloadprogress.h \
-    serialcom/serialporttester.h \
-    builddatetime.h \
-    loggingcategories.h
+        serialcom/serialporttester.h \
+        builddatetime.h \
+        loggingcategories.h
 
 
 #buildtimeTarget.target = builddatetime.h
