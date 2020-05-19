@@ -1315,7 +1315,7 @@ void MainWindow::SaveCSVFile_default(QString filepath, QJsonArray datalist)
 
     for(quint32 result_count=1; result_count<glucosedatacount; result_count++)
     {
-         contentstream << datalist[result_count].toObject()["time"].toString("yyyy.MM.dd hh:mm:ss")<< ",";
+         contentstream << datalist[result_count].toObject()["time"].toString("yyyy-MM-dd hh-mm-ss")<< ",";
          contentstream << datalist[result_count].toObject()["glucose_value"].toString()<< ",";
          contentstream << datalist[result_count].toObject()["glucose_value"].toString()<< ",";
          contentstream << datalist[result_count].toObject()["manual"].toString().remove(" ") << ",";
