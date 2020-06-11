@@ -349,10 +349,10 @@
    <widget class="QGroupBox" name="groupBox_4">
     <property name="geometry">
      <rect>
-      <x>414</x>
-      <y>194</y>
+      <x>410</x>
+      <y>250</y>
       <width>361</width>
-      <height>201</height>
+      <height>141</height>
      </rect>
     </property>
     <property name="title">
@@ -364,7 +364,7 @@
        <x>10</x>
        <y>30</y>
        <width>341</width>
-       <height>161</height>
+       <height>101</height>
       </rect>
      </property>
     </widget>
@@ -414,7 +414,7 @@
       <x>516</x>
       <y>9</y>
       <width>251</width>
-      <height>171</height>
+      <height>231</height>
      </rect>
     </property>
     <property name="font">
@@ -525,6 +525,24 @@
      </property>
      <property name="text">
       <string>Time Sync</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="download">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>170</y>
+       <width>80</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Download</string>
      </property>
     </widget>
    </widget>

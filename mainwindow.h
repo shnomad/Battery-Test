@@ -52,9 +52,9 @@ public:
     ~MainWindow();
 
     quint32 detect_on_time = 0;
-    quint32 work_on_time = 5000;
-    quint32 third_on_time =1000; // 6000;
-    quint32 detect_off_time = 8000; //14000;
+    quint32 work_on_time = 3500;
+    quint32 third_on_time =0; // 6000;
+    quint32 detect_off_time = 7500; //14000;
     quint32 port_reset_time = 15000; //18000;
     quint32 bluetooth_time = 0;
     quint32 hub_port_delay_time = 2000;
@@ -114,6 +114,7 @@ private Q_SLOTS:
     void SaveCSVFile_default(QString filepath, QJsonArray datalist);
     void on_reboot_clicked();
     void currentMeterIndexChanged(int index);
+    void on_download_clicked();
 
 signals:
     void measure_start();
@@ -130,7 +131,7 @@ private:
     QTimer *camera_timer, *detect_on_timer, *work_on_timer, *third_on_timer, *detect_off_timer, *port_reset_timer, *timer_sec, *hub_port_delay_timer, *comm_polling_timer;
     QImage qt_image;
     relay_seed_ddl *measure_relay;
-    QElapsedTimer *mesure_time_check;
+//  QElapsedTimer *mesure_time_check;
 
 
     void makeProgressView();
