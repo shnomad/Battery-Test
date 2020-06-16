@@ -38,7 +38,7 @@ class bgm_comm_protocol : public QObject
     public:
 
     quint8 cmd_buffer[32];
-    quint8 resp_buffer[];
+//    quint8 resp_buffer[];
 
     quint8 system_time[6];
     quint16 set_result_index=1 ,get_result_count =0;

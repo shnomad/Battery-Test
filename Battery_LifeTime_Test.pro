@@ -31,10 +31,8 @@ SOURCES += \
         serialcom/stmhidport.cpp \
         serialcom/stmhidtester.cpp \
         settings.cpp \
-    serialcom/serialporttester.cpp \
-    loggingcategories.cpp
-
-
+        serialcom/serialporttester.cpp \
+        loggingcategories.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -65,12 +63,14 @@ QMAKE_EXTRA_TARGETS += buildtimeTarget
 FORMS += \
         mainwindow.ui
 
-INCLUDEPATH += /opt/qt5pi/sysroot/usr/include /opt/qt5pi/sysroot/usr/local/include
+INCLUDEPATH +=/opt/qt5pi3/sysroot/usr/include
 
-LIBS += -L/opt/qt5pi/sysroot/usr/lib -lwiringPi \
-        -L/opt/qt5pi/sysroot/usr/lib -lhidapi-hidraw \
-        -L/opt/qt5pi/sysroot/usr/local/qt5pi/lib -lQt5Network \
-        -L/opt/qt5pi/sysroot/usr/local/qt5pi/lib -lQt5SerialPort
+LIBS += -L/opt/qt5pi3/sysroot/usr/lib -lwiringPi \
+        -L/opt/qt5pi3/sysroot/usr/lib -lhidapi-hidraw \
+        -L/opt/qt5pi3/sysroot/usr/local/qt5pi/lib -lQt5Network \
+        -L/opt/qt5pi3/sysroot/usr/local/qt5pi/lib -lQt5SerialPort
+
+QMAKE_CFLAGS_ISYSTEM = -I
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -19,13 +19,12 @@
 #include <QApplication>
 #include <QProcess>
 #include <QtNetwork/QNetworkInterface>
-#include "loggingcategories.h"
+//#include "loggingcategories.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), measure_relay(new relay_seed_ddl)
 {
     ui->setupUi(this);
 
-//    mesure_time_check = new QElapsedTimer;
     measure_port_init();
 
     serialComm = Q_NULLPTR;
@@ -313,8 +312,6 @@ void MainWindow::measure_port_reset()
     ui->test_step->setText("Action : port reset");
     measure_relay->measure_port_reset();
 
-//    connect(this, SIGNAL(measure_cnt_check(SIGNAL_SENDER)), this, SLOT(measure_count_check(SIGNAL_SENDER)));
-
     emit measure_cnt_check(SIGNAL_FROM_MEASURE_PORT_RESET);
 }
 
@@ -328,26 +325,22 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
             case SIGNAL_FROM_MEASURE_PORT_RESET:
             case SIGNAL_FROM_COMM_ERROR:
 
-           Logf() << "current_measure_count :" << current_measure_count;
-           Logf() << "target_measure_count :"  << target_measure_count;
-           Logf() << "target_measure_count_rest :"  << target_measure_count_rest;
+           Log() << "current_measure_count :" << current_measure_count;
+           Log() << "target_measure_count :"  << target_measure_count;
+           Log() << "target_measure_count_rest :"  << target_measure_count_rest;
 
                 if(target_measure_count<=1000)
                 {
                     //Target count is 1000                            //target count is under 1000
                    if((current_measure_count == meter_mem_capacity) || (current_measure_count == target_measure_count_rest))
                    {
-//                    Logf();
                        meter_comm_measure_count_check_request = true;
 
                        emit on_device_open_clicked();
                    }
                    else if(current_measure_count < target_measure_count)
                    {
-//                      Logf();
-
                        emit measure_start();
-
                    }
                 }
                 else    //over 1000
@@ -363,8 +356,7 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                     //target count is reached at 1000, 2000, 3000, 4000 .....                 //Targeet count reached at 100, 200, 300, ......
                     if((th_current>=1 && !hund_current && !tens_current && !unit_current) || (target_measure_count_rest<1000 && hund_current==hund_target && !tens_target && !unit_target))
                     {
-//                      Logf()<<"on_device_open_clicked";
-
+                        Log()<<"on_device_open_clicked";
                         emit on_device_open_clicked();
                     }
                     else
@@ -517,14 +509,20 @@ void MainWindow::hub_port_open()
 
 void MainWindow::hub_port_close()
 {
-    system("uhubctl -a off -p 2-5");
+    system("uhubctl -l 1-1 -p 2-4 -a off");
+    system("uhubctl -l 1-1.1 -p 2-3 -a off");
 }
 
 void MainWindow::hub_port_reset()
 {
-    system("uhubctl -a off -p 2-5");
-    QThread::msleep(300);
-    system("uhubctl -a on -p 2-5");
+//  system("uhubctl -a off -p 2-5");
+    system("uhubctl -l 1-1 -p 2-4 -a off");
+    system("uhubctl -l 1-1.1 -p 2-3 -a off");
+
+    QThread::msleep(500);
+//  system("uhubctl -a on -p 2-5");
+    system("uhubctl -l 1-1 -p 2-4 -a on");
+    system("uhubctl -l 1-1.1 -p 2-3 -a on");
 }
 
 void MainWindow::on_quit_clicked()
@@ -598,7 +596,9 @@ void MainWindow::on_device_close_clicked()
         measure_relay->measure_port_control(measure_relay->relay_channel::CH_4, DDL_CH_OFF);
     }
 
-    system("uhubctl -a off -p 2-5");
+//    system("uhubctl -a off -p 2-5");
+
+    hub_port_close();
 
     QThread::msleep(1000);
 
