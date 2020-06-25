@@ -232,13 +232,13 @@ void MainWindow::measure_port_init()
 void MainWindow::measurement()
 {
 
-    Logf() << "measurement start";
+    Log() << "measurement start";
     detect_on_timer->start();
 }
 
 void MainWindow::detect_on()
 {    
-    Logf() << "detect on";
+    Log() << "detect on";
 
     if(ui->meter_type->currentIndex() != STM32L_GLUCOSE)
     {
@@ -254,7 +254,7 @@ void MainWindow::detect_on()
 
 void MainWindow::work_on()
 {    
-    Logf() << "work on";
+    Log() << "work on";
 
     ui->test_step->setText("Action : work on");
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_2, DDL_CH_ON);        
@@ -271,7 +271,7 @@ void MainWindow::work_on()
 
 void MainWindow::third_on()
 {
-    Logf() << "third on";
+    Log() << "third on";
 
     ui->test_step->setText("Action : third on");
 
@@ -283,7 +283,7 @@ void MainWindow::third_on()
 
 void MainWindow::detect_off()
 { 
-    Logf() << "detect off";
+    Log() << "detect off";
 
     ui->test_step->setText("Action : detect off");
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_1, DDL_CH_OFF);
@@ -306,7 +306,7 @@ void MainWindow::detect_off()
 
 void MainWindow::measure_port_reset()
 {
-    Logf() << "measure port reset";
+    Log() << "measure port reset";
 
     ui->test_step->setText("Action : port reset");
     measure_relay->measure_port_reset();
@@ -317,16 +317,16 @@ void MainWindow::measure_port_reset()
 void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
 {       
 
-       Logf() <<"SIGNAL_SENDER"<< sig_orin;
+       Log() <<"SIGNAL_SENDER"<< sig_orin;
 
         switch(sig_orin)
         {
             case SIGNAL_FROM_MEASURE_PORT_RESET:
             case SIGNAL_FROM_COMM_ERROR:
 
-           Logf() << "current_measure_count :" << current_measure_count;
-           Logf() << "target_measure_count :"  << target_measure_count;
-           Logf() << "target_measure_count_rest :"  << target_measure_count_rest;
+           Log() << "current_measure_count :" << current_measure_count;
+           Log() << "target_measure_count :"  << target_measure_count;
+           Log() << "target_measure_count_rest :"  << target_measure_count_rest;
 
                 if(target_measure_count<=1000)
                 {
@@ -355,7 +355,7 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                     //target count is reached at 1000, 2000, 3000, 4000 .....                 //Targeet count reached at 100, 200, 300, ......
                     if((th_current>=1 && !hund_current && !tens_current && !unit_current) || (target_measure_count_rest<1000 && hund_current==hund_target && !tens_target && !unit_target))
                     {
-                        Logf()<<"on_device_open_clicked";
+                        Log()<<"on_device_open_clicked";
                         emit on_device_open_clicked();
                     }
                     else
@@ -368,7 +368,7 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
 
             case SIGNAL_FROM_FINISH_DO_COMMAND:
 
-                Logf() << "measure_count_read_from_meter :" << measure_count_read_from_meter;
+                Log() << "measure_count_read_from_meter :" << measure_count_read_from_meter;
 
                 if(!GluecoseResultDataExpanded)
                 {
@@ -377,7 +377,7 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                         //Target count is 1000                                       //target count is under 1000
                         if((meter_mem_capacity == measure_count_read_from_meter) || (target_measure_count_rest <= measure_count_read_from_meter))
                         {
-//                           Logff() <<"protocol->startDownload";
+//                           Log() <<"protocol->startDownload";
 
                             meter_comm_measure_count_check_request = true;
 
@@ -391,7 +391,7 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                         {
                             current_measure_count = measure_count_read_from_meter;
 
-                            Logf() <<"current_measure_count" << current_measure_count;
+                            Log() <<"current_measure_count" << current_measure_count;
 
                             ui->test_count->setText("Test Count is " + (QString::number(current_measure_count)));
 
@@ -407,7 +407,7 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                     {                      
                        if((meter_mem_capacity == measure_count_read_from_meter) || (target_measure_count_rest == measure_count_read_from_meter))
                        {
-                            Logf() <<"protocol->startDownload";
+                            Log() <<"protocol->startDownload";
 
                             //ToDo: Download saved data to Host system
                            if(checkProtocol() != true)
@@ -424,7 +424,7 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                            else
                                current_measure_count = measure_count_read_from_meter;
 
-//                           Logff() <<"current_measure_count" << current_measure_count;
+//                           Log() <<"current_measure_count" << current_measure_count;
 
                             ui->test_count->setText("Test Count is " + (QString::number(current_measure_count)));
 
@@ -446,7 +446,7 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                      else
                         target_measure_count_rest -=measure_count_read_from_meter;
 
-                   Logf() <<"target_measure_count_rest" << target_measure_count_rest;
+                   Log() <<"target_measure_count_rest" << target_measure_count_rest;
 
                     if(target_measure_count<=1000)
                     {
@@ -457,13 +457,13 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                         current_measure_count = target_measure_count-target_measure_count_rest;
                     }
 
-                    Logf() <<"current_measure_count" << current_measure_count;
+                    Log() <<"current_measure_count" << current_measure_count;
 
                     ui->test_count->setText("Test Count is " + (QString::number(current_measure_count)));
 
                     if(!target_measure_count_rest)
                     {
-                        Logf()<< "measure End";
+                        Log()<< "measure End";
 
                         emit on_device_close_clicked();
 
@@ -475,7 +475,7 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                     else
                     {
 
-                        Logf()<< "measure Start Again";
+                        Log()<< "measure Start Again";
 
                         current_test_cycle++;
 
@@ -514,12 +514,10 @@ void MainWindow::hub_port_close()
 
 void MainWindow::hub_port_reset()
 {
-//  system("uhubctl -a off -p 2-5");
     system("uhubctl -l 1-1 -p 2-4 -a off");
     system("uhubctl -l 1-1.1 -p 2-3 -a off");
 
     QThread::msleep(500);
-//  system("uhubctl -a on -p 2-5");
     system("uhubctl -l 1-1 -p 2-4 -a on");
     system("uhubctl -l 1-1.1 -p 2-3 -a on");
 }
@@ -642,7 +640,7 @@ void MainWindow::meter_comm_start()
 
     if(serialComm == Q_NULLPTR)
     {
-       Logf();
+       Log();
 
         serialComm = new SerialComm;
 
@@ -662,7 +660,7 @@ void MainWindow::meter_comm_start()
     }
     else
     {
-       Logf();
+       Log();
     }
 }
 
@@ -687,7 +685,7 @@ void MainWindow::comm_polling_event()
 {    
     if(serialComm != Q_NULLPTR)
     {
-        Logf() << "serialComm check!";
+        Log() << "serialComm check!";
         serialComm->check();
     }
 }
@@ -734,7 +732,7 @@ void MainWindow::portReady()
             disconnect(serialComm, SIGNAL(connectionError()), this, SLOT(connectionError()));
 
             protocol = new SerialProtocol3(serialComm, this);
-//          Logf() << "protocol state" << protocol->state();
+//          Log() << "protocol state" << protocol->state();
 
             connect(protocol, SIGNAL(timeoutError(Sp::ProtocolCommand)), this, SLOT(timeoutError(Sp::ProtocolCommand)));
             connect(protocol, SIGNAL(errorOccurred(Sp::ProtocolCommand,Sp::ProtocolCommand)), this, SLOT(errorOccurred(Sp::ProtocolCommand,Sp::ProtocolCommand)));
@@ -768,7 +766,7 @@ void MainWindow::maintainConnection(bool isOK)
 {
     if(isOK == true)
     {
-        Logf();
+        Log();
         cout<<"connection success"<< endl;
     }
     else
@@ -779,27 +777,27 @@ void MainWindow::maintainConnection(bool isOK)
 
 void MainWindow::connectionError()
 {
-    Logf();
+    Log();
 
     if(meter_comm_measure_count_check_request)
     {
         if(comm_retry_count < 6)
         {
-            Logf();
+            Log();
             on_device_close_clicked();
             port_reset_timer->start();
             comm_retry_count++;
         }
         else
         {
-            Logf();
+            Log();
             emit serialComm->textMessageSignal("Meter connection failed!!");
             comm_retry_count = 0;
         }
     }
     else
     {
-        Logf();
+        Log();
         on_device_close_clicked();
     }
 
@@ -815,11 +813,11 @@ void MainWindow::textMessage(QString text)
 void MainWindow::timeoutError(Sp::ProtocolCommand command)
 {
     Q_UNUSED(command);
-    Logf() << "DownloadView::timeoutError" << command;
+    Log() << "DownloadView::timeoutError" << command;
 
     if(command == Sp::GetGlucoseDataFlag)
         {
-            Logf() << "No Flag Settings" << command;
+            Log() << "No Flag Settings" << command;
         }
         else if(command == Sp::Unlock)
         {
@@ -829,11 +827,11 @@ void MainWindow::timeoutError(Sp::ProtocolCommand command)
         }
         else if(command == Sp::SetAvgDays || command == Sp::GetAvgDays)
         {
-            Logf() << "No Average Days settings" << command;
+            Log() << "No Average Days settings" << command;
         }
         else
         {
-            Logf() << "needReopenSerialComm" << command;
+            Log() << "needReopenSerialComm" << command;
 //          needReopenSerialComm();
         }
 }
@@ -841,7 +839,7 @@ void MainWindow::timeoutError(Sp::ProtocolCommand command)
 void MainWindow::errorOccurred(Sp::ProtocolCommand command, Sp::ProtocolCommand preCommand)// 미터에서 보내온 오류
 {
     Q_UNUSED(command);
-    Logf() << command;
+    Log() << command;
 
     if(preCommand == Sp::Unlock)
     {
@@ -854,13 +852,13 @@ void MainWindow::errorOccurred(Sp::ProtocolCommand command, Sp::ProtocolCommand 
 
 void MainWindow::errorCrc()                                    // 수신데이터 CRC 오류
 {
-    Logf();
+    Log();
 
     if(meter_comm_measure_count_check_request)
     {
         if(comm_retry_count < 6)
         {
-           Logf();
+           Log();
 
             on_device_close_clicked();
 
@@ -882,12 +880,12 @@ void MainWindow::errorCrc()                                    // 수신데이�
 void MainWindow::errorUnresolvedCommand(Sp::ProtocolCommand command)     // 다운로드 과정에서 수행하지 않는 커맨드 패킷 수신
 {
     Q_UNUSED(command);
-    Logf() << command;
+    Log() << command;
 }
 
 void MainWindow::packetReceived()
 {
-    Logf();
+    Log();
 }
 
 void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand)
@@ -895,7 +893,7 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
 
     if(bSuccess == true)
     {
-        Logf();
+        Log();
 
         if(lastcommand == Sp::Unlock)
         {
@@ -909,13 +907,13 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
         }
         else
         {
-           Logf()<<"check last command";
+           Log()<<"check last command";
 
             comm_polling_event_start();
 
             if(lastcommand == Sp::ReadSerialNumber)
             {
-               Logf()<<"ReadSerialNumber";
+               Log()<<"ReadSerialNumber";
 
                 ui->meter_info->clear();
 
@@ -923,7 +921,7 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
 
                 if(temp_sn == "")
                 {
-                    Logf() << "temp_sn = " <<MSG_NoSN;
+                    Log() << "temp_sn = " <<MSG_NoSN;
                     ui->meter_info->append("Read Fail!!");
                 }
                 else
@@ -940,7 +938,7 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
             }
             else if(lastcommand == Sp::ReadTimeInformation)
             {
-               Logf()<<"ReadTimeInformation";
+               Log()<<"ReadTimeInformation";
 
                  ui->meter_info->append("meter time : " + Settings::Instance()->getMeterTime());
 
@@ -955,11 +953,11 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
             }
             else if(lastcommand == Sp::CurrentIndexOfGluecose)
             {
-               Logf()<<"CurrentIndexOfGluecose";
+               Log()<<"CurrentIndexOfGluecose";
 
                 measure_count_read_from_meter = Settings::Instance()->getNumberofCurrentGlucoseData();
 
-                Logf()<<"number of measured data is"<< measure_count_read_from_meter;
+                Log()<<"number of measured data is"<< measure_count_read_from_meter;
 
                 ui->meter_info->append("number of measured data is " + (QString::number(measure_count_read_from_meter)));
                 ui->time_sync->setEnabled(true);
@@ -972,7 +970,7 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
             }
             else if(lastcommand == Sp::GluecoseResultDataTxExpanded)
             {
-                Logf()<<"GluecoseResultDataTxExpanded";
+                Log()<<"GluecoseResultDataTxExpanded";
 
                  GluecoseResultDataExpanded = true;         //data download done
 
@@ -980,7 +978,7 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
             }
             else if((lastcommand == Sp::WriteTimeInformation) || (lastcommand == Sp::DeleteData))
             {
-                 Logf()<<"WriteTimeInformation || DeleteData" << lastcommand ;
+                 Log()<<"WriteTimeInformation || DeleteData" << lastcommand ;
 
                 //Read Meter Time
                 if(checkProtocol() != true)
@@ -992,11 +990,11 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
             }
         }
 
-       Logf();
+       Log();
     }
     else
     {
-       Logf() << "Success";
+       Log() << "Success";
     }
 
 
@@ -1098,18 +1096,18 @@ void MainWindow::finishReadingQcData()
     if(m_qcType == QC_TYPE_DEL)
     {
 //      finishReadingQcData_del();
-        Logf();
+        Log();
     }
     else
     {
         if(modelType == 2 || modelType == 3) //SMART, N IoT
         {
-            Logf();
+            Log();
 //          finishReadingQcData_color();
         }
         else
         {
-            Logf();
+            Log();
 //          finishReadingQcData_default();
         }
     }
@@ -1119,7 +1117,7 @@ void MainWindow::finishReadingQcData()
 
 void MainWindow::needReopenSerialComm()
 {
-    Logf();
+    Log();
     ClearListLog();
 }
 
@@ -1128,7 +1126,7 @@ void MainWindow::on_mem_delete_clicked()
     if(checkProtocol() != true)
         return;
 
-    Logf() << "on_mem_delete_clicked";
+    Log() << "on_mem_delete_clicked";
 
     QList<Sp::ProtocolCommand> list;
     list.append(Sp::DeleteData);
@@ -1142,7 +1140,7 @@ void MainWindow::on_time_sync_clicked()
     if(checkProtocol() != true)
         return;
 
-   Logf() << "on_time_sync_clicked";
+   Log() << "on_time_sync_clicked";
 
     QList<Sp::ProtocolCommand> list;
     list.append(Sp::WriteTimeInformation);
@@ -1156,7 +1154,7 @@ void MainWindow::on_download_clicked()
     if(checkProtocol() != true)
         return;
 
-    Logf() << "on_download_clicked";
+    Log() << "on_download_clicked";
 
     protocol->startDownload();
 
@@ -1165,7 +1163,7 @@ void MainWindow::on_download_clicked()
 void MainWindow::downloadProgress(float progress)
 {
     Q_UNUSED(progress);
-    Logf()<< "download progress :" <<progress;
+    Log()<< "download progress :" <<progress;
 }
 
 QString MainWindow::parseTime(QString timevalue)
@@ -1206,7 +1204,7 @@ void MainWindow::makeDownloadCompleteView(QJsonArray datalist)
                         + "), Ketone(" + datalist[i].toObject()["flag_ketone"].toString() +")";
         InsertListLog(datastring);
 
-       Logf() <<datastring;
+       Log() <<datastring;
     }
 
     QString currenttimestring = QDateTime::currentDateTime().toString("yyyy/MM/dd AP h:mm:ss");
@@ -1219,7 +1217,7 @@ void MainWindow::makeDownloadCompleteView(QJsonArray datalist)
 
 void MainWindow::downloadComplete(QJsonArray* datalist)
 {
-     Logf() << "downloadComplete";
+     Log() << "downloadComplete";
 
      SaveCSVFile(*datalist);
 
@@ -1237,7 +1235,7 @@ void MainWindow::SaveCSVFile(QJsonArray datalist)
     if(fdir.exists() == false)
     {
         bool result = fdir.mkdir(folderpath);
-        Logf() << " directory = " << result;
+        Log() << " directory = " << result;
     }
 
     QDir fdir_date(folderpath + working_date);
@@ -1245,7 +1243,7 @@ void MainWindow::SaveCSVFile(QJsonArray datalist)
     if(fdir_date.exists() == false)
     {
         bool result = fdir_date.mkdir(folderpath + working_date + "/");
-        Logf() << " directory = " << result;
+        Log() << " directory = " << result;
     }
 
     QString filepath, meter_sn;
@@ -1274,7 +1272,7 @@ void MainWindow::SaveCSVFile_default(QString filepath, QJsonArray datalist)
 
         if (!outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
         {
-            Logf() << "Open file error for csv header";
+            Log() << "Open file error for csv header";
             return ;
         }
 
@@ -1314,7 +1312,7 @@ void MainWindow::SaveCSVFile_default(QString filepath, QJsonArray datalist)
 
         if (!contentFile.open(QIODevice::Append))
         {
-           Logf() << "Open file error for csv header";
+           Log() << "Open file error for csv header";
 
            return;
         }
@@ -1324,7 +1322,7 @@ void MainWindow::SaveCSVFile_default(QString filepath, QJsonArray datalist)
 
     if (!contentFile.open(QIODevice::Append))
     {
-       Logf() << "Open file error for csv header";
+       Log() << "Open file error for csv header";
         return;
     }
 
@@ -1358,7 +1356,7 @@ void MainWindow::SaveCSVFile_default(QString filepath, QJsonArray datalist)
 
     contentFile.close();
 
-    Logf();
+    Log();
 }
 
 void MainWindow::currentMeterIndexChanged(int index)
@@ -1367,25 +1365,25 @@ void MainWindow::currentMeterIndexChanged(int index)
     {
         case STM32L_GLUCOSE :
 
-            Logf()<<"STM32L_GLUCOSE selected";
+            Log()<<"STM32L_GLUCOSE selected";
 
             break;
 
         case STM32L_KETONE:
 
-            Logf()<<"STM32L_KETONE selected";
+            Log()<<"STM32L_KETONE selected";
 
             break;
 
         case STM32L_GLUCOSE_NN:
 
-            Logf()<<"STM32L_GLUCOSE_NN selected";
+            Log()<<"STM32L_GLUCOSE_NN selected";
 
             break;
 
         case STM8L_GLUCOSE :
 
-            Logf()<<"STM8L_GLUCOSE selected";
+            Log()<<"STM8L_GLUCOSE selected";
 
             break;
 

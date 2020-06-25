@@ -21,9 +21,7 @@ SerialComm::SerialComm(QObject *parent) : QObject(parent), selectedSerialPort(Q_
     selectedSerialPortTester = Q_NULLPTR;
     selectedStmPort = Q_NULLPTR;
     selectedStmPortTester = Q_NULLPTR;
-
     m_baudrate = Settings::Instance()->getBaudrate();
-
 }
 
 SerialComm::~SerialComm()

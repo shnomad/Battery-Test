@@ -9,7 +9,10 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-   logfilecreate();
+    logfilecreate();
+
+    // Set handler
+    qInstallMessageHandler(messageHandler);
 
     MainWindow w;
     w.show();
@@ -27,7 +30,7 @@ void messageHandler(QtMsgType type, const QMessageLogContext &context, const QSt
     out << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz ");
 
     // By type determine to what level belongs message
-#if 0
+#if 1
     switch (type)
     {
         case QtInfoMsg:     out << "INF "; break;
