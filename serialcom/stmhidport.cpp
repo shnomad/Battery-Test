@@ -1,4 +1,5 @@
-﻿#include "stmhidport.h"
+﻿#include <QThread>
+#include "stmhidport.h"
 #include "serialdefinition.h"
 
 STMHIDPort::STMHIDPort(hid_device *hiddevice, QObject *parent) : QObject(parent), m_hid_device(hiddevice)
@@ -122,6 +123,9 @@ void STMHIDPort::ReceiveData()
                 totalBytesRead_ActualData += 1;
             }
         }
+
+        //need some delay
+        QThread::msleep(5);
     }
 
     if(m_hid_device==NULL) return;

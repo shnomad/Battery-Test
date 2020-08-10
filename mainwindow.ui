@@ -22,10 +22,10 @@
    <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
      <rect>
-      <x>17</x>
-      <y>8</y>
+      <x>14</x>
+      <y>10</y>
       <width>191</width>
-      <height>171</height>
+      <height>91</height>
      </rect>
     </property>
     <property name="font">
@@ -39,10 +39,10 @@
     <widget class="QPushButton" name="test_start">
      <property name="geometry">
       <rect>
-       <x>27</x>
-       <y>47</y>
-       <width>140</width>
-       <height>41</height>
+       <x>10</x>
+       <y>33</y>
+       <width>50</width>
+       <height>50</height>
       </rect>
      </property>
      <property name="font">
@@ -52,16 +52,16 @@
       </font>
      </property>
      <property name="text">
-      <string>Start</string>
+      <string/>
      </property>
     </widget>
     <widget class="QPushButton" name="test_stop">
      <property name="geometry">
       <rect>
-       <x>27</x>
-       <y>110</y>
-       <width>140</width>
-       <height>40</height>
+       <x>130</x>
+       <y>33</y>
+       <width>50</width>
+       <height>50</height>
       </rect>
      </property>
      <property name="font">
@@ -70,15 +70,34 @@
       </font>
      </property>
      <property name="text">
-      <string>Stop</string>
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="test_pause">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>33</y>
+       <width>50</width>
+       <height>50</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Sans</family>
+       <pointsize>13</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </widget>
    <widget class="QLabel" name="build_date">
     <property name="geometry">
      <rect>
-      <x>420</x>
-      <y>400</y>
+      <x>431</x>
+      <y>415</y>
       <width>291</width>
       <height>16</height>
      </rect>
@@ -97,7 +116,7 @@
      <rect>
       <x>220</x>
       <y>10</y>
-      <width>281</width>
+      <width>301</width>
       <height>171</height>
      </rect>
     </property>
@@ -237,7 +256,7 @@
     <widget class="QLabel" name="capacity_2">
      <property name="geometry">
       <rect>
-       <x>1</x>
+       <x>6</x>
        <y>59</y>
        <width>111</width>
        <height>31</height>
@@ -275,12 +294,31 @@
       <string>Bluetooth</string>
      </property>
     </widget>
+    <widget class="QCheckBox" name="download_data_sel">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>26</y>
+       <width>121</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>DejaVu Sans</family>
+       <pointsize>13</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Download</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
       <x>13</x>
-      <y>187</y>
+      <y>177</y>
       <width>381</width>
       <height>121</height>
      </rect>
@@ -304,7 +342,7 @@
     <widget class="QLabel" name="test_step">
      <property name="geometry">
       <rect>
-       <x>13</x>
+       <x>16</x>
        <y>62</y>
        <width>340</width>
        <height>17</height>
@@ -332,7 +370,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>407</y>
+      <y>395</y>
       <width>81</width>
       <height>21</height>
      </rect>
@@ -349,10 +387,10 @@
    <widget class="QGroupBox" name="groupBox_4">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>250</y>
+      <x>421</x>
+      <y>310</y>
       <width>361</width>
-      <height>141</height>
+      <height>101</height>
      </rect>
     </property>
     <property name="title">
@@ -362,9 +400,9 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>30</y>
+       <y>33</y>
        <width>341</width>
-       <height>101</height>
+       <height>60</height>
       </rect>
      </property>
     </widget>
@@ -373,7 +411,7 @@
     <property name="geometry">
      <rect>
       <x>24</x>
-      <y>344</y>
+      <y>333</y>
       <width>340</width>
       <height>20</height>
      </rect>
@@ -386,7 +424,7 @@
     <property name="geometry">
      <rect>
       <x>15</x>
-      <y>315</y>
+      <y>304</y>
       <width>381</width>
       <height>80</height>
      </rect>
@@ -399,7 +437,7 @@
     <property name="geometry">
      <rect>
       <x>23</x>
-      <y>369</y>
+      <y>358</y>
       <width>340</width>
       <height>20</height>
      </rect>
@@ -411,10 +449,10 @@
    <widget class="QGroupBox" name="groupBox_3">
     <property name="geometry">
      <rect>
-      <x>516</x>
+      <x>530</x>
       <y>9</y>
       <width>251</width>
-      <height>231</height>
+      <height>221</height>
      </rect>
     </property>
     <property name="font">
@@ -531,7 +569,7 @@
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>170</y>
+       <y>167</y>
        <width>80</width>
        <height>41</height>
       </rect>
@@ -550,7 +588,7 @@
     <property name="geometry">
      <rect>
       <x>112</x>
-      <y>408</y>
+      <y>396</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -582,7 +620,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>23</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

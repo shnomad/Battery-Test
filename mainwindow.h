@@ -54,7 +54,7 @@ public:
     quint32 detect_on_time = 0;
     quint32 work_on_time = 3500;
     quint32 third_on_time =0; // 6000;
-    quint32 detect_off_time = 7500; //14000;
+    quint32 detect_off_time = 10000; //14000;
     quint32 port_reset_time = 15000; //18000;
     quint32 bluetooth_time = 0;
     quint32 hub_port_delay_time = 2000;
@@ -114,7 +114,9 @@ private Q_SLOTS:
     void SaveCSVFile_default(QString filepath, QJsonArray datalist);
     void on_reboot_clicked();
     void currentMeterIndexChanged(int index);
-    void on_download_clicked();
+    void on_download_clicked();        
+
+    void on_test_pause_clicked();
 
 signals:
     void measure_start();

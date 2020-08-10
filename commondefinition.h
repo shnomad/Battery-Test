@@ -3,6 +3,7 @@
 
 #include <QDebug>
 #include <QDateTime>
+#include <QEventLoop>
 
 //#define Log() qDebug() <<"["<<QDateTime::currentDateTime().toString("MM.dd hh:mm:ss") << __PRETTY_FUNCTION__ << __LINE__ << "]"
   #define Log() qDebug()<<"["<< __PRETTY_FUNCTION__ << __LINE__ << "]"
@@ -122,7 +123,6 @@
 
 #define ANIMAL_TYPE_DOG     "개"
 #define ANIMAL_TYPE_CAT     "고양이"
-
 
 #endif // COMMONDEFINITION
 

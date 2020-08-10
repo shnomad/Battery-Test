@@ -28,7 +28,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     measure_port_init();
 
     serialComm = Q_NULLPTR;
-
     timer_sec = new QTimer(this);       //display current time
     detect_on_timer = new QTimer(this);
     work_on_timer = new QTimer(this);
@@ -45,7 +44,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     port_reset_timer->setSingleShot(true);
     hub_port_delay_timer->setSingleShot(true);
 
+    /*Play/Pause/Stop Button*/
+    ui->test_start->setIcon(QIcon(":/images/play.png"));
+    ui->test_start->setIconSize(QSize(45,45));
+    ui->test_stop->setIcon(QIcon(":/images/stop.png"));
+    ui->test_stop->setIconSize(QSize(45,45));
+    ui->test_pause->setIcon(QIcon(":/images/pause.png"));
+    ui->test_pause->setIconSize(QSize(45,45));
+
     ui->test_stop->setEnabled(false);
+    ui->test_pause->setEnabled(false);
     ui->device_open->setEnabled(true);
     ui->device_close->setEnabled(false);
 
@@ -224,6 +232,11 @@ void MainWindow::on_test_stop_clicked()
     measure_test_active = false;
 }
 
+void MainWindow::on_test_pause_clicked()
+{
+
+}
+
 void MainWindow::measure_port_init()
 {   
     measure_relay->measure_port_reset();
@@ -344,6 +357,13 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                 }
                 else    //over 1000
                 {
+
+#if 1
+                    if (target_measure_count == current_measure_count)
+                        emit measure_end();
+                    else
+                        emit measure_start();
+#else
                     quint8 th_current = current_measure_count/1000;
                     quint8 hund_current = (current_measure_count/100)%10;
                     quint8 tens_current = (current_measure_count/10)%10;
@@ -362,6 +382,8 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                     {
                         emit measure_start();
                     }
+#endif
+
                 }
 
             break;
@@ -399,6 +421,8 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
 
                             emit on_device_close_clicked();
 
+                            QThread::msleep(1000);
+
                             emit measure_start();
 
                         }
@@ -431,6 +455,8 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                             meter_comm_measure_count_check_request = false;
 
                             emit on_device_close_clicked();
+
+                            QThread::msleep(1000);
 
                             emit measure_start();
 
@@ -509,17 +535,17 @@ void MainWindow::hub_port_open()
 void MainWindow::hub_port_close()
 {
     system("uhubctl -l 1-1 -p 2-4 -a off");
-    system("uhubctl -l 1-1.1 -p 2-3 -a off");
+//  system("uhubctl -l 1-1.1 -p 2-3 -a off");
 }
 
 void MainWindow::hub_port_reset()
 {
     system("uhubctl -l 1-1 -p 2-4 -a off");
-    system("uhubctl -l 1-1.1 -p 2-3 -a off");
+//  system("uhubctl -l 1-1.1 -p 2-3 -a off");
 
     QThread::msleep(500);
     system("uhubctl -l 1-1 -p 2-4 -a on");
-    system("uhubctl -l 1-1.1 -p 2-3 -a on");
+//  system("uhubctl -l 1-1.1 -p 2-3 -a on");
 }
 
 void MainWindow::on_quit_clicked()

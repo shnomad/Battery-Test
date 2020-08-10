@@ -2,12 +2,8 @@
 #define RELAY_SEED_DDL_H
 
 #include <QObject>
-#define DEVICE_ID_COMM		0x10
-
-//#define CH1_GND		0x01
-//#define CH2_VCC		0x02
-//#define CH3_DP		0x03
-//#define CH4_DM		0x04
+#define DEVICE_ID_I		0x10
+#define DEVICE_ID_II    0x12
 
 #define DDL_CH_ON   0xff
 #define DDL_CH_OFF  0x00

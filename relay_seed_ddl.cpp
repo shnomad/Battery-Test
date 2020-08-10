@@ -3,7 +3,7 @@
 
 relay_seed_ddl::relay_seed_ddl()
 {
-    fd_seed_ddl = wiringPiI2CSetup(DEVICE_ID_COMM);
+    fd_seed_ddl = wiringPiI2CSetup(DEVICE_ID_I);
 
     if(!fd_seed_ddl)
         exit(0);
