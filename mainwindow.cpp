@@ -27,13 +27,26 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     measure_port_init();
 
+    measurement_timer_setup();
+
+    measurement_ui_setup();
+
+    system_info_setup();
+
+//  hub_port_close();
+}
+
+void MainWindow::measurement_timer_setup()
+{
     serialComm = Q_NULLPTR;
-    timer_sec = new QTimer(this);       //display current time
+
+    timer_sec = new QTimer(this);                   //display current time
     detect_on_timer = new QTimer(this);
     work_on_timer = new QTimer(this);
     third_on_timer = new QTimer(this);
     detect_off_timer = new QTimer(this);
-    port_reset_timer = new QTimer(this);
+//    port_reset_timer = new QTimer(this);
+    test_interval_timer = new QTimer(this);
     hub_port_delay_timer = new QTimer(this);
     comm_polling_timer = new QTimer(this);
 
@@ -41,8 +54,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     work_on_timer->setSingleShot(true);
     third_on_timer->setSingleShot(true);
     detect_off_timer->setSingleShot(true);
-    port_reset_timer->setSingleShot(true);
+//    port_reset_timer->setSingleShot(true);
+    test_interval_timer->setSingleShot(true);
     hub_port_delay_timer->setSingleShot(true);
+}
+
+void MainWindow::measurement_ui_setup()
+{
 
     /*Play/Pause/Stop Button*/
     ui->test_start->setIcon(QIcon(":/images/play.png"));
@@ -94,14 +112,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->meter_type->setCurrentIndex(0);
 
     connect(ui->meter_type,SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
+    connect(comm_polling_timer, SIGNAL(timeout()), this, SLOT(comm_polling_event()));
+}
 
+void MainWindow::system_info_setup()
+{
     /*Show Build information*/
     ui->build_date->setText("build date : " + build_date);
-
-    QObject::connect(timer_sec, SIGNAL(timeout()), this, SLOT(UpdateTime()));
-    timer_sec->start(1000);
-
-    connect(comm_polling_timer, SIGNAL(timeout()), this, SLOT(comm_polling_event()));
 
     //Print local machine's IP address
     QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
@@ -122,12 +139,76 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         }
     }
 
-    hub_port_close();
+    QObject::connect(timer_sec, SIGNAL(timeout()), this, SLOT(UpdateTime()));
+    timer_sec->start(1000);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::ui_set_measurement_start()
+{
+    ui->test_start->setEnabled(false);
+    ui->device_open->setEnabled(false);
+    ui->device_close->setEnabled(false);
+    ui->test_stop->setEnabled(true);
+    ui->test_pause->setEnabled(true);
+
+    //Test option
+    ui->meter_type->setEnabled(false);
+    ui->bluetooth_sel->setEnabled(false);
+    ui->times->setEnabled(false);
+    ui->sec->setEnabled(false);
+
+    //Comm Interface option
+    ui->micro_usb->setEnabled(false);
+    ui->phone_jack->setEnabled(false);
+
+    ui->test_start_time->setText("Test start :" + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap"));
+    ui->test_count->setText("Test Count is " + (QString::number(current_measure_count)));
+}
+
+void MainWindow::ui_set_measurement_stop()
+{
+    ui->test_start->setEnabled(true);
+    ui->test_stop->setEnabled(false);
+    ui->test_pause->setEnabled(false);
+
+    ui->meter_type->setEnabled(true);
+    ui->bluetooth_sel->setEnabled(true);
+    ui->times->setEnabled(true);
+    ui->sec->setEnabled(true);
+
+    ui->device_open->setEnabled(true);
+    ui->micro_usb->setEnabled(true);
+    ui->phone_jack->setEnabled(true);
+
+    ui->test_step->setText("Action : stopped");
+}
+
+void MainWindow::ui_set_measurement_pause()
+{
+    ui->test_start->setEnabled(true);
+    ui->test_stop->setEnabled(true);
+    ui->test_pause->setEnabled(false);
+
+    ui->device_open->setEnabled(true);
+    ui->micro_usb->setEnabled(true);
+    ui->phone_jack->setEnabled(true);
+
+    ui->test_step->setText("Action : pause");
+}
+
+void MainWindow::ui_set_comm_start()
+{
+
+}
+
+void MainWindow::ui_set_comm_stop()
+{
+
 }
 
 void MainWindow::on_test_start_clicked()
@@ -151,8 +232,8 @@ void MainWindow::on_test_start_clicked()
     third_on_timer->setInterval(third_on_time);
     detect_off_timer->setInterval(detect_off_time);
 
-    //default teset interval      15 Sec            0 Sec              10 Sec
-    port_reset_timer->setInterval(port_reset_time + changed_interval + bluetooth_time);    
+    //default teset interval         15 Sec               0 Sec             10 Sec
+    test_interval_timer->setInterval(test_interval_time + changed_interval + bluetooth_time);
 
     connect(this, SIGNAL(measure_start()), this, SLOT(measurement()));
     connect(this, SIGNAL(measure_cnt_check(SIGNAL_SENDER)), this, SLOT(measure_count_check(SIGNAL_SENDER)));
@@ -162,26 +243,12 @@ void MainWindow::on_test_start_clicked()
     connect(work_on_timer, SIGNAL(timeout()),SLOT(work_on()));
     connect(third_on_timer, SIGNAL(timeout()),SLOT(third_on()));
     connect(detect_off_timer, SIGNAL(timeout()),SLOT(detect_off()));
-    connect(port_reset_timer, SIGNAL(timeout()),SLOT(measure_port_reset()));
+    connect(test_interval_timer, &QTimer::timeout,[=]()
+        {
+            emit measure_cnt_check(SIGNAL_FROM_MEASURE_DETECT_OFF);
+        });
 
-    ui->test_start->setEnabled(false);
-    ui->device_open->setEnabled(false);
-    ui->device_close->setEnabled(false);
-    ui->test_stop->setEnabled(true);
-
-    //Test option
-    ui->meter_type->setEnabled(false);
-    ui->bluetooth_sel->setEnabled(false);
-    ui->times->setEnabled(false);
-    ui->sec->setEnabled(false);
-
-    //Comm Interface option
-    ui->micro_usb->setEnabled(false);
-    ui->phone_jack->setEnabled(false);    
-
-    ui->test_start_time->setText("Test start :" + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap"));
-
-    ui->test_count->setText("Test Count is " + (QString::number(current_measure_count)));    
+    ui_set_measurement_start();
 
     measure_test_active = true;
 
@@ -193,48 +260,40 @@ void MainWindow::on_test_start_clicked()
 void MainWindow::on_test_stop_clicked()
 {   
     disconnect(this, SIGNAL(measure_start()), this, SLOT(measurement()));
-    disconnect(this, SIGNAL(measure_check(SIGNAL_SENDER)), this, SLOT(measure_count_check(SIGNAL_SENDER)));
     disconnect(this, SIGNAL(measure_end()), this, SLOT(on_test_stop_clicked()));
 
     detect_on_timer->stop();
     work_on_timer->stop();
     third_on_timer->stop();
     detect_off_timer->stop();
-    port_reset_timer->stop();
+//  port_reset_timer->stop();
 
     disconnect(detect_on_timer, SIGNAL(timeout()),this,SLOT(detect_on()));
     disconnect(work_on_timer, SIGNAL(timeout()),this,SLOT(work_on()));
     disconnect(third_on_timer, SIGNAL(timeout()),this,SLOT(third_on()));
     disconnect(detect_off_timer, SIGNAL(timeout()),this,SLOT(detect_off()));
-    disconnect(port_reset_timer, SIGNAL(timeout()),this,SLOT(measure_port_reset()));
 
     current_measure_count = 0;
 
-    ui->test_start->setEnabled(true);
-    ui->test_stop->setEnabled(false);
-
-    ui->meter_type->setEnabled(true);
-    ui->bluetooth_sel->setEnabled(true);
-    ui->times->setEnabled(true);
-    ui->sec->setEnabled(true);
-
-    ui->device_open->setEnabled(true);   
-    ui->micro_usb->setEnabled(true);
-    ui->phone_jack->setEnabled(true);
+    ui_set_measurement_stop();
 
     measure_port_init();
 
-    ui->test_step->setText("Action : stopped");
-
     target_test_cycle = 0;
     current_test_cycle = 0;
-
     measure_test_active = false;
 }
 
 void MainWindow::on_test_pause_clicked()
 {
+    detect_on_timer->stop();
+    work_on_timer->stop();
+    third_on_timer->stop();
+    detect_off_timer->stop();
+//  port_reset_timer->stop();
+    ui_set_measurement_pause();
 
+    measure_port_init();
 }
 
 void MainWindow::measure_port_init()
@@ -313,8 +372,9 @@ void MainWindow::detect_off()
 
     ui->test_count->setText("Test Count is " + (QString::number(current_measure_count)));
 
-    port_reset_timer->start();
+    Log() << "test interval";
 
+    test_interval_timer->start();
 }
 
 void MainWindow::measure_port_reset()
@@ -324,7 +384,7 @@ void MainWindow::measure_port_reset()
     ui->test_step->setText("Action : port reset");
     measure_relay->measure_port_reset();
 
-    emit measure_cnt_check(SIGNAL_FROM_MEASURE_PORT_RESET);
+    emit measure_cnt_check(SIGNAL_FROM_MEASURE_DETECT_OFF);
 }
 
 void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
@@ -334,7 +394,7 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
 
         switch(sig_orin)
         {
-            case SIGNAL_FROM_MEASURE_PORT_RESET:
+            case SIGNAL_FROM_MEASURE_DETECT_OFF:
             case SIGNAL_FROM_COMM_ERROR:
 
            Log() << "current_measure_count :" << current_measure_count;
@@ -343,7 +403,7 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
 
                 if(target_measure_count<=1000)
                 {
-                    //Target count is 1000                            //target count is under 1000
+                    //Target count is 1000                             //target count is under 1000
                    if((current_measure_count == meter_mem_capacity) || (current_measure_count == target_measure_count_rest))
                    {
                        meter_comm_measure_count_check_request = true;
@@ -358,12 +418,6 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                 else    //over 1000
                 {
 
-#if 1
-                    if (target_measure_count == current_measure_count)
-                        emit measure_end();
-                    else
-                        emit measure_start();
-#else
                     quint8 th_current = current_measure_count/1000;
                     quint8 hund_current = (current_measure_count/100)%10;
                     quint8 tens_current = (current_measure_count/10)%10;
@@ -382,7 +436,6 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                     {
                         emit measure_start();
                     }
-#endif
 
                 }
 
@@ -583,7 +636,7 @@ void MainWindow::on_device_open_clicked()
         measure_relay->measure_port_control(measure_relay->relay_channel::CH_4, DDL_CH_ON);
     }
 
-    hub_port_open();
+//    hub_port_open();
 
     if(ui->phone_jack->isChecked())
     {
@@ -811,7 +864,7 @@ void MainWindow::connectionError()
         {
             Log();
             on_device_close_clicked();
-            port_reset_timer->start();
+//          port_reset_timer->start();
             comm_retry_count++;
         }
         else
@@ -888,7 +941,7 @@ void MainWindow::errorCrc()                                    // 수신데이�
 
             on_device_close_clicked();
 
-            port_reset_timer->start();
+//          port_reset_timer->start();
             comm_retry_count++;
         }
         else

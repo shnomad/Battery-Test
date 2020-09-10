@@ -55,13 +55,13 @@ public:
     quint32 work_on_time = 3500;
     quint32 third_on_time =0; // 6000;
     quint32 detect_off_time = 10000; //14000;
-    quint32 port_reset_time = 15000; //18000;
+    quint32 test_interval_time = 15000;
     quint32 bluetooth_time = 0;
     quint32 hub_port_delay_time = 2000;
     quint32 measure_count_read_from_meter=0;
 
     enum SIGNAL_SENDER{
-        SIGNAL_FROM_MEASURE_PORT_RESET = 0x0,
+        SIGNAL_FROM_MEASURE_DETECT_OFF = 0x0,
         SIGNAL_FROM_FINISH_DO_COMMAND,
         SIGNAL_FROM_COMM_ERROR
     };
@@ -115,7 +115,6 @@ private Q_SLOTS:
     void on_reboot_clicked();
     void currentMeterIndexChanged(int index);
     void on_download_clicked();        
-
     void on_test_pause_clicked();
 
 signals:
@@ -129,27 +128,33 @@ Q_SIGNALS:
     void currentIndexChanged(int index);
 
 private:
-    Ui::MainWindow *ui = nullptr;    
-    QTimer *camera_timer, *detect_on_timer, *work_on_timer, *third_on_timer, *detect_off_timer, *port_reset_timer, *timer_sec, *hub_port_delay_timer, *comm_polling_timer;
+    Ui::MainWindow *ui = nullptr;
+//    QSignalMapper *idMapper;
+    QTimer *camera_timer, *detect_on_timer, *work_on_timer, *third_on_timer, *detect_off_timer, *port_reset_timer, *test_interval_timer, *timer_sec, *hub_port_delay_timer, *comm_polling_timer;
     QImage qt_image;
     relay_seed_ddl *measure_relay;
-//  QElapsedTimer *mesure_time_check;
 
-
+    void measurement_timer_setup();
+    void measurement_ui_setup();
+    void system_info_setup();
+    void ui_set_measurement_start();
+    void ui_set_measurement_stop();
+    void ui_set_measurement_pause();
+    void ui_set_comm_start();
+    void ui_set_comm_stop();
     void makeProgressView();
     void makeDownloadCompleteView(QJsonArray datalist);
     QString parseTime(QString timevalue);
 
     bool bAutoSetSN;    //각 단말의 연결 상태를 위한 필드
-
     QHash<QString, QVariant> m_settings;
+
     bool isEnableBLE;
+
     void EnableBLEControls(bool value);
     bool isCaresensC(); //V176.110.x.x
-
     bool checkProtocol();
     void doCommands(QList<Sp::ProtocolCommand> list);
-
     void InsertListLog(QString str);
     void InsertListStateLog(int state, QString str);
     void ClearListLog();

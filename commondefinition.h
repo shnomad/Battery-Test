@@ -5,8 +5,8 @@
 #include <QDateTime>
 #include <QEventLoop>
 
-//#define Log() qDebug() <<"["<<QDateTime::currentDateTime().toString("MM.dd hh:mm:ss") << __PRETTY_FUNCTION__ << __LINE__ << "]"
-  #define Log() qDebug()<<"["<< __PRETTY_FUNCTION__ << __LINE__ << "]"
+  #define Log() qDebug() <<"["<<QDateTime::currentDateTime().toString("MM.dd hh:mm:ss") << __PRETTY_FUNCTION__ << __LINE__ << "]"
+//#define Log() qDebug()<<"["<< __PRETTY_FUNCTION__ << __LINE__ << "]"
 //#define Logf() qDebug(logDebug()) <<"["<< __PRETTY_FUNCTION__ << __LINE__ << "]"
 
 // ==========================
