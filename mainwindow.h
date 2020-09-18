@@ -76,7 +76,7 @@ private slots:
     void detect_off();
     void measure_port_reset();
     void measure_port_init();
-    void measure_count_check(SIGNAL_SENDER);
+    void measure_count_check(SIGNAL_SENDER);    
     void hub_port_open();
     void hub_port_close();
     void hub_port_reset();
@@ -159,6 +159,9 @@ private:
     void InsertListStateLog(int state, QString str);
     void ClearListLog();
     bool isOtgModeVisible(); //CareSens N Premier BLE – V89.110.x.x, CareSens N(N-ISO) – V39.200.x.x, CareSens N(N-ISO) Notch – V129.100.x.x
+
+    QString board_info = NULL, usb_port_info=NULL;
+    string do_console_command_get_result (char* command);
 
     int m_logcount;
 

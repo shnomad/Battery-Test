@@ -18,6 +18,7 @@
 #include <QTime>
 #include <QApplication>
 #include <QProcess>
+#include <QRegExp>
 #include <QtNetwork/QNetworkInterface>
 #include "loggingcategories.h"
 
@@ -33,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     system_info_setup();
 
-//  hub_port_close();
+    hub_port_close();
 }
 
 void MainWindow::measurement_timer_setup()
@@ -45,7 +46,7 @@ void MainWindow::measurement_timer_setup()
     work_on_timer = new QTimer(this);
     third_on_timer = new QTimer(this);
     detect_off_timer = new QTimer(this);
-//    port_reset_timer = new QTimer(this);
+//  port_reset_timer = new QTimer(this);
     test_interval_timer = new QTimer(this);
     hub_port_delay_timer = new QTimer(this);
     comm_polling_timer = new QTimer(this);
@@ -54,7 +55,7 @@ void MainWindow::measurement_timer_setup()
     work_on_timer->setSingleShot(true);
     third_on_timer->setSingleShot(true);
     detect_off_timer->setSingleShot(true);
-//    port_reset_timer->setSingleShot(true);
+//  port_reset_timer->setSingleShot(true);
     test_interval_timer->setSingleShot(true);
     hub_port_delay_timer->setSingleShot(true);
 }
@@ -138,6 +139,8 @@ void MainWindow::system_info_setup()
             }
         }
     }
+
+    board_info = QString::fromStdString(do_console_command_get_result ("cat /proc/device-tree/model"));
 
     QObject::connect(timer_sec, SIGNAL(timeout()), this, SLOT(UpdateTime()));
     timer_sec->start(1000);
@@ -587,17 +590,17 @@ void MainWindow::hub_port_open()
 
 void MainWindow::hub_port_close()
 {
-    system("uhubctl -l 1-1 -p 2-4 -a off");
-//  system("uhubctl -l 1-1.1 -p 2-3 -a off");
+    system("uhubctl -l 1-1 -p 2-3 -a off");         //RPi3B
+//  system("uhubctl -l 1-1.1 -p 2-3 -a off");       //RPi3B+
 }
 
 void MainWindow::hub_port_reset()
 {
-    system("uhubctl -l 1-1 -p 2-4 -a off");
+    system("uhubctl -l 1-1 -p 2-3 -a off");
 //  system("uhubctl -l 1-1.1 -p 2-3 -a off");
 
     QThread::msleep(500);
-    system("uhubctl -l 1-1 -p 2-4 -a on");
+    system("uhubctl -l 1-1 -p 2-3 -a on");
 //  system("uhubctl -l 1-1.1 -p 2-3 -a on");
 }
 
@@ -672,11 +675,11 @@ void MainWindow::on_device_close_clicked()
         measure_relay->measure_port_control(measure_relay->relay_channel::CH_4, DDL_CH_OFF);
     }
 
-//    system("uhubctl -a off -p 2-5");
+//  system("uhubctl -a off -p 2-5");
 
-    hub_port_close();
+//  hub_port_close();
 
-    QThread::msleep(1000);
+//  QThread::msleep(1000);
 
     if(!measure_test_active)
     {
@@ -1469,4 +1472,21 @@ void MainWindow::currentMeterIndexChanged(int index)
         default:
         break;
     }
+}
+
+string MainWindow::do_console_command_get_result (char* command)
+{
+    FILE* pipe = popen(command, "r");		//Send the command, popen exits immediately
+        if (!pipe)
+            return "ERROR";
+
+        char buffer[128];
+        string result = "";
+        while(!feof(pipe))						//Wait for the output resulting from the command
+        {
+            if(fgets(buffer, 128, pipe) != NULL)
+                result += buffer;
+        }
+        pclose(pipe);
+        return(result);
 }

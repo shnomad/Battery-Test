@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.5.1, 2020-09-10T18:00:42. -->
+<!-- Written by QtCreator 4.5.1, 2020-09-18T15:49:12. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -270,13 +270,16 @@
        <value type="QString">/home/system1/dev/Qtapp/build-Battery_LifeTime_Test-Rpix-Debug/Battery_LifeTime_Test</value>
        <value type="QString">/home/system1/dev/Qtapp/build-Battery_LifeTime_Test-Rpix-Debug/Battery_LifeTime_Test</value>
        <value type="QString">/home/system1/dev/Qtapp/build-Battery_LifeTime_Test-Rpix-Debug/Battery_LifeTime_Test</value>
+       <value type="QString">/home/system1/dev/Qtapp/build-Battery_LifeTime_Test-Rpix-Debug/Battery_LifeTime_Test</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedHosts">
        <value type="QString">10.42.0.24</value>
+       <value type="QString">10.42.0.219</value>
        <value type="QString">10.42.0.120</value>
        <value type="QString">10.42.0.84</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedRemotePaths">
+       <value type="QString">/home/pi/Battery_LifeTime_Test/bin</value>
        <value type="QString">/home/pi/Battery_LifeTime_Test/bin</value>
        <value type="QString">/home/pi/Battery_LifeTime_Test/bin</value>
        <value type="QString">/home/pi/Battery_LifeTime_Test/bin</value>
@@ -285,11 +288,13 @@
        <value type="QString">/opt/qt5pi/sysroot</value>
        <value type="QString">/opt/qt5pi/sysroot</value>
        <value type="QString">/opt/qt5pi/sysroot</value>
+       <value type="QString">/opt/qt5pi/sysroot</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedTimes">
        <value type="QDateTime">2020-07-20T07:25:16</value>
+       <value type="QDateTime">2020-09-18T14:26:55</value>
        <value type="QDateTime">2020-07-15T16:14:44</value>
-       <value type="QDateTime">2020-09-10T17:49:07</value>
+       <value type="QDateTime">2020-09-14T14:37:18</value>
       </valuelist>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.IgnoreMissingFiles">false</value>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.Incremental">true</value>
