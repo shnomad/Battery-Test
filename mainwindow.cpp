@@ -76,16 +76,28 @@ void MainWindow::measurement_ui_setup()
     ui->device_open->setEnabled(true);
     ui->device_close->setEnabled(false);
 
-    ui->bluetooth_sel->setEnabled(true);
-    ui->times->setEnabled(true);
-    ui->sec->setEnabled(true);
+    /* Measurement Condition*/
+    ui->sec_startdelay->setEnabled(true);
+    ui->sec_detoffdelay->setEnabled(true);
+    ui->sec_interval->setEnabled(true);
+
+    /*Measuremet Start Delay*/
+    ui->sec_startdelay->setRange(0.0, 180.0);
+    ui->sec_startdelay->setSingleStep(1.0);
+    ui->sec_startdelay->setValue((int)(work_on_time/1000));
+
+    /*Detect Off Delay*/
+    ui->sec_detoffdelay->setRange(0.0, 180.0);
+    ui->sec_detoffdelay->setSingleStep(1.0);
+    ui->sec_detoffdelay->setValue((int)(detect_off_time/1000));
 
     /*Test Interval*/
-    ui->sec->setRange(0.0, 180.0);
-    ui->sec->setSingleStep(1.0);
-    ui->sec->setValue(0.0);
+    ui->sec_interval->setRange(0.0, 180.0);
+    ui->sec_interval->setSingleStep(1.0);
+    ui->sec_interval->setValue((int)(test_interval_time/1000));
 
     /*Test capacity*/
+    ui->times->setEnabled(true);
     ui->times->setRange(0.0, 5000.0);
     ui->times->setSingleStep(100.0);
 //  ui->times->setSingleStep(1.0);
@@ -106,11 +118,19 @@ void MainWindow::measurement_ui_setup()
     ui->download->setEnabled(false);
 
     //Meter type select
-    ui->meter_type->addItem("STM32L_Glucose");
-    ui->meter_type->addItem("STM32L_Ketone");
-    ui->meter_type->addItem("STM32L_Glucose_NN");
-    ui->meter_type->addItem("STM8L_Glucose");
+    ui->meter_type->addItem("GLUCOSE BASIC");
+    ui->meter_type->addItem("GLUCOSE BLE");
+    ui->meter_type->addItem("GLUCOSE VOICE");
+    ui->meter_type->addItem("GLUCOSE VOICE BLE");
+    ui->meter_type->addItem("KETONE BASIC");
+    ui->meter_type->addItem("KETONE BLE");
     ui->meter_type->setCurrentIndex(0);
+
+    currentMeterIndexChanged(0);
+
+    ui->sec_startdelay->setValue((int)(work_on_time/1000));
+    ui->sec_detoffdelay->setValue((int)(detect_off_time/1000));
+    ui->sec_interval->setValue((int)(test_interval_time/1000));
 
     connect(ui->meter_type,SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
     connect(comm_polling_timer, SIGNAL(timeout()), this, SLOT(comm_polling_event()));
@@ -161,9 +181,10 @@ void MainWindow::ui_set_measurement_start()
 
     //Test option
     ui->meter_type->setEnabled(false);
-    ui->bluetooth_sel->setEnabled(false);
     ui->times->setEnabled(false);
-    ui->sec->setEnabled(false);
+    ui->sec_startdelay->setEnabled(false);
+    ui->sec_detoffdelay->setEnabled(false);
+    ui->sec_interval->setEnabled(false);
 
     //Comm Interface option
     ui->micro_usb->setEnabled(false);
@@ -179,10 +200,11 @@ void MainWindow::ui_set_measurement_stop()
     ui->test_stop->setEnabled(false);
     ui->test_pause->setEnabled(false);
 
-    ui->meter_type->setEnabled(true);
-    ui->bluetooth_sel->setEnabled(true);
+    ui->meter_type->setEnabled(true);    
     ui->times->setEnabled(true);
-    ui->sec->setEnabled(true);
+    ui->sec_startdelay->setEnabled(true);
+    ui->sec_detoffdelay->setEnabled(true);
+    ui->sec_interval->setEnabled(true);
 
     ui->device_open->setEnabled(true);
     ui->micro_usb->setEnabled(true);
@@ -195,7 +217,7 @@ void MainWindow::ui_set_measurement_pause()
 {
     ui->test_start->setEnabled(true);
     ui->test_stop->setEnabled(true);
-    ui->test_pause->setEnabled(false);
+    ui->test_pause->setEnabled(false);        
 
     ui->device_open->setEnabled(true);
     ui->micro_usb->setEnabled(true);
@@ -217,26 +239,15 @@ void MainWindow::ui_set_comm_stop()
 void MainWindow::on_test_start_clicked()
 {    
 
-    if(ui->bluetooth_sel->isChecked())
-    {
-        bluetooth_time = 10000;         //add
-    }
-
-    if(ui->meter_type->currentIndex() == STM32L_KETONE)
-    {
-        detect_off_time = 15000;        //case of KETONE
-    }
-
-    //Glucose : detect -> (5 sec) -> work_on -> (1 sec) -> third on -> (8 sec) -> detect off -> (4 sec)
-    //KETONE :  detect -> (5 sec) -> work_on -> (1 sec) -> third on -> (10 sec)-> detect off -> (4 sec)
+    //Glucose : detect -> (3.5 sec) -> work/third on -> (7 sec) -> detect off -> (4 sec)
 
     detect_on_timer->setInterval(detect_on_time);
     work_on_timer->setInterval(work_on_time);
     third_on_timer->setInterval(third_on_time);
     detect_off_timer->setInterval(detect_off_time);
 
-    //default teset interval         15 Sec               0 Sec             10 Sec
-    test_interval_timer->setInterval(test_interval_time + changed_interval + bluetooth_time);
+    //default teset interval            15 Sec
+    test_interval_timer->setInterval(test_interval_time);
 
     connect(this, SIGNAL(measure_start()), this, SLOT(measurement()));
     connect(this, SIGNAL(measure_cnt_check(SIGNAL_SENDER)), this, SLOT(measure_count_check(SIGNAL_SENDER)));
@@ -250,6 +261,7 @@ void MainWindow::on_test_start_clicked()
         {
             emit measure_cnt_check(SIGNAL_FROM_MEASURE_DETECT_OFF);
         });
+
 
     ui_set_measurement_start();
 
@@ -269,7 +281,6 @@ void MainWindow::on_test_stop_clicked()
     work_on_timer->stop();
     third_on_timer->stop();
     detect_off_timer->stop();
-//  port_reset_timer->stop();
 
     disconnect(detect_on_timer, SIGNAL(timeout()),this,SLOT(detect_on()));
     disconnect(work_on_timer, SIGNAL(timeout()),this,SLOT(work_on()));
@@ -295,7 +306,6 @@ void MainWindow::on_test_pause_clicked()
     detect_off_timer->stop();
 //  port_reset_timer->stop();
     ui_set_measurement_pause();
-
     measure_port_init();
 }
 
@@ -315,12 +325,6 @@ void MainWindow::detect_on()
 {    
     Log() << "detect on";
 
-    if(ui->meter_type->currentIndex() != STM32L_GLUCOSE)
-    {
-        //Second Detect port
-        measure_relay->measure_port_control(measure_relay->relay_channel::CH_3, DDL_CH_ON);
-    }
-
     ui->test_step->setText("Action : detect on");
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_1, DDL_CH_ON);
 
@@ -332,16 +336,9 @@ void MainWindow::work_on()
     Log() << "work on";
 
     ui->test_step->setText("Action : work on");
-    measure_relay->measure_port_control(measure_relay->relay_channel::CH_2, DDL_CH_ON);        
+    measure_relay->measure_port_control(measure_relay->relay_channel::CH_2, DDL_CH_ON);
 
-    if(ui->meter_type->currentIndex() == STM32L_KETONE)
-    {
-        detect_off_timer->start();
-    }
-    else
-    {
-        third_on_timer->start();
-    }
+    third_on_timer->start();
 }
 
 void MainWindow::third_on()
@@ -349,9 +346,6 @@ void MainWindow::third_on()
     Log() << "third on";
 
     ui->test_step->setText("Action : third on");
-
-    if(ui->meter_type->currentIndex() == STM32L_GLUCOSE)
-        measure_relay->measure_port_control(measure_relay->relay_channel::CH_3, DDL_CH_ON);
 
     detect_off_timer->start();
 }
@@ -363,13 +357,6 @@ void MainWindow::detect_off()
     ui->test_step->setText("Action : detect off");
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_1, DDL_CH_OFF);
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_2, DDL_CH_OFF);
-    measure_relay->measure_port_control(measure_relay->relay_channel::CH_3, DDL_CH_OFF);
-
-    if(ui->meter_type->currentIndex() == STM32L_KETONE || ui->meter_type->currentIndex() == STM8L_GLUCOSE)
-    {
-        //Second Detect port off
-        measure_relay->measure_port_control(measure_relay->relay_channel::CH_3, DDL_CH_OFF);
-    }
 
     current_measure_count++;
 
@@ -455,15 +442,23 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                         //Target count is 1000                                       //target count is under 1000
                         if((meter_mem_capacity == measure_count_read_from_meter) || (target_measure_count_rest <= measure_count_read_from_meter))
                         {
-//                           Log() <<"protocol->startDownload";
 
-                            meter_comm_measure_count_check_request = true;
+                            if(ui->audo_download->isChecked())
+                            {
+                                Log() <<"protocol->startDownload";
 
-                            //ToDo: Download saved data to Host system
-                            if(checkProtocol() != true)
-                                return;
+                                meter_comm_measure_count_check_request = true;
 
-                             protocol->startDownload();
+                                //ToDo: Download saved data to Host system
+                                if(checkProtocol() != true)
+                                    return;
+                                protocol->startDownload();
+                            }
+                            else
+                            {
+                                 GluecoseResultDataExpanded =true;
+                                 emit measure_cnt_check(SIGNAL_FROM_FINISH_DO_COMMAND);
+                            }
                         }
                         else
                         {
@@ -480,22 +475,29 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                             QThread::msleep(1000);
 
                             emit measure_start();
-
                         }
                     }
                     else  //target count is over 1000
                     {                      
                        if((meter_mem_capacity == measure_count_read_from_meter) || (target_measure_count_rest == measure_count_read_from_meter))
-                       {
-                            Log() <<"protocol->startDownload";
+                       {                          
+                              if(ui->audo_download->isChecked())
+                              {
+                                   Log() <<"protocol->startDownload";
 
-                            //ToDo: Download saved data to Host system
-                           if(checkProtocol() != true)
-                               return;
+                                    //ToDo: Download saved data to Host system
+                                   if(checkProtocol() != true)
+                                       return;
 
-                           meter_comm_measure_count_check_request = true;
+                                   meter_comm_measure_count_check_request = true;
 
-                           protocol->startDownload();
+                                   protocol->startDownload();
+                              }
+                              else
+                              {
+                                   GluecoseResultDataExpanded =true;
+                                   emit measure_cnt_check(SIGNAL_FROM_FINISH_DO_COMMAND);
+                              }
                        }
                        else
                        {
@@ -504,7 +506,7 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                            else
                                current_measure_count = measure_count_read_from_meter;
 
-//                           Log() <<"current_measure_count" << current_measure_count;
+//                          Log() <<"current_measure_count" << current_measure_count;
 
                             ui->test_count->setText("Test Count is " + (QString::number(current_measure_count)));
 
@@ -515,8 +517,6 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                             QThread::msleep(1000);
 
                             emit measure_start();
-
-
                        }
                     }
                 }
@@ -627,11 +627,13 @@ void MainWindow::on_device_open_clicked()
     //Measurement Option
     ui->test_start->setEnabled(false);
     ui->test_stop->setEnabled(false);
-    ui->bluetooth_sel->setEnabled(false);
 
     ui->meter_type->setEnabled(false);
     ui->times->setEnabled(false);
-    ui->sec->setEnabled(false);
+
+    ui->sec_startdelay->setEnabled(false);
+    ui->sec_detoffdelay->setEnabled(false);
+    ui->sec_interval->setEnabled(false);
 
     if(ui->phone_jack->isChecked())
     {
@@ -639,17 +641,9 @@ void MainWindow::on_device_open_clicked()
         measure_relay->measure_port_control(measure_relay->relay_channel::CH_4, DDL_CH_ON);
     }
 
-//    hub_port_open();
+    hub_port_open();
 
-    if(ui->phone_jack->isChecked())
-    {
-        if(ui->meter_type->currentIndex() == STM8L_GLUCOSE)
-            hub_port_delay_time = 7000;
-        else
-            hub_port_delay_time = 3000;
-    }
-
-    hub_port_delay_timer->setInterval(hub_port_delay_time);
+    hub_port_delay_timer->setInterval(5000);
 
     connect(hub_port_delay_timer, SIGNAL(timeout()), this, SLOT(meter_comm_start()));
 
@@ -677,18 +671,19 @@ void MainWindow::on_device_close_clicked()
 
 //  system("uhubctl -a off -p 2-5");
 
-//  hub_port_close();
+    hub_port_close();
 
-//  QThread::msleep(1000);
+    QThread::msleep(1000);
 
     if(!measure_test_active)
     {
         ui->device_open->setEnabled(true);
         ui->test_start->setEnabled(true);
         ui->meter_type->setEnabled(true);
-        ui->bluetooth_sel->setEnabled(true);
         ui->times->setEnabled(true);
-        ui->sec->setEnabled(true);        
+        ui->sec_startdelay->setEnabled(true);
+        ui->sec_detoffdelay->setEnabled(true);
+        ui->sec_interval->setEnabled(true);
     }
     else
     {
@@ -703,11 +698,6 @@ void MainWindow::on_times_valueChanged(const QString &arg1)
      target_measure_count_rest = target_measure_count;
 
      target_test_cycle = target_measure_count/meter_mem_capacity;
-}
-
-void MainWindow::on_sec_valueChanged(const QString &arg1)
-{
-    changed_interval = arg1.toInt(0,10)*1000;
 }
 
 void MainWindow::UpdateTime()
@@ -1445,33 +1435,71 @@ void MainWindow::currentMeterIndexChanged(int index)
 {
     switch (index)
     {
-        case STM32L_GLUCOSE :
+        case GLUCOSE_BASIC:
 
-            Log()<<"STM32L_GLUCOSE selected";
+            Log()<<"GLUCOSE selected";
 
-            break;
-
-        case STM32L_KETONE:
-
-            Log()<<"STM32L_KETONE selected";
-
-            break;
-
-        case STM32L_GLUCOSE_NN:
-
-            Log()<<"STM32L_GLUCOSE_NN selected";
+            work_on_time = 3000;
+            third_on_time =0; // 6000;
+            detect_off_time = 8000; //14000;
+            test_interval_time = 15000;
 
             break;
 
-        case STM8L_GLUCOSE :
+        case GLUCOSE_BLE:
 
-            Log()<<"STM8L_GLUCOSE selected";
+            Log()<<"GLUCOSE BLE selected";
+
+            work_on_time = 3000;
+            third_on_time =0; // 6000;
+            detect_off_time = 8000; //14000;
+            test_interval_time = 25000;
+
+            break;
+
+        case GLUCOSE_VOICE:
+
+            Log()<<"GLUCOSE VOICE selected";
+
+            work_on_time = 7000;
+            third_on_time =0; // 6000;
+            detect_off_time = 11000; //14000;
+            test_interval_time = 15000;
+
+            break;
+
+        case GLUCOSE_VOICE_BLE :
+
+            Log()<<"GLUCOSE VOICE BLE selected";
+
+            work_on_time = 7000;
+            third_on_time =0; // 6000;
+            detect_off_time = 11000; //14000;
+            test_interval_time = 25000;
+
+            break;
+
+        case KETONE_BASIC:
+
+            Log()<<"KETONE selected";
+
+            break;
+
+        case KETONE_BLE:
+
+            Log()<<"KETONE BLE selected";
 
             break;
 
         default:
         break;
     }
+
+
+    /*Set delay time on spin box*/
+    ui->sec_startdelay->setValue((int)(work_on_time/1000));
+    ui->sec_detoffdelay->setValue((int)(detect_off_time/1000));
+    ui->sec_interval->setValue((int)(test_interval_time/1000));
 }
 
 string MainWindow::do_console_command_get_result (char* command)
@@ -1489,4 +1517,24 @@ string MainWindow::do_console_command_get_result (char* command)
         }
         pclose(pipe);
         return(result);
+}
+
+void MainWindow::on_sec_startdelay_valueChanged(const QString &arg1)
+{
+     work_on_time = arg1.toInt(0,10)*1000;
+}
+
+void MainWindow::on_sec_detoffdelay_valueChanged(const QString &arg1)
+{
+    detect_off_time = arg1.toInt(0,10)*1000;
+}
+
+void MainWindow::on_sec_interval_valueChanged(const QString &arg1)
+{
+    test_interval_time = arg1.toInt(0,10)*1000;
+}
+
+void MainWindow::on_checkBox_stateChanged(int arg1)
+{
+
 }

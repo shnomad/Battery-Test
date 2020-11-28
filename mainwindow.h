@@ -22,10 +22,12 @@ class relay_seed_ddl;
 class QElapsedTimer;
 class SerialProtocolAbstract;
 
-#define STM32L_GLUCOSE      0x0
-#define STM32L_KETONE       0x1
-#define STM32L_GLUCOSE_NN   0x2
-#define STM8L_GLUCOSE       0x3
+#define GLUCOSE_BASIC       0x0
+#define GLUCOSE_BLE         0x1
+#define GLUCOSE_VOICE       0x2
+#define GLUCOSE_VOICE_BLE   0x3
+#define KETONE_BASIC        0x4
+#define KETONE_BLE          0x5
 
 class MainWindow : public QMainWindow
 {
@@ -37,8 +39,7 @@ class MainWindow : public QMainWindow
     quint32 current_measure_count=0;
     quint32 target_measure_count=0, target_measure_count_rest=0;
     quint32 meter_mem_capacity =1000;
-    quint8 target_test_cycle = 0, current_test_cycle = 0;
-    quint16 changed_interval=0;
+    quint8 target_test_cycle = 0, current_test_cycle = 0;    
     quint8 comm_retry_count =0;
 
     bool measure_test_active = false;
@@ -52,11 +53,10 @@ public:
     ~MainWindow();
 
     quint32 detect_on_time = 0;
-    quint32 work_on_time = 3500;
+    quint32 work_on_time = 0; //3000;
     quint32 third_on_time =0; // 6000;
-    quint32 detect_off_time = 10000; //14000;
-    quint32 test_interval_time = 15000;
-    quint32 bluetooth_time = 0;
+    quint32 detect_off_time = 0; //9000; //14000;
+    quint32 test_interval_time = 0; //15000;
     quint32 hub_port_delay_time = 2000;
     quint32 measure_count_read_from_meter=0;
 
@@ -86,7 +86,6 @@ private slots:
     void meter_comm_start();
     void meter_comm_end();
     void on_times_valueChanged(const QString &arg1);
-    void on_sec_valueChanged(const QString &arg1);
     void UpdateTime();
     void comm_polling_event();          //periodical polling for device
     void comm_polling_event_start();    //periodical polling for device
@@ -116,6 +115,12 @@ private Q_SLOTS:
     void currentMeterIndexChanged(int index);
     void on_download_clicked();        
     void on_test_pause_clicked();
+
+    void on_sec_startdelay_valueChanged(const QString &arg1);
+    void on_sec_detoffdelay_valueChanged(const QString &arg1);
+    void on_sec_interval_valueChanged(const QString &arg1);
+
+    void on_checkBox_stateChanged(int arg1);
 
 signals:
     void measure_start();

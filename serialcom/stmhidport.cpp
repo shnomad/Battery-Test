@@ -87,6 +87,9 @@ void STMHIDPort::ReceiveData()
     {
         numberOfBytesRead = hid_read(m_hid_device, buf, 64);
 
+        //need some delay
+        QThread::msleep(10);
+
         if (numberOfBytesRead <= 0)
         {
             count_ReceiveData_ZeroByte ++;
@@ -123,9 +126,6 @@ void STMHIDPort::ReceiveData()
                 totalBytesRead_ActualData += 1;
             }
         }
-
-        //need some delay
-        QThread::msleep(5);
     }
 
     if(m_hid_device==NULL) return;
