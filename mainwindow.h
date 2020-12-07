@@ -29,6 +29,10 @@ class SerialProtocolAbstract;
 #define KETONE_BASIC        0x4
 #define KETONE_BLE          0x5
 
+#define RASPBERRY_PI3_B         0x0
+#define RASPBERRY_PI3_B_PLUS    0x1
+#define RASPBERRY_PI_UNKNOWN    0x2
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -169,6 +173,7 @@ private:
     string do_console_command_get_result (char* command);
 
     int m_logcount;
+    quint8 board_version = 0x0;
 
 };
 

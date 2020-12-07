@@ -62,6 +62,25 @@ void MainWindow::measurement_timer_setup()
 
 void MainWindow::measurement_ui_setup()
 {
+    /*measure count debug*/
+#if 0
+    ui->n_1000->setEnabled(true);
+    ui->n_2000->setEnabled(true);
+    ui->n_3000->setEnabled(true);
+    ui->n_4000->setEnabled(true);
+    ui->n_5000->setEnabled(true);
+#endif
+    ui->n_1000->setCheckable(true);
+    ui->n_2000->setCheckable(true);
+    ui->n_3000->setCheckable(true);
+    ui->n_4000->setCheckable(true);
+    ui->n_5000->setCheckable(true);
+
+    ui->n_1000->setChecked(true);
+    ui->n_2000->setChecked(false);
+    ui->n_3000->setChecked(false);
+    ui->n_4000->setChecked(false);
+    ui->n_5000->setChecked(false);
 
     /*Play/Pause/Stop Button*/
     ui->test_start->setIcon(QIcon(":/images/play.png"));
@@ -117,6 +136,7 @@ void MainWindow::measurement_ui_setup()
     ui->mem_delete->setEnabled(false);
     ui->download->setEnabled(false);
 
+
     //Meter type select
     ui->meter_type->addItem("GLUCOSE BASIC");
     ui->meter_type->addItem("GLUCOSE BLE");
@@ -161,6 +181,15 @@ void MainWindow::system_info_setup()
     }
 
     board_info = QString::fromStdString(do_console_command_get_result ("cat /proc/device-tree/model"));
+
+    if(board_info.contains("Raspberry Pi 3 Model B",Qt::CaseInsensitive))
+        board_version = RASPBERRY_PI3_B;
+    else if(board_info.contains("Raspberry Pi 3 Model B plus",Qt::CaseInsensitive))
+        board_version = RASPBERRY_PI3_B_PLUS;
+    else
+        board_version = RASPBERRY_PI_UNKNOWN;
+
+    ui->board->setText("board :" + board_info);
 
     QObject::connect(timer_sec, SIGNAL(timeout()), this, SLOT(UpdateTime()));
     timer_sec->start(1000);
@@ -358,7 +387,23 @@ void MainWindow::detect_off()
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_1, DDL_CH_OFF);
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_2, DDL_CH_OFF);
 
-    current_measure_count++;
+    if(ui->DebugCount->isChecked())
+    {
+        if(ui->n_1000->isChecked())
+            current_measure_count=1000;
+        else if(ui->n_2000->isChecked())
+              current_measure_count=2000;
+        else if(ui->n_3000->isChecked())
+              current_measure_count=3000;
+        else if(ui->n_4000->isChecked())
+              current_measure_count=4000;
+        else if(ui->n_5000->isChecked())
+              current_measure_count=5000;
+    }
+    else
+    {
+        current_measure_count++;
+    }
 
     ui->test_count->setText("Test Count is " + (QString::number(current_measure_count)));
 
@@ -424,6 +469,7 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                     }
                     else
                     {
+                        Log()<<"measure_start";
                         emit measure_start();
                     }
 
@@ -585,23 +631,34 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
 
 void MainWindow::hub_port_open()
 {
-    hub_port_reset();
+     if(board_version == RASPBERRY_PI3_B)
+         system("uhubctl -l 1-1 -p 2-3 -a on");         //RPi3B
+     else
+         system("uhubctl -l 1-1.1 -p 2-3 -a on");       //RPi3B+
 }
 
 void MainWindow::hub_port_close()
 {
-    system("uhubctl -l 1-1 -p 2-3 -a off");         //RPi3B
-//  system("uhubctl -l 1-1.1 -p 2-3 -a off");       //RPi3B+
+    if(board_version == RASPBERRY_PI3_B)
+        system("uhubctl -l 1-1 -p 2-3 -a off");         //RPi3B
+    else
+        system("uhubctl -l 1-1.1 -p 2-3 -a off");       //RPi3B+
 }
 
 void MainWindow::hub_port_reset()
 {
+  if(board_version == RASPBERRY_PI3_B)
+  {
     system("uhubctl -l 1-1 -p 2-3 -a off");
-//  system("uhubctl -l 1-1.1 -p 2-3 -a off");
-
     QThread::msleep(500);
     system("uhubctl -l 1-1 -p 2-3 -a on");
-//  system("uhubctl -l 1-1.1 -p 2-3 -a on");
+  }
+else
+  {
+    system("uhubctl -l 1-1.1 -p 2-3 -a off");
+    QThread::msleep(500);
+    system("uhubctl -l 1-1.1 -p 2-3 -a on");
+  }
 }
 
 void MainWindow::on_quit_clicked()
