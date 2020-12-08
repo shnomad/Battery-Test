@@ -81,7 +81,7 @@ private slots:
     void measure_port_reset();
     void measure_port_init();
     void measure_count_check(SIGNAL_SENDER);    
-    void hub_port_open();
+    quint8 hub_port_open();
     void hub_port_close();
     void hub_port_reset();
     void on_quit_clicked();

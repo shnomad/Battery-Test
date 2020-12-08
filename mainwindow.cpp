@@ -430,7 +430,6 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
         switch(sig_orin)
         {
             case SIGNAL_FROM_MEASURE_DETECT_OFF:
-            case SIGNAL_FROM_COMM_ERROR:
 
            Log() << "current_measure_count :" << current_measure_count;
            Log() << "target_measure_count :"  << target_measure_count;
@@ -607,13 +606,19 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
 
                         current_test_cycle++;
 
+                        Log()<< "measure Start Again, current_test_cycle:" << current_test_cycle;
+
                         on_mem_delete_clicked();
 
                         QThread::msleep(3000);
 
+                        Log()<< "on_mem_delete";
+
                         emit on_device_close_clicked();
 
                         QThread::msleep(1000);
+
+                        Log()<< "on_device_close, measure start again";
 
                         emit measure_start();
                     }
@@ -624,23 +629,71 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
 
             break;
 
+            case SIGNAL_FROM_COMM_ERROR:
+
+                Log()<< "device open Error";
+
+                QThread::msleep(100);
+
+                emit measure_end();
+
+            break;
+
             default:
                 break;
         }
 }
 
-void MainWindow::hub_port_open()
+quint8 MainWindow::hub_port_open()
 {
-     if(board_version == RASPBERRY_PI3_B)
-         system("uhubctl -l 1-1 -p 2-3 -a on");         //RPi3B
-     else
-         system("uhubctl -l 1-1.1 -p 2-3 -a on");       //RPi3B+
+    quint8 port_open_retry_count=0, result=false;
+    QString stm_device = "0483:a18b";
+
+     do
+     {
+        if(board_version == RASPBERRY_PI3_B)
+            system("uhubctl -l 1-1 -p 2-5 -a on");         //RPi3B
+        else
+            system("uhubctl -l 1-1.1 -p 2-3 -a off");       //RPi3B+
+
+        QThread::msleep(3000);
+
+        usb_port_info = QString::fromStdString(do_console_command_get_result ("uhubctl"));
+
+        if(usb_port_info.contains(stm_device,Qt::CaseInsensitive))
+        {
+
+            Log () << "found device";
+
+            result = true;
+            break;
+        }
+        else
+        {
+            Log () << "retry found device";
+            hub_port_close();
+        }
+
+       if(port_open_retry_count<5)
+       {
+           Log () << "port_open_retry_count" <<port_open_retry_count;
+           port_open_retry_count++;
+       }
+       else
+       {
+           Log () << "Failed found device";
+           result = false;
+       }
+
+     }while(port_open_retry_count<5);
+
+    return result;
 }
 
 void MainWindow::hub_port_close()
 {
     if(board_version == RASPBERRY_PI3_B)
-        system("uhubctl -l 1-1 -p 2-3 -a off");         //RPi3B
+        system("uhubctl -l 1-1 -p 2-5 -a off");         //RPi3B
     else
         system("uhubctl -l 1-1.1 -p 2-3 -a off");       //RPi3B+
 }
@@ -649,13 +702,13 @@ void MainWindow::hub_port_reset()
 {
   if(board_version == RASPBERRY_PI3_B)
   {
-    system("uhubctl -l 1-1 -p 2-3 -a off");
+    system("uhubctl -l 1-1 -p 2-5 -a off");
     QThread::msleep(500);
     system("uhubctl -l 1-1 -p 2-3 -a on");
   }
 else
   {
-    system("uhubctl -l 1-1.1 -p 2-3 -a off");
+    system("uhubctl -l 1-1.1 -p 2-5 -a off");
     QThread::msleep(500);
     system("uhubctl -l 1-1.1 -p 2-3 -a on");
   }
@@ -698,13 +751,17 @@ void MainWindow::on_device_open_clicked()
         measure_relay->measure_port_control(measure_relay->relay_channel::CH_4, DDL_CH_ON);
     }
 
-    hub_port_open();
-
-    hub_port_delay_timer->setInterval(5000);
-
-    connect(hub_port_delay_timer, SIGNAL(timeout()), this, SLOT(meter_comm_start()));
-
-    hub_port_delay_timer->start();
+    if(!hub_port_open())
+    {
+        Log();
+        emit on_device_close_clicked();
+    }
+    else
+    {
+        hub_port_delay_timer->setInterval(2000);
+        connect(hub_port_delay_timer, SIGNAL(timeout()), this, SLOT(meter_comm_start()));
+        hub_port_delay_timer->start();
+    }
 }
 
 void MainWindow::on_device_close_clicked()
@@ -725,8 +782,6 @@ void MainWindow::on_device_close_clicked()
         //Phone Jack type meter PC mode enable
         measure_relay->measure_port_control(measure_relay->relay_channel::CH_4, DDL_CH_OFF);
     }
-
-//  system("uhubctl -a off -p 2-5");
 
     hub_port_close();
 
@@ -912,15 +967,18 @@ void MainWindow::connectionError()
     {
         if(comm_retry_count < 6)
         {
-            Log();
+            Log()<<"comm_retry_count:"<<comm_retry_count;
+
             on_device_close_clicked();
-//          port_reset_timer->start();
+
             comm_retry_count++;
         }
         else
         {
             Log();
+
             emit serialComm->textMessageSignal("Meter connection failed!!");
+
             comm_retry_count = 0;
         }
     }
@@ -1565,11 +1623,11 @@ string MainWindow::do_console_command_get_result (char* command)
         if (!pipe)
             return "ERROR";
 
-        char buffer[128];
+        char buffer[256];
         string result = "";
         while(!feof(pipe))						//Wait for the output resulting from the command
         {
-            if(fgets(buffer, 128, pipe) != NULL)
+            if(fgets(buffer, 256, pipe) != NULL)
                 result += buffer;
         }
         pclose(pipe);
