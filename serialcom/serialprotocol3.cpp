@@ -171,7 +171,8 @@ qint64 SerialProtocol3::requestCommand(const Sp::ProtocolCommand &command, QByte
     timerStop();
 
 #ifdef SERIALCOM_SMARTLOG
-    if(currentState == Sp::RequestWaiting) {
+    if(currentState == Sp::RequestWaiting)
+    {
         Log() << "Request Waiting......" << lastCommand;
         return 0;
     }
@@ -2147,19 +2148,25 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
 #endif
 
 #ifdef SERIALCOM_QC
+
+        Log()<<"m_current_cmd_index"<<m_current_cmd_index;
+        Log()<<"m_commands.length()"<<m_commands.length();
+
         if(m_current_cmd_index < m_commands.length())
         {
-
             Log();
             //go ahead
             requestCommand(m_commands[m_current_cmd_index]);
         }
         else
         {
-#if 1      
+           Log()<<"cmd"<<cmd;
+
             switch(cmd)
-            {
+            {                                   
                 case Sp::ReadSerialNumber:                
+
+                  Log();
 
                   if(dataDownload)
                     {
@@ -2172,6 +2179,8 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
                 break;
 
                 case Sp::ReadTimeInformation:
+
+                   Log();
 
                 break;
 
@@ -2199,6 +2208,8 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
                 break;
 
                 case Sp::WriteTimeInformation :
+
+                    Log();
 
                 break;
 
@@ -2236,34 +2247,11 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
                 break;
             }
 
-            Log();
+//          QThread::msleep(500);
 
-            QThread::msleep(500);
+            Log()<<"m_current_cmd_index"<<m_current_cmd_index;
 
-            emit finishDoCommands(true, m_commands[m_current_cmd_index - 1]);
-
-#else
-            if(cmd == Sp::GluecoseResultDataTxExpanded)
-            {
-                Log();
-
-                if(downloadInfo.downloadableCount())
-                {
-                    m_current_cmd_index--;
-                    requestCommand(m_commands[m_current_cmd_index]);
-                }
-                else
-                {
-                    emit downloadComplete(&m_dataArray);
-                }
-
-            }
-            else
-            {
-                emit finishDoCommands(true, m_commands[m_current_cmd_index - 1]);
-            }
-
-#endif
+            emit finishDoCommands(true, m_commands[m_current_cmd_index - 1]);            
 
         }
 #endif
@@ -3048,6 +3036,7 @@ void SerialProtocol3::readyRead() {
              timerStart();
              return;
          }
+
          Log();
 
          if(isCompletePacketReceved())
@@ -3560,14 +3549,12 @@ void SerialProtocol3::parseReceivedData(QByteArray rcvPacket)
 //            data["flag_ketone"] = "0";
 #endif
 
-#ifdef SERIALCOM_QC
             data["flag_cs"] = "0";
             data["flag_meal"] = "0";
             data["flag_hilo"] = "0";
             data["flag_fasting"] = "0";
             data["flag_nomark"] = "0";
             data["flag_ketone"] = "0";
-#endif
             data["glucose_unit"] = "mg/dL";
 
             int gflag = quint8(rcvPacket[dataindex + 6]);
@@ -3625,15 +3612,7 @@ void SerialProtocol3::parseReceivedData(QByteArray rcvPacket)
                 data["flag_hilo"] = "Lo"; // "lo" // SERIALCOM_QC
             }
 
-//#ifdef SERIALCOM_SMARTLOG
-#if 1
             m_dataArray.push_front(data);
-#endif
-
-//#ifdef SERIALCOM_QC
-#if 0
-            m_dataArray.push_back(data);
-#endif
         }
     }
     else if(cmd == Sp::CurrentIndexOfGluecose)

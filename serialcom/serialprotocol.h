@@ -38,17 +38,17 @@ public:
 
     enum ProtocolCommand {
         ProtocolCommandNone,
-        GluecoseResultDataTx,           //GLUC  0x474C5543
-        GluecoseResultDataTxExpanded,   //GLUE  0x474C5545
-        CurrentIndexOfGluecose,         //NCOT  0x4E434F54
-        ReadSerialNumber,               //RSNB  0x52534E42
-        WriteSerialNumber,              //WSNB  0x57534E42
-        ReadTimeInformation,            //RTIM  0x5254494D
-        WriteTimeInformation,           //WTIM  0x5754494D
-        SaveData,                       //SVDT  0x53564454
-        DeleteData,                     //DELD  0x44454C44
-        WriteAnimalType,
-        ReadAnimalType,
+        GluecoseResultDataTx,           //GLUC  0x474C5543  1
+        GluecoseResultDataTxExpanded,   //GLUE  0x474C5545  2
+        CurrentIndexOfGluecose,         //NCOT  0x4E434F54  3
+        ReadSerialNumber,               //RSNB  0x52534E42  4
+        WriteSerialNumber,              //WSNB  0x57534E42  5
+        ReadTimeInformation,            //RTIM  0x5254494D  6
+        WriteTimeInformation,           //WTIM  0x5754494D  7
+        SaveData,                       //SVDT  0x53564454  8
+        DeleteData,                     //DELD  0x44454C44  9
+        WriteAnimalType,                                //10
+        ReadAnimalType,                                 //11
         Unlock,
         ReadSavePoint,        
         ProtocolCommandMax,

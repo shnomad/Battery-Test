@@ -72,6 +72,7 @@ LIBS += -L/opt/qt5pi/sysroot/usr/lib -lwiringPi \
 
 QMAKE_CFLAGS_ISYSTEM = -I
 
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /home/pi/$${TARGET}/bin

@@ -303,6 +303,8 @@ void MainWindow::on_test_start_clicked()
 
 void MainWindow::on_test_stop_clicked()
 {   
+    Log() << "measurement stop";
+
     disconnect(this, SIGNAL(measure_start()), this, SLOT(measurement()));
     disconnect(this, SIGNAL(measure_end()), this, SLOT(on_test_stop_clicked()));
 
@@ -460,9 +462,12 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                     quint8 tens_target = (target_measure_count/10)%10;
                     quint8 unit_target = target_measure_count%10;
 
+                    Log() << "current Count:" << th_current <<hund_current<<tens_current<<unit_current;
+                    Log() << "target Count Rest:"  << hund_target<<tens_target<<unit_target;
+
                     //target count is reached at 1000, 2000, 3000, 4000 .....                 //Targeet count reached at 100, 200, 300, ......
                     if((th_current>=1 && !hund_current && !tens_current && !unit_current) || (target_measure_count_rest<1000 && hund_current==hund_target && !tens_target && !unit_target))
-                    {
+                    {                                                
                         Log()<<"on_device_open_clicked";
                         emit on_device_open_clicked();
                     }
@@ -534,6 +539,9 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                                    if(checkProtocol() != true)
                                        return;
 
+                                   ui->meter_info->clear();
+                                   ui->meter_info->setText("Data Downloading");
+
                                    meter_comm_measure_count_check_request = true;
 
                                    protocol->startDownload();
@@ -567,6 +575,9 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                 }
                 else        //measure data download is complete
                 {
+
+                    ui->meter_info->clear();
+                    ui->meter_info->setText("Download Complete");
 
                     if(target_measure_count_rest < measure_count_read_from_meter)
                        target_measure_count_rest =0;
@@ -623,8 +634,8 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                         emit measure_start();
                     }
 
-                    meter_comm_measure_count_check_request = false;
-                    GluecoseResultDataExpanded = false;
+                        meter_comm_measure_count_check_request = false;
+                        GluecoseResultDataExpanded = false;
                 }                
 
             break;
@@ -649,16 +660,16 @@ quint8 MainWindow::hub_port_open()
     quint8 port_open_retry_count=0, result=false;
     QString stm_device = "0483:a18b";
 
-     do
-     {
         if(board_version == RASPBERRY_PI3_B)
             system("uhubctl -l 1-1 -p 2-5 -a on");         //RPi3B
         else
             system("uhubctl -l 1-1.1 -p 2-3 -a off");       //RPi3B+
 
-        QThread::msleep(3000);
+        QThread::msleep(5000);
 
-        usb_port_info = QString::fromStdString(do_console_command_get_result ("uhubctl"));
+     do{
+
+         usb_port_info = QString::fromStdString(do_console_command_get_result ("uhubctl"));
 
         if(usb_port_info.contains(stm_device,Qt::CaseInsensitive))
         {
@@ -677,13 +688,16 @@ quint8 MainWindow::hub_port_open()
        if(port_open_retry_count<5)
        {
            Log () << "port_open_retry_count" <<port_open_retry_count;
-           port_open_retry_count++;
+           hub_port_reset();
+           port_open_retry_count++;           
        }
        else
        {
            Log () << "Failed found device";
            result = false;
        }
+
+       QThread::msleep(5000);
 
      }while(port_open_retry_count<5);
 
@@ -703,13 +717,13 @@ void MainWindow::hub_port_reset()
   if(board_version == RASPBERRY_PI3_B)
   {
     system("uhubctl -l 1-1 -p 2-5 -a off");
-    QThread::msleep(500);
+    QThread::msleep(1000);
     system("uhubctl -l 1-1 -p 2-3 -a on");
   }
 else
   {
     system("uhubctl -l 1-1.1 -p 2-5 -a off");
-    QThread::msleep(500);
+    QThread::msleep(1000);
     system("uhubctl -l 1-1.1 -p 2-3 -a on");
   }
 }
@@ -1045,10 +1059,10 @@ void MainWindow::errorCrc()                                    // 수신데이�
     {
         if(comm_retry_count < 6)
         {
-           Log();
+
+            Log();
 
             on_device_close_clicked();
-
 //          port_reset_timer->start();
             comm_retry_count++;
         }
@@ -1160,6 +1174,9 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
                 Log()<<"GluecoseResultDataTxExpanded";
 
                  GluecoseResultDataExpanded = true;         //data download done
+
+                 ui->meter_info->clear();
+                 ui->meter_info->setText("Download Complete");
 
                  emit measure_cnt_check(SIGNAL_FROM_FINISH_DO_COMMAND);
             }
@@ -1342,6 +1359,8 @@ void MainWindow::on_download_clicked()
         return;
 
     Log() << "on_download_clicked";
+    ui->meter_info->clear();
+    ui->meter_info->setText("Data Downloading");
 
     protocol->startDownload();
 
@@ -1457,7 +1476,7 @@ void MainWindow::SaveCSVFile_default(QString filepath, QJsonArray datalist)
         //first row
         tableheaderlist << "name" << " " << "birthday" << "sex" << "serial number" << "data unit" << "user idx" << "Insurance Number" << "date_format" <<"email" << "version";
 
-        if (!outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
+        if (!outputFile.open(QIODevice::ReadWrite | QIODevice::Text))
         {
             Log() << "Open file error for csv header";
             return ;
