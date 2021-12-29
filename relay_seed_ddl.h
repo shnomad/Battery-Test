@@ -30,6 +30,14 @@ public slots:
     void measure_port_reset();
     void measure_port_open();
     void measure_port_control(relay_channel, quint8 OnOff);
+
+private:
+
+    int file_i2c;
+    int length;
+    unsigned char buffer[60] = {0};
+
+    char *filename = (char*)"/dev/i2c-1";
 };
 
 #endif // RELAY_SEED_DDL_H

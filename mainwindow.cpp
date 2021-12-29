@@ -1629,7 +1629,6 @@ void MainWindow::currentMeterIndexChanged(int index)
         break;
     }
 
-
     /*Set delay time on spin box*/
     ui->sec_startdelay->setValue((int)(work_on_time/1000));
     ui->sec_detoffdelay->setValue((int)(detect_off_time/1000));

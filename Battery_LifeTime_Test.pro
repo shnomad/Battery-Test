@@ -52,7 +52,6 @@ HEADERS += \
         builddatetime.h \
         loggingcategories.h
 
-
 #buildtimeTarget.target = builddatetime.h
 #buildtimeTarget.depends = FORCE
 #buildtimeTarget.commands = touch $$PWD/builddatetime.h
@@ -65,10 +64,10 @@ FORMS += \
 
 INCLUDEPATH +=/opt/qt5pi/sysroot/usr/include
 
-LIBS += -L/opt/qt5pi/sysroot/usr/lib -lwiringPi \
-        -L/opt/qt5pi/sysroot/usr/lib -lhidapi-hidraw \
-        -L/opt/qt5pi/sysroot/usr/local/qt5pi/lib -lQt5Network \
-        -L/opt/qt5pi/sysroot/usr/local/qt5pi/lib -lQt5SerialPort
+#LIBS += -L/opt/qt5pi/sysroot/usr/lib -lwiringPi \
+LIBS += -L/opt/qt5rpi3/sysroot/usr/lib -lhidapi-hidraw \
+        -L/opt/qt5rpi3/sysroot/usr/local/qt5pi/lib -lQt5Network \
+        -L/opt/qt5rpi3/sysroot/usr/local/qt5pi/lib -lQt5SerialPort
 
 QMAKE_CFLAGS_ISYSTEM = -I
 
