@@ -25,32 +25,32 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
         relay_seed_ddl.cpp \
-        serialcom/serialcomm.cpp \
-        serialcom/serialprotocol3.cpp \
-        serialcom/serialprotocolabstract.cpp \
-        serialcom/stmhidport.cpp \
-        serialcom/stmhidtester.cpp \
         settings.cpp \
-        serialcom/serialporttester.cpp \
         loggingcategories.cpp
+#        serialcom/serialporttester.cpp \
+#        serialcom/serialcomm.cpp \
+#        serialcom/serialprotocol3.cpp \
+#        serialcom/serialprotocolabstract.cpp \
+#        serialcom/stmhidport.cpp \
+#        serialcom/stmhidtester.cpp
 
 HEADERS += \
         mainwindow.h \
         relay_seed_ddl.h \
-        serialcom/serialcomm.h \
-        serialcom/serialdefinition.h \
-        serialcom/serialprotocol.h \
-        serialcom/serialprotocol3.h \
-        serialcom/serialprotocolabstract.h \
-        serialcom/stmhidport.h \
-        serialcom/stmhidtester.h \
         commondefinition.h \
         settings.h \
         setting_flagname_definition.h \
-        serialcom/glucosedownloadprogress.h \
-        serialcom/serialporttester.h \
         builddatetime.h \
         loggingcategories.h
+#        serialcom/glucosedownloadprogress.h \
+#        serialcom/serialporttester.h \
+#        serialcom/serialcomm.h \
+#        serialcom/serialdefinition.h \
+#        serialcom/serialprotocol.h \
+#        serialcom/serialprotocol3.h \
+#        serialcom/serialprotocolabstract.h \
+#        serialcom/stmhidport.h \
+#        serialcom/stmhidtester.h
 
 #buildtimeTarget.target = builddatetime.h
 #buildtimeTarget.depends = FORCE
@@ -70,7 +70,6 @@ LIBS += -L/opt/qt5rpi3/sysroot/usr/lib -lhidapi-hidraw \
         -L/opt/qt5rpi3/sysroot/usr/local/qt5pi/lib -lQt5SerialPort
 
 QMAKE_CFLAGS_ISYSTEM = -I
-
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

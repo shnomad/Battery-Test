@@ -189,7 +189,7 @@ void MainWindow::system_info_setup()
     else
         board_version = RASPBERRY_PI_UNKNOWN;
 
-    ui->board->setText("board :" + board_info);
+//   ui->board->setText("board :" + board_info);
 
     QObject::connect(timer_sec, SIGNAL(timeout()), this, SLOT(UpdateTime()));
     timer_sec->start(1000);
@@ -290,7 +290,6 @@ void MainWindow::on_test_start_clicked()
         {
             emit measure_cnt_check(SIGNAL_FROM_MEASURE_DETECT_OFF);
         });
-
 
     ui_set_measurement_start();
 
@@ -836,6 +835,7 @@ void MainWindow::meter_comm_start()
 
      hub_port_delay_timer->stop();
 
+#if 0
     if(serialComm == Q_NULLPTR)
     {
        Log();
@@ -860,11 +860,15 @@ void MainWindow::meter_comm_start()
     {
        Log();
     }
+
+#endif
+
 }
 
 void MainWindow::meter_comm_end()
 {
 
+#if 0
     if(isDeviceOpened)
         serialComm->close();
 
@@ -877,15 +881,21 @@ void MainWindow::meter_comm_end()
     disconnect(serialComm, SIGNAL(textMessageSignal(QString)), this, SLOT(textMessage(QString)));
     disconnect(serialComm, SIGNAL(maintainConnection(bool)), this, SLOT(maintainConnection(bool)));
 
+#endif
+
 }
 
 void MainWindow::comm_polling_event()
 {    
+
+#if 0
     if(serialComm != Q_NULLPTR)
     {
         Log() << "serialComm check!";
         serialComm->check();
     }
+#endif
+
 }
 
 void MainWindow::comm_polling_event_start()          //periodical polling for device
@@ -902,6 +912,8 @@ void MainWindow::comm_polling_event_stop()
 
 void MainWindow::portReady()
 {
+
+#if 0
     // 여기서 프로토콜을 연결한다.
     comm_polling_event_stop();
     //ui->centralWidget->setEnabled(false);
@@ -958,6 +970,8 @@ void MainWindow::portReady()
         }
     }
     //emit portReadySignal();
+
+#endif
 }
 
 void MainWindow::maintainConnection(bool isOK)
@@ -991,7 +1005,7 @@ void MainWindow::connectionError()
         {
             Log();
 
-            emit serialComm->textMessageSignal("Meter connection failed!!");
+//          emit serialComm->textMessageSignal("Meter connection failed!!");
 
             comm_retry_count = 0;
         }
@@ -1068,7 +1082,7 @@ void MainWindow::errorCrc()                                    // 수신데이�
         }
         else
         {
-           emit serialComm->textMessageSignal("Meter CRC Fail!!");
+//         emit serialComm->textMessageSignal("Meter CRC Fail!!");
            comm_retry_count = 0;
         }
     }
@@ -1207,6 +1221,8 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
 
 bool MainWindow::checkProtocol()
 {
+
+#if 0
     if(protocol == Q_NULLPTR || serialComm == Q_NULLPTR || serialComm->isAvailable() != true)
     {
 #if 0
@@ -1226,6 +1242,8 @@ bool MainWindow::checkProtocol()
 
     comm_polling_event_stop();
     serialComm->unsetCheckState();
+
+#endif
 
     return true;
 }

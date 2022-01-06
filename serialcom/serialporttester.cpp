@@ -67,6 +67,8 @@ void SerialPortTester::unsetCheckState()
 
 void SerialPortTester::readResponse()
 {
+
+#if 0
     Log() << "read response~~";
     QByteArray readed = serialPort->readAll();
     receivedData.append(readed);
@@ -94,12 +96,16 @@ void SerialPortTester::readResponse()
 
         emit responseUnknown(this);
     }
+
+#endif
+
 }
 
 void SerialPortTester::checkResponse()
 {
     Log() << "check Response~`";
 
+#if 0
     if(isCheckState == true)
     {
         QByteArray readed = serialPort->readAll();
@@ -122,8 +128,11 @@ void SerialPortTester::checkResponse()
                 return;
             }
             emit responseUnknown(this);
-        }
+        }    
     }
+
+#endif
+
 }
 
 void SerialPortTester::timerEvent(QTimerEvent *event)

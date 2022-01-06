@@ -3,7 +3,7 @@
 
 #include <QObject>
 #define DEVICE_ID_I		0x10
-#define DEVICE_ID_II    0x12
+#define DEVICE_ID_II    0x13
 
 #define DDL_CH_ON   0xff
 #define DDL_CH_OFF  0x00
