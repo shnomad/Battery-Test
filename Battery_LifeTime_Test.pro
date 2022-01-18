@@ -22,8 +22,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+        control.cpp \
         main.cpp \
         mainwindow.cpp \
+        measurement.cpp \
         relay_seed_ddl.cpp \
         settings.cpp \
         loggingcategories.cpp
@@ -35,7 +37,10 @@ SOURCES += \
 #        serialcom/stmhidtester.cpp
 
 HEADERS += \
+        control.h \
         mainwindow.h \
+        measurement.h \
+        measurement_param.h \
         relay_seed_ddl.h \
         commondefinition.h \
         settings.h \

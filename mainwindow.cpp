@@ -18,58 +18,41 @@
 #include <QTime>
 #include <QApplication>
 #include <QProcess>
-#include <QRegExp>
+//#include <QRegExp>
 #include <QtNetwork/QNetworkInterface>
 #include "loggingcategories.h"
+#include "control.h"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), measure_relay(new relay_seed_ddl)
+//MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), measure_relay(new relay_seed_ddl)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
+      ui->setupUi(this);
 
-    measure_port_init();
+      timer_sec = new QTimer(this);                   //display current time
 
-    measurement_timer_setup();
+//    measure_port_init();
 
-    measurement_ui_setup();
+//    measurement_timer_setup();
 
-    system_info_setup();
+      measurement_ui_setup();
 
-    hub_port_close();
-}
+      system_info_setup();
 
-void MainWindow::measurement_timer_setup()
-{
-    serialComm = Q_NULLPTR;
+//    hub_port_close();
 
-    timer_sec = new QTimer(this);                   //display current time
-    detect_on_timer = new QTimer(this);
-    work_on_timer = new QTimer(this);
-    third_on_timer = new QTimer(this);
-    detect_off_timer = new QTimer(this);
-//  port_reset_timer = new QTimer(this);
-    test_interval_timer = new QTimer(this);
-    hub_port_delay_timer = new QTimer(this);
-    comm_polling_timer = new QTimer(this);
-
-    detect_on_timer->setSingleShot(true);
-    work_on_timer->setSingleShot(true);
-    third_on_timer->setSingleShot(true);
-    detect_off_timer->setSingleShot(true);
-//  port_reset_timer->setSingleShot(true);
-    test_interval_timer->setSingleShot(true);
-    hub_port_delay_timer->setSingleShot(true);
+      control m_control;
 }
 
 void MainWindow::measurement_ui_setup()
 {
     /*measure count debug*/
 #if 0
+
     ui->n_1000->setEnabled(true);
     ui->n_2000->setEnabled(true);
     ui->n_3000->setEnabled(true);
     ui->n_4000->setEnabled(true);
     ui->n_5000->setEnabled(true);
-#endif
     ui->n_1000->setCheckable(true);
     ui->n_2000->setCheckable(true);
     ui->n_3000->setCheckable(true);
@@ -82,79 +65,338 @@ void MainWindow::measurement_ui_setup()
     ui->n_4000->setChecked(false);
     ui->n_5000->setChecked(false);
 
+#endif
+
     /*Play/Pause/Stop Button*/
-    ui->test_start->setIcon(QIcon(":/images/play.png"));
-    ui->test_start->setIconSize(QSize(45,45));
-    ui->test_stop->setIcon(QIcon(":/images/stop.png"));
-    ui->test_stop->setIconSize(QSize(45,45));
-    ui->test_pause->setIcon(QIcon(":/images/pause.png"));
-    ui->test_pause->setIconSize(QSize(45,45));
+    ui->test_start_ch1->setIcon(QIcon(":/images/play.png"));
+    ui->test_start_ch1->setIconSize(QSize(45,45));
+    ui->test_stop_ch1->setIcon(QIcon(":/images/stop.png"));
+    ui->test_stop_ch1->setIconSize(QSize(45,45));
+    ui->test_pause_ch1->setIcon(QIcon(":/images/pause.png"));
+    ui->test_pause_ch1->setIconSize(QSize(45,45));
 
-    ui->test_stop->setEnabled(false);
-    ui->test_pause->setEnabled(false);
-    ui->device_open->setEnabled(true);
-    ui->device_close->setEnabled(false);
-
-    /* Measurement Condition*/
-    ui->sec_startdelay->setEnabled(true);
-    ui->sec_detoffdelay->setEnabled(true);
-    ui->sec_interval->setEnabled(true);
-
-    /*Measuremet Start Delay*/
-    ui->sec_startdelay->setRange(0.0, 180.0);
-    ui->sec_startdelay->setSingleStep(1.0);
-    ui->sec_startdelay->setValue((int)(work_on_time/1000));
-
-    /*Detect Off Delay*/
-    ui->sec_detoffdelay->setRange(0.0, 180.0);
-    ui->sec_detoffdelay->setSingleStep(1.0);
-    ui->sec_detoffdelay->setValue((int)(detect_off_time/1000));
-
-    /*Test Interval*/
-    ui->sec_interval->setRange(0.0, 180.0);
-    ui->sec_interval->setSingleStep(1.0);
-    ui->sec_interval->setValue((int)(test_interval_time/1000));
-
-    /*Test capacity*/
-    ui->times->setEnabled(true);
-    ui->times->setRange(0.0, 5000.0);
-    ui->times->setSingleStep(100.0);
-//  ui->times->setSingleStep(1.0);
-    ui->times->setValue(1000.0);
-//  ui->times->setValue(2.0);
-
-    target_measure_count_rest = 1000;
-
-    /*USB Interface select*/
-    ui->micro_usb->setEnabled(true);
-    ui->micro_usb->setChecked(true);
-
-    ui->phone_jack->setEnabled(true);
-    ui->micro_usb->setChecked(false);
-
-    ui->time_sync->setEnabled(false);
-    ui->mem_delete->setEnabled(false);
-    ui->download->setEnabled(false);
-
+    ui->test_stop_ch1->setEnabled(false);
+    ui->test_pause_ch1->setEnabled(false);
+    ui->device_open_ch1->setEnabled(true);
+    ui->device_close_ch1->setEnabled(false);
 
     //Meter type select
-    ui->meter_type->addItem("GLUCOSE BASIC");
-    ui->meter_type->addItem("GLUCOSE BLE");
-    ui->meter_type->addItem("GLUCOSE VOICE");
-    ui->meter_type->addItem("GLUCOSE VOICE BLE");
-    ui->meter_type->addItem("KETONE BASIC");
-    ui->meter_type->addItem("KETONE BLE");
-    ui->meter_type->setCurrentIndex(0);
+    ui->meter_type_ch1->addItem("GLUCOSE BASIC");
+    ui->meter_type_ch1->addItem("GLUCOSE BLE");
+    ui->meter_type_ch1->addItem("GLUCOSE VOICE");
+    ui->meter_type_ch1->addItem("GLUCOSE VOICE BLE");
+    ui->meter_type_ch1->addItem("KETONE BASIC");
+    ui->meter_type_ch1->addItem("KETONE BLE");
+    ui->meter_type_ch1->setCurrentIndex(0);
 
-    currentMeterIndexChanged(0);
+    /*Measurement Condition*/
+    ui->meter_type_ch1->setEnabled(true);
+    ui->measure_count_ch1->setEnabled(true);
+    ui->sec_startdelay_ch1->setEnabled(true);
+    ui->sec_detoffdelay_ch1->setEnabled(true);
+    ui->sec_interval_ch1->setEnabled(true);
 
-    ui->sec_startdelay->setValue((int)(work_on_time/1000));
-    ui->sec_detoffdelay->setValue((int)(detect_off_time/1000));
-    ui->sec_interval->setValue((int)(test_interval_time/1000));
+    /*Setting the Test Count*/
+    ui->measure_count_ch1->setEnabled(true);
+    ui->measure_count_ch1->setRange(0.0, 5000.0);
+    ui->measure_count_ch1->setSingleStep(100.0);
+    //  ui->measure_count_ch1->setSingleStep(1.0);
+    ui->measure_count_ch1->setValue((int)m_test_param.target_measure_count);
+    //ui->measure_count_ch1->setValue(1000.0);
+    //  ui->measure_count_ch1->setValue(2.0);
 
-    connect(ui->meter_type,SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
-    connect(comm_polling_timer, SIGNAL(timeout()), this, SLOT(comm_polling_event()));
+    /*Measuremet Start Delay*/
+    ui->sec_startdelay_ch1->setRange(0.0, 180.0);
+    ui->sec_startdelay_ch1->setSingleStep(1.0);
+    ui->sec_startdelay_ch1->setValue((int)(m_test_param.work_on_time/1000));
+
+    /*Detect Off Delay*/
+    ui->sec_detoffdelay_ch1->setRange(0.0, 180.0);
+    ui->sec_detoffdelay_ch1->setSingleStep(1.0);
+    ui->sec_detoffdelay_ch1->setValue((int)(m_test_param.detect_off_time/1000));
+
+    /*Test Interval*/
+    ui->sec_interval_ch1->setRange(0.0, 300.0);
+    ui->sec_interval_ch1->setSingleStep(1.0);
+    ui->sec_interval_ch1->setValue((int)(m_test_param.test_interval_time/1000));
+
+    /*Test capacity*/
+//  ui->times_ch1->setEnabled(true);
+//  ui->times_ch1->setRange(0.0, 5000.0);
+//  ui->times_ch1->setSingleStep(100.0);
+//  ui->times->setSingleStep(1.0);
+//  ui->times_ch1->setValue(1000.0);
+//  ui->times->setValue(2.0);
+
+//  target_measure_count_rest = 1000;
+
+    /*Test UI Enhanced*/
+//    ui->sec_interval_3->setEnabled(true);
+//    ui->sec_interval_3->setRange(0.0, 5000.0);
+//    ui->sec_interval_3->setSingleStep(100.0);
+//  ui->sec_interval_3->setSingleStep(1.0);
+//    ui->sec_interval_3->setValue(1000.0);
+//  ui->sec_interval_3->setValue(2.0);
+
+    /*USB Interface select*/
+//    ui->micro_usb_ch1->setEnabled(true);
+//    ui->micro_usb_ch1->setChecked(true);
+
+//    ui->phone_jack_ch1->setEnabled(true);
+//    ui->micro_usb_ch1->setChecked(false);
+
+//    ui->time_sync_ch1->setEnabled(false);
+//    ui->mem_delete_ch1->setEnabled(false);
+//    ui->download_ch1->setEnabled(false);
+
+//    currentMeterIndexChanged(0);
+
+//    ui->sec_startdelay_ch1->setValue((int)(work_on_time/1000));
+//    ui->sec_detoffdelay_ch1->setValue((int)(detect_off_time/1000));
+//    ui->sec_interval_ch1->setValue((int)(test_interval_time/1000));
 }
+
+void MainWindow::ui_set_measurement_start()
+{
+    ui->test_start_ch1->setEnabled(false);
+    ui->device_open_ch1->setEnabled(false);
+    ui->device_close_ch1->setEnabled(false);
+    ui->test_stop_ch1->setEnabled(true);
+    ui->test_pause_ch1->setEnabled(true);
+
+    //Test option
+    ui->meter_type_ch1->setEnabled(false);
+    ui->test_count_ch1->setEnabled(false);
+    ui->sec_startdelay_ch1->setEnabled(false);
+    ui->sec_detoffdelay_ch1->setEnabled(false);
+    ui->sec_interval_ch1->setEnabled(false);
+
+    //Comm Interface option
+    ui->micro_usb_ch1->setEnabled(false);
+    ui->phone_jack_ch1->setEnabled(false);
+
+    ui->test_start_time_ch1->setText("Test start :" + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap"));
+//    ui->test_count_ch1->setText("Test Count is " + (QString::number(current_measure_count)));
+}
+
+void MainWindow::ui_set_measurement_stop()
+{
+    ui->test_start_ch1->setEnabled(true);
+    ui->test_stop_ch1->setEnabled(false);
+    ui->test_pause_ch1->setEnabled(false);
+
+    ui->meter_type_ch1->setEnabled(true);
+    ui->test_count_ch1->setEnabled(true);
+    ui->sec_startdelay_ch1->setEnabled(true);
+    ui->sec_detoffdelay_ch1->setEnabled(true);
+    ui->sec_interval_ch1->setEnabled(true);
+
+    ui->device_open_ch1->setEnabled(true);
+    ui->micro_usb_ch1->setEnabled(true);
+    ui->phone_jack_ch1->setEnabled(true);
+
+    ui->test_step_ch1->setText("Action : stopped");
+}
+
+void MainWindow::ui_set_measurement_pause()
+{
+    ui->test_start_ch1->setEnabled(true);
+    ui->test_stop_ch1->setEnabled(true);
+    ui->test_pause_ch1->setEnabled(false);
+
+    ui->device_open_ch1->setEnabled(true);
+    ui->micro_usb_ch1->setEnabled(true);
+    ui->phone_jack_ch1->setEnabled(true);
+
+    ui->test_step_ch1->setText("Action : pause");
+}
+
+void MainWindow::on_test_start_ch1_clicked()
+{
+    //Glucose : detect -> (3.5 sec) -> work/third on -> (7 sec) -> detect off -> (4 sec)
+
+#if 0
+    detect_on_timer->setInterval(detect_on_time);
+    work_on_timer->setInterval(work_on_time);
+    third_on_timer->setInterval(third_on_time);
+    detect_off_timer->setInterval(detect_off_time);
+
+    //default teset interval            15 Sec
+    test_interval_timer->setInterval(test_interval_time);
+
+    connect(this, SIGNAL(measure_start()), this, SLOT(measurement()));
+    connect(this, SIGNAL(measure_cnt_check(SIGNAL_SENDER)), this, SLOT(measure_count_check(SIGNAL_SENDER)));
+    connect(this, SIGNAL(measure_end()), this, SLOT(on_test_stop_clicked()));
+
+    connect(detect_on_timer, SIGNAL(timeout()),SLOT(detect_on()));
+    connect(work_on_timer, SIGNAL(timeout()),SLOT(work_on()));
+    connect(third_on_timer, SIGNAL(timeout()),SLOT(third_on()));
+    connect(detect_off_timer, SIGNAL(timeout()),SLOT(detect_off()));
+    connect(test_interval_timer, &QTimer::timeout,[=]()
+        {
+            emit measure_cnt_check(SIGNAL_FROM_MEASURE_DETECT_OFF);
+        });
+
+    ui_set_measurement_start();
+
+    measure_test_active = true;
+
+    target_measure_count_rest = target_measure_count;
+
+    emit measure_start();
+
+#endif
+
+}
+
+void MainWindow::on_test_stop_ch1_clicked()
+{
+    Log() << "measurement stop";
+#if 0
+    disconnect(this, SIGNAL(measure_start()), this, SLOT(measurement()));
+    disconnect(this, SIGNAL(measure_end()), this, SLOT(on_test_stop_clicked()));
+
+    detect_on_timer->stop();
+    work_on_timer->stop();
+    third_on_timer->stop();
+    detect_off_timer->stop();
+
+    disconnect(detect_on_timer, SIGNAL(timeout()),this,SLOT(detect_on()));
+    disconnect(work_on_timer, SIGNAL(timeout()),this,SLOT(work_on()));
+    disconnect(third_on_timer, SIGNAL(timeout()),this,SLOT(third_on()));
+    disconnect(detect_off_timer, SIGNAL(timeout()),this,SLOT(detect_off()));
+
+    current_measure_count = 0;
+
+    ui_set_measurement_stop();
+
+    measure_port_init();
+
+    target_test_cycle = 0;
+    current_test_cycle = 0;
+    measure_test_active = false;
+
+#endif
+
+}
+
+void MainWindow::on_test_pause_ch1_clicked()
+{
+
+#if 0
+    detect_on_timer->stop();
+    work_on_timer->stop();
+    third_on_timer->stop();
+    detect_off_timer->stop();
+//  port_reset_timer->stop();
+    ui_set_measurement_pause();
+    measure_port_init();
+
+#endif
+
+}
+
+void MainWindow::on_meter_type_ch1_activated(const QString &arg1)
+{
+
+}
+
+void MainWindow::on_measure_count_ch1_valueChanged(const QString &arg1)
+{
+
+}
+
+void MainWindow::on_sec_startdelay_ch1_valueChanged(const QString &arg1)
+{
+
+}
+
+void MainWindow::on_sec_detoffdelay_ch1_valueChanged(const QString &arg1)
+{
+
+}
+
+void MainWindow::on_sec_interval_ch1_valueChanged(const QString &arg1)
+{
+
+}
+
+void MainWindow::currentMeterIndexChanged(measurement_param::meter_type index)
+{
+
+    switch (index)
+    {
+//        case GLUCOSE_BASIC:
+          case measurement_param::meter_type::GLUCOSE_BASIC :
+
+            Log()<<"GLUCOSE selected";
+
+            m_test_param.work_on_time = 3000;
+            m_test_param.third_on_time =0; // 6000;
+            m_test_param.detect_off_time = 8000; //14000;
+            m_test_param.test_interval_time = 15000;
+
+            break;
+
+//        case GLUCOSE_BLE:
+          case measurement_param::meter_type::GLUCOSE_BLE:
+
+            Log()<<"GLUCOSE BLE selected";
+
+            m_test_param.work_on_time = 3000;
+            m_test_param.third_on_time =0; // 6000;
+            m_test_param.detect_off_time = 8000; //14000;
+            m_test_param.test_interval_time = 25000;
+
+            break;
+
+//        case GLUCOSE_VOICE:
+          case measurement_param::meter_type::GLUCOSE_VOICE:
+
+            Log()<<"GLUCOSE VOICE selected";
+
+            m_test_param.work_on_time = 7000;
+            m_test_param.third_on_time =0; // 6000;
+            m_test_param.detect_off_time = 11000; //14000;
+            m_test_param.test_interval_time = 15000;
+
+            break;
+
+//        case GLUCOSE_VOICE_BLE :
+          case measurement_param::meter_type::GLUCOSE_VOICE_BLE:
+
+            Log()<<"GLUCOSE VOICE BLE selected";
+
+            m_test_param.work_on_time = 7000;
+            m_test_param.third_on_time =0; // 6000;
+            m_test_param.detect_off_time = 11000; //14000;
+            m_test_param.test_interval_time = 25000;
+
+            break;
+
+          case measurement_param::meter_type::KETONE_BASIC:
+
+            Log()<<"KETONE selected";
+
+            break;
+
+          case measurement_param::meter_type::KETONE_BLE:
+
+            Log()<<"KETONE BLE selected";
+
+            break;
+
+        default:
+        break;
+    }
+
+}
+
+    /*Set delay time on spin box*/
+//    ui->sec_startdelay_ch1->setValue((int)(work_on_time/1000));
+//    ui->sec_detoffdelay_ch1->setValue((int)(detect_off_time/1000));
+//    ui->sec_interval_ch1->setValue((int)(test_interval_time/1000));
+
 
 void MainWindow::system_info_setup()
 {
@@ -195,64 +437,51 @@ void MainWindow::system_info_setup()
     timer_sec->start(1000);
 }
 
+string MainWindow::do_console_command_get_result (char* command)
+{
+    FILE* pipe = popen(command, "r");		//Send the command, popen exits immediately
+        if (!pipe)
+            return "ERROR";
+
+        char buffer[256];
+        string result = "";
+        while(!feof(pipe))						//Wait for the output resulting from the command
+        {
+            if(fgets(buffer, 256, pipe) != NULL)
+                result += buffer;
+        }
+        pclose(pipe);
+        return(result);
+}
+
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-void MainWindow::ui_set_measurement_start()
+#if 0
+
+void MainWindow::measurement_timer_setup()
 {
-    ui->test_start->setEnabled(false);
-    ui->device_open->setEnabled(false);
-    ui->device_close->setEnabled(false);
-    ui->test_stop->setEnabled(true);
-    ui->test_pause->setEnabled(true);
+    serialComm = Q_NULLPTR;
 
-    //Test option
-    ui->meter_type->setEnabled(false);
-    ui->times->setEnabled(false);
-    ui->sec_startdelay->setEnabled(false);
-    ui->sec_detoffdelay->setEnabled(false);
-    ui->sec_interval->setEnabled(false);
+    timer_sec = new QTimer(this);                   //display current time
+    detect_on_timer = new QTimer(this);
+    work_on_timer = new QTimer(this);
+    third_on_timer = new QTimer(this);
+    detect_off_timer = new QTimer(this);
+//  port_reset_timer = new QTimer(this);
+    test_interval_timer = new QTimer(this);
+    hub_port_delay_timer = new QTimer(this);
+    comm_polling_timer = new QTimer(this);
 
-    //Comm Interface option
-    ui->micro_usb->setEnabled(false);
-    ui->phone_jack->setEnabled(false);
-
-    ui->test_start_time->setText("Test start :" + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap"));
-    ui->test_count->setText("Test Count is " + (QString::number(current_measure_count)));
-}
-
-void MainWindow::ui_set_measurement_stop()
-{
-    ui->test_start->setEnabled(true);
-    ui->test_stop->setEnabled(false);
-    ui->test_pause->setEnabled(false);
-
-    ui->meter_type->setEnabled(true);    
-    ui->times->setEnabled(true);
-    ui->sec_startdelay->setEnabled(true);
-    ui->sec_detoffdelay->setEnabled(true);
-    ui->sec_interval->setEnabled(true);
-
-    ui->device_open->setEnabled(true);
-    ui->micro_usb->setEnabled(true);
-    ui->phone_jack->setEnabled(true);
-
-    ui->test_step->setText("Action : stopped");
-}
-
-void MainWindow::ui_set_measurement_pause()
-{
-    ui->test_start->setEnabled(true);
-    ui->test_stop->setEnabled(true);
-    ui->test_pause->setEnabled(false);        
-
-    ui->device_open->setEnabled(true);
-    ui->micro_usb->setEnabled(true);
-    ui->phone_jack->setEnabled(true);
-
-    ui->test_step->setText("Action : pause");
+    detect_on_timer->setSingleShot(true);
+    work_on_timer->setSingleShot(true);
+    third_on_timer->setSingleShot(true);
+    detect_off_timer->setSingleShot(true);
+//  port_reset_timer->setSingleShot(true);
+    test_interval_timer->setSingleShot(true);
+    hub_port_delay_timer->setSingleShot(true);
 }
 
 void MainWindow::ui_set_comm_start()
@@ -263,80 +492,6 @@ void MainWindow::ui_set_comm_start()
 void MainWindow::ui_set_comm_stop()
 {
 
-}
-
-void MainWindow::on_test_start_clicked()
-{    
-
-    //Glucose : detect -> (3.5 sec) -> work/third on -> (7 sec) -> detect off -> (4 sec)
-
-    detect_on_timer->setInterval(detect_on_time);
-    work_on_timer->setInterval(work_on_time);
-    third_on_timer->setInterval(third_on_time);
-    detect_off_timer->setInterval(detect_off_time);
-
-    //default teset interval            15 Sec
-    test_interval_timer->setInterval(test_interval_time);
-
-    connect(this, SIGNAL(measure_start()), this, SLOT(measurement()));
-    connect(this, SIGNAL(measure_cnt_check(SIGNAL_SENDER)), this, SLOT(measure_count_check(SIGNAL_SENDER)));
-    connect(this, SIGNAL(measure_end()), this, SLOT(on_test_stop_clicked()));
-
-    connect(detect_on_timer, SIGNAL(timeout()),SLOT(detect_on()));
-    connect(work_on_timer, SIGNAL(timeout()),SLOT(work_on()));
-    connect(third_on_timer, SIGNAL(timeout()),SLOT(third_on()));
-    connect(detect_off_timer, SIGNAL(timeout()),SLOT(detect_off()));
-    connect(test_interval_timer, &QTimer::timeout,[=]()
-        {
-            emit measure_cnt_check(SIGNAL_FROM_MEASURE_DETECT_OFF);
-        });
-
-    ui_set_measurement_start();
-
-    measure_test_active = true;
-
-    target_measure_count_rest = target_measure_count;
-
-    emit measure_start();
-}
-
-void MainWindow::on_test_stop_clicked()
-{   
-    Log() << "measurement stop";
-
-    disconnect(this, SIGNAL(measure_start()), this, SLOT(measurement()));
-    disconnect(this, SIGNAL(measure_end()), this, SLOT(on_test_stop_clicked()));
-
-    detect_on_timer->stop();
-    work_on_timer->stop();
-    third_on_timer->stop();
-    detect_off_timer->stop();
-
-    disconnect(detect_on_timer, SIGNAL(timeout()),this,SLOT(detect_on()));
-    disconnect(work_on_timer, SIGNAL(timeout()),this,SLOT(work_on()));
-    disconnect(third_on_timer, SIGNAL(timeout()),this,SLOT(third_on()));
-    disconnect(detect_off_timer, SIGNAL(timeout()),this,SLOT(detect_off()));
-
-    current_measure_count = 0;
-
-    ui_set_measurement_stop();
-
-    measure_port_init();
-
-    target_test_cycle = 0;
-    current_test_cycle = 0;
-    measure_test_active = false;
-}
-
-void MainWindow::on_test_pause_clicked()
-{
-    detect_on_timer->stop();
-    work_on_timer->stop();
-    third_on_timer->stop();
-    detect_off_timer->stop();
-//  port_reset_timer->stop();
-    ui_set_measurement_pause();
-    measure_port_init();
 }
 
 void MainWindow::measure_port_init()
@@ -355,7 +510,7 @@ void MainWindow::detect_on()
 {    
     Log() << "detect on";
 
-    ui->test_step->setText("Action : detect on");
+    ui->test_step_ch1->setText("Action : detect on");
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_1, DDL_CH_ON);
 
     work_on_timer->start();
@@ -365,7 +520,7 @@ void MainWindow::work_on()
 {    
     Log() << "work on";
 
-    ui->test_step->setText("Action : work on");
+    ui->test_step_ch1->setText("Action : work on");
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_2, DDL_CH_ON);
 
     third_on_timer->start();
@@ -375,7 +530,7 @@ void MainWindow::third_on()
 {
     Log() << "third on";
 
-    ui->test_step->setText("Action : third on");
+    ui->test_step_ch1->setText("Action : third on");
 
     detect_off_timer->start();
 }
@@ -384,7 +539,7 @@ void MainWindow::detect_off()
 { 
     Log() << "detect off";
 
-    ui->test_step->setText("Action : detect off");
+    ui->test_step_ch1->setText("Action : detect off");
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_1, DDL_CH_OFF);
     measure_relay->measure_port_control(measure_relay->relay_channel::CH_2, DDL_CH_OFF);
 
@@ -406,7 +561,7 @@ void MainWindow::detect_off()
         current_measure_count++;
     }
 
-    ui->test_count->setText("Test Count is " + (QString::number(current_measure_count)));
+    ui->test_count_ch1->setText("Test Count is " + (QString::number(current_measure_count)));
 
     Log() << "test interval";
 
@@ -417,7 +572,7 @@ void MainWindow::measure_port_reset()
 {
     Log() << "measure port reset";
 
-    ui->test_step->setText("Action : port reset");
+    ui->test_step_ch1->setText("Action : port reset");
     measure_relay->measure_port_reset();
 
     emit measure_cnt_check(SIGNAL_FROM_MEASURE_DETECT_OFF);
@@ -492,7 +647,7 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                         if((meter_mem_capacity == measure_count_read_from_meter) || (target_measure_count_rest <= measure_count_read_from_meter))
                         {
 
-                            if(ui->audo_download->isChecked())
+                            if(ui->audo_download_ch1->isChecked())
                             {
                                 Log() <<"protocol->startDownload";
 
@@ -515,7 +670,7 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
 
                             Log() <<"current_measure_count" << current_measure_count;
 
-                            ui->test_count->setText("Test Count is " + (QString::number(current_measure_count)));
+                            ui->test_count_ch1->setText("Test Count is " + (QString::number(current_measure_count)));
 
                             meter_comm_measure_count_check_request = false;
 
@@ -530,7 +685,7 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                     {                      
                        if((meter_mem_capacity == measure_count_read_from_meter) || (target_measure_count_rest == measure_count_read_from_meter))
                        {                          
-                              if(ui->audo_download->isChecked())
+                              if(ui->audo_download_ch1->isChecked())
                               {
                                    Log() <<"protocol->startDownload";
 
@@ -538,8 +693,8 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                                    if(checkProtocol() != true)
                                        return;
 
-                                   ui->meter_info->clear();
-                                   ui->meter_info->setText("Data Downloading");
+                                   ui->meter_info_ch1->clear();
+                                   ui->meter_info_ch1->setText("Data Downloading");
 
                                    meter_comm_measure_count_check_request = true;
 
@@ -560,7 +715,7 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
 
 //                          Log() <<"current_measure_count" << current_measure_count;
 
-                            ui->test_count->setText("Test Count is " + (QString::number(current_measure_count)));
+                            ui->test_count_ch1->setText("Test Count is " + (QString::number(current_measure_count)));
 
                             meter_comm_measure_count_check_request = false;
 
@@ -575,8 +730,8 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
                 else        //measure data download is complete
                 {
 
-                    ui->meter_info->clear();
-                    ui->meter_info->setText("Download Complete");
+                    ui->meter_info_ch1->clear();
+                    ui->meter_info_ch1->setText("Download Complete");
 
                     if(target_measure_count_rest < measure_count_read_from_meter)
                        target_measure_count_rest =0;
@@ -596,7 +751,7 @@ void MainWindow:: measure_count_check(MainWindow::SIGNAL_SENDER sig_orin)
 
                     Log() <<"current_measure_count" << current_measure_count;
 
-                    ui->test_count->setText("Test Count is " + (QString::number(current_measure_count)));
+                    ui->test_count_ch1->setText("Test Count is " + (QString::number(current_measure_count)));
 
                     if(!target_measure_count_rest)
                     {
@@ -741,24 +896,24 @@ void MainWindow::on_reboot_clicked()
 
 void MainWindow::on_device_open_clicked()
 {
-    ui->device_open->setEnabled(false);
+    ui->device_open_ch1->setEnabled(false);
 
     /*USB Interface select*/
-    ui->micro_usb->setEnabled(false);
-    ui->phone_jack->setEnabled(false);
+    ui->micro_usb_ch1->setEnabled(false);
+    ui->phone_jack_ch1->setEnabled(false);
 
     //Measurement Option
-    ui->test_start->setEnabled(false);
-    ui->test_stop->setEnabled(false);
+    ui->test_start_ch1->setEnabled(false);
+    ui->test_stop_ch1->setEnabled(false);
 
-    ui->meter_type->setEnabled(false);
-    ui->times->setEnabled(false);
+    ui->meter_type_ch1->setEnabled(false);
+    ui->times_ch1->setEnabled(false);
 
-    ui->sec_startdelay->setEnabled(false);
-    ui->sec_detoffdelay->setEnabled(false);
-    ui->sec_interval->setEnabled(false);
+    ui->sec_startdelay_ch1->setEnabled(false);
+    ui->sec_detoffdelay_ch1->setEnabled(false);
+    ui->sec_interval_ch1->setEnabled(false);
 
-    if(ui->phone_jack->isChecked())
+    if(ui->phone_jack_ch1->isChecked())
     {
         //Phone Jack type meter PC mode enable
         measure_relay->measure_port_control(measure_relay->relay_channel::CH_4, DDL_CH_ON);
@@ -779,18 +934,18 @@ void MainWindow::on_device_open_clicked()
 
 void MainWindow::on_device_close_clicked()
 {
-    ui->device_close->setEnabled(false);
-    ui->time_sync->setEnabled(false);
-    ui->mem_delete->setEnabled(false);
-    ui->download->setEnabled(false);
+    ui->device_close_ch1->setEnabled(false);
+    ui->time_sync_ch1->setEnabled(false);
+    ui->mem_delete_ch1->setEnabled(false);
+    ui->download_ch1->setEnabled(false);
 
     /*USB Interface select*/
-    ui->micro_usb->setEnabled(true);
-    ui->phone_jack->setEnabled(true);
+    ui->micro_usb_ch1->setEnabled(true);
+    ui->phone_jack_ch1->setEnabled(true);
 
     meter_comm_end();
 
-    if(ui->phone_jack->isChecked())
+    if(ui->phone_jack_ch1->isChecked())
     {
         //Phone Jack type meter PC mode enable
         measure_relay->measure_port_control(measure_relay->relay_channel::CH_4, DDL_CH_OFF);
@@ -802,17 +957,17 @@ void MainWindow::on_device_close_clicked()
 
     if(!measure_test_active)
     {
-        ui->device_open->setEnabled(true);
-        ui->test_start->setEnabled(true);
-        ui->meter_type->setEnabled(true);
-        ui->times->setEnabled(true);
-        ui->sec_startdelay->setEnabled(true);
-        ui->sec_detoffdelay->setEnabled(true);
-        ui->sec_interval->setEnabled(true);
+        ui->device_open_ch1->setEnabled(true);
+        ui->test_start_ch1->setEnabled(true);
+        ui->meter_type_ch1->setEnabled(true);
+        ui->times_ch1->setEnabled(true);
+        ui->sec_startdelay_ch1->setEnabled(true);
+        ui->sec_detoffdelay_ch1->setEnabled(true);
+        ui->sec_interval_ch1->setEnabled(true);
     }
     else
     {
-        ui->test_stop->setEnabled(true);
+        ui->test_stop_ch1->setEnabled(true);
     }
 }
 
@@ -1020,8 +1175,8 @@ void MainWindow::connectionError()
 
 void MainWindow::textMessage(QString text)
 {
-    ui->meter_info->clear();
-    ui->meter_info->append(text);
+    ui->meter_info_ch1->clear();
+    ui->meter_info_ch1->append(text);
 }
 
 // 다운로드 과정에서 protocol에서 보내오는 시그널과 연결되는 함수
@@ -1130,18 +1285,18 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
             {
                Log()<<"ReadSerialNumber";
 
-                ui->meter_info->clear();
+                ui->meter_info_ch1->clear();
 
                 QString temp_sn = Settings::Instance()->getSerialNumber();
 
                 if(temp_sn == "")
                 {
                     Log() << "temp_sn = " <<MSG_NoSN;
-                    ui->meter_info->append("Read Fail!!");
+                    ui->meter_info_ch1->append("Read Fail!!");
                 }
                 else
                 {
-                    ui->meter_info->append("Serial Number :" + temp_sn);
+                    ui->meter_info_ch1->append("Serial Number :" + temp_sn);
                 }             
 
                 if(checkProtocol() != true)
@@ -1155,7 +1310,7 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
             {
                Log()<<"ReadTimeInformation";
 
-                 ui->meter_info->append("meter time : " + Settings::Instance()->getMeterTime());
+                 ui->meter_info_ch1->append("meter time : " + Settings::Instance()->getMeterTime());
 
                  //Read number of stored measured results
                  if(checkProtocol() != true)
@@ -1174,11 +1329,11 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
 
                 Log()<<"number of measured data is"<< measure_count_read_from_meter;
 
-                ui->meter_info->append("number of measured data is " + (QString::number(measure_count_read_from_meter)));
-                ui->time_sync->setEnabled(true);
-                ui->mem_delete->setEnabled(true);
-                ui->download->setEnabled(true);
-                ui->device_close->setEnabled(true);
+                ui->meter_info_ch1->append("number of measured data is " + (QString::number(measure_count_read_from_meter)));
+                ui->time_sync_ch1->setEnabled(true);
+                ui->mem_delete_ch1->setEnabled(true);
+                ui->download_ch1->setEnabled(true);
+                ui->device_close_ch1->setEnabled(true);
 
                 if(measure_test_active)
                     emit measure_cnt_check(SIGNAL_FROM_FINISH_DO_COMMAND);
@@ -1189,8 +1344,8 @@ void MainWindow::finishDoCommands(bool bSuccess, Sp::ProtocolCommand lastcommand
 
                  GluecoseResultDataExpanded = true;         //data download done
 
-                 ui->meter_info->clear();
-                 ui->meter_info->setText("Download Complete");
+                 ui->meter_info_ch1->clear();
+                 ui->meter_info_ch1->setText("Download Complete");
 
                  emit measure_cnt_check(SIGNAL_FROM_FINISH_DO_COMMAND);
             }
@@ -1377,8 +1532,8 @@ void MainWindow::on_download_clicked()
         return;
 
     Log() << "on_download_clicked";
-    ui->meter_info->clear();
-    ui->meter_info->setText("Data Downloading");
+    ui->meter_info_ch1->clear();
+    ui->meter_info_ch1->setText("Data Downloading");
 
     protocol->startDownload();
 
@@ -1585,6 +1740,8 @@ void MainWindow::SaveCSVFile_default(QString filepath, QJsonArray datalist)
 
 void MainWindow::currentMeterIndexChanged(int index)
 {
+
+#if 0
     switch (index)
     {
         case GLUCOSE_BASIC:
@@ -1648,9 +1805,12 @@ void MainWindow::currentMeterIndexChanged(int index)
     }
 
     /*Set delay time on spin box*/
-    ui->sec_startdelay->setValue((int)(work_on_time/1000));
-    ui->sec_detoffdelay->setValue((int)(detect_off_time/1000));
-    ui->sec_interval->setValue((int)(test_interval_time/1000));
+    ui->sec_startdelay_ch1->setValue((int)(work_on_time/1000));
+    ui->sec_detoffdelay_ch1->setValue((int)(detect_off_time/1000));
+    ui->sec_interval_ch1->setValue((int)(test_interval_time/1000));
+
+#endif
+
 }
 
 string MainWindow::do_console_command_get_result (char* command)
@@ -1686,6 +1846,51 @@ void MainWindow::on_sec_interval_valueChanged(const QString &arg1)
 }
 
 void MainWindow::on_checkBox_stateChanged(int arg1)
+{
+
+}
+
+void MainWindow::on_sec_interval_3_valueChanged(const QString &arg1)
+{
+     spinbox_test = arg1.toInt(0,10);
+}
+#endif
+
+void MainWindow::on_test_start_ch2_clicked()
+{
+
+}
+void MainWindow::on_test_stop_ch2_clicked()
+{
+
+}
+
+void MainWindow::on_test_pause_ch2_clicked()
+{
+
+}
+
+void MainWindow::on_meter_type_ch2_activated(const QString &arg1)
+{
+
+}
+
+void MainWindow::on_sec_startdelay_ch2_valueChanged(const QString &arg1)
+{
+
+}
+
+void MainWindow::on_sec_detoffdelay_ch2_valueChanged(const QString &arg1)
+{
+
+}
+
+void MainWindow::on_sec_interval_ch2_valueChanged(const QString &arg1)
+{
+
+}
+
+void MainWindow::on_measure_count_ch2_valueChanged(const QString &arg1)
 {
 
 }

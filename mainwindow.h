@@ -3,10 +3,11 @@
 
 #include <QMainWindow>
 #include <QTimer>
+#include "measurement_param.h"
 #include "commondefinition.h"
-#include "serialcom/serialprotocol.h"
-#include "serialcom/serialcomm.h"
-#include "serialcom/serialprotocol3.h"
+//#include "serialcom/serialprotocol.h"
+//#include "serialcom/serialcomm.h"
+//#include "serialcom/serialprotocol3.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -17,25 +18,30 @@ class MainWindow;
 }
 QT_END_NAMESPACE
 
-//class relay_seed;
-class relay_seed_ddl;
-class QElapsedTimer;
-class SerialProtocolAbstract;
+//class relay_seed_ddl;
+//class QElapsedTimer;
+//class SerialProtocolAbstract;
 
+#if 0
 #define GLUCOSE_BASIC       0x0
 #define GLUCOSE_BLE         0x1
 #define GLUCOSE_VOICE       0x2
 #define GLUCOSE_VOICE_BLE   0x3
 #define KETONE_BASIC        0x4
 #define KETONE_BLE          0x5
+#endif
 
 #define RASPBERRY_PI3_B         0x0
 #define RASPBERRY_PI3_B_PLUS    0x1
 #define RASPBERRY_PI_UNKNOWN    0x2
 
+class measurement_param;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+
+#if 0
     SerialComm *serialComm;
     SerialProtocolAbstract *protocol;
     QString m_qcType;
@@ -52,10 +58,15 @@ class MainWindow : public QMainWindow
     bool meter_comm_user_request=0;
     bool meter_comm_measure_count_check_request=0;
 
+#endif
+
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    measurement_param m_test_param;
+
+#if 0
     quint32 detect_on_time = 0;
     quint32 work_on_time = 0; //3000;
     quint32 third_on_time =0; // 6000;
@@ -63,16 +74,17 @@ public:
     quint32 test_interval_time = 0; //15000;
     quint32 hub_port_delay_time = 2000;
     quint32 measure_count_read_from_meter=0;
+    quint32 spinbox_test=0;
 
     enum SIGNAL_SENDER{
         SIGNAL_FROM_MEASURE_DETECT_OFF = 0x0,
         SIGNAL_FROM_FINISH_DO_COMMAND,
         SIGNAL_FROM_COMM_ERROR
     };
+#endif
 
 private slots:
-    void on_test_start_clicked();
-    void on_test_stop_clicked();
+#if 0    
     void measurement();
     void detect_on();
     void work_on();
@@ -94,8 +106,32 @@ private slots:
     void comm_polling_event();          //periodical polling for device
     void comm_polling_event_start();    //periodical polling for device
     void comm_polling_event_stop();     //periodical polling for device
+#endif
 
 private Q_SLOTS:
+
+//  void currentMeterIndexChanged(int index);
+    void currentMeterIndexChanged(measurement_param::meter_type);
+    void on_test_start_ch1_clicked();
+    void on_test_pause_ch1_clicked();
+    void on_test_stop_ch1_clicked();
+    void on_meter_type_ch1_activated(const QString &arg1);
+
+    void on_measure_count_ch1_valueChanged(const QString &arg1);
+    void on_sec_startdelay_ch1_valueChanged(const QString &arg1);
+    void on_sec_detoffdelay_ch1_valueChanged(const QString &arg1);
+    void on_sec_interval_ch1_valueChanged(const QString &arg1);
+
+    void on_test_start_ch2_clicked();
+    void on_test_pause_ch2_clicked();
+    void on_test_stop_ch2_clicked();
+    void on_meter_type_ch2_activated(const QString &arg1);
+
+    void on_sec_startdelay_ch2_valueChanged(const QString &arg1);
+    void on_sec_detoffdelay_ch2_valueChanged(const QString &arg1);
+    void on_sec_interval_ch2_valueChanged(const QString &arg1);
+
+#if 0
     void portReady();
     void connectionError();
     void textMessage(QString text);
@@ -116,39 +152,52 @@ private Q_SLOTS:
     void SaveCSVFile(QJsonArray datalist);
     void SaveCSVFile_default(QString filepath, QJsonArray datalist);
     void on_reboot_clicked();
-    void currentMeterIndexChanged(int index);
-    void on_download_clicked();        
-    void on_test_pause_clicked();
+    void on_download_clicked();
 
     void on_sec_startdelay_valueChanged(const QString &arg1);
     void on_sec_detoffdelay_valueChanged(const QString &arg1);
     void on_sec_interval_valueChanged(const QString &arg1);
-
     void on_checkBox_stateChanged(int arg1);
+    void on_sec_interval_3_valueChanged(const QString &arg1);
+
+#endif
+
+    void on_measure_count_ch2_valueChanged(const QString &arg1);
 
 signals:
+
+#if 0
     void measure_start();
     void measure_cnt_check(SIGNAL_SENDER);
     void measure_end();
     void comm_check();
     void activated(const QString &text);
+#endif
 
 Q_SIGNALS:
-    void currentIndexChanged(int index);
+//    void currentIndexChanged(int index);
 
 private:
+
     Ui::MainWindow *ui = nullptr;
+
+    void measurement_ui_setup();
+    void ui_set_measurement_start();
+    void ui_set_measurement_stop();
+    void ui_set_measurement_pause();
+    void system_info_setup();
+    string do_console_command_get_result (char* command);
+
+    QTimer *timer_sec;
+
+#if 0
+
 //    QSignalMapper *idMapper;
-    QTimer *camera_timer, *detect_on_timer, *work_on_timer, *third_on_timer, *detect_off_timer, *port_reset_timer, *test_interval_timer, *timer_sec, *hub_port_delay_timer, *comm_polling_timer;
+    QTimer *camera_timer, *detect_on_timer, *work_on_timer, *third_on_timer, *detect_off_timer, *port_reset_timer, *test_interval_timer, *hub_port_delay_timer, *comm_polling_timer;
     QImage qt_image;
     relay_seed_ddl *measure_relay;
 
     void measurement_timer_setup();
-    void measurement_ui_setup();
-    void system_info_setup();
-    void ui_set_measurement_start();
-    void ui_set_measurement_stop();
-    void ui_set_measurement_pause();
     void ui_set_comm_start();
     void ui_set_comm_stop();
     void makeProgressView();
@@ -170,11 +219,11 @@ private:
     bool isOtgModeVisible(); //CareSens N Premier BLE – V89.110.x.x, CareSens N(N-ISO) – V39.200.x.x, CareSens N(N-ISO) Notch – V129.100.x.x
 
     QString board_info = NULL, usb_port_info=NULL;
-    string do_console_command_get_result (char* command);
 
-    int m_logcount;
+    int m_logcount;    
+#endif
+    QString board_info = NULL;
     quint8 board_version = 0x0;
-
 };
 
 #endif // MAINWINDOW_H
