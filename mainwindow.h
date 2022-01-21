@@ -22,20 +22,12 @@ QT_END_NAMESPACE
 //class QElapsedTimer;
 //class SerialProtocolAbstract;
 
-#if 0
-#define GLUCOSE_BASIC       0x0
-#define GLUCOSE_BLE         0x1
-#define GLUCOSE_VOICE       0x2
-#define GLUCOSE_VOICE_BLE   0x3
-#define KETONE_BASIC        0x4
-#define KETONE_BLE          0x5
-#endif
+class measurement_param;
+class control;
 
 #define RASPBERRY_PI3_B         0x0
 #define RASPBERRY_PI3_B_PLUS    0x1
 #define RASPBERRY_PI_UNKNOWN    0x2
-
-class measurement_param;
 
 class MainWindow : public QMainWindow
 {
@@ -62,9 +54,9 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    ~MainWindow();    
 
-    measurement_param m_test_param;
+    enum meter_channel {CH_1=0x1, CH_2=0x2};
 
 #if 0
     quint32 detect_on_time = 0;
@@ -102,16 +94,17 @@ private slots:
     void meter_comm_start();
     void meter_comm_end();
     void on_times_valueChanged(const QString &arg1);
-    void UpdateTime();
+
     void comm_polling_event();          //periodical polling for device
     void comm_polling_event_start();    //periodical polling for device
     void comm_polling_event_stop();     //periodical polling for device
 #endif
 
+    void UpdateTime();
+
 private Q_SLOTS:
 
-//  void currentMeterIndexChanged(int index);
-    void currentMeterIndexChanged(measurement_param::meter_type);
+    void currentMeterIndexChanged(int index);
     void on_test_start_ch1_clicked();
     void on_test_pause_ch1_clicked();
     void on_test_stop_ch1_clicked();
@@ -164,6 +157,8 @@ private Q_SLOTS:
 
     void on_measure_count_ch2_valueChanged(const QString &arg1);
 
+    void on_download_ch2_clicked();
+
 signals:
 
 #if 0
@@ -175,8 +170,8 @@ signals:
 #endif
 
 Q_SIGNALS:
-//    void currentIndexChanged(int index);
-
+        void currentIndexChanged(int index);
+//      void currentIndexChanged(int index, m_channel);
 private:
 
     Ui::MainWindow *ui = nullptr;
@@ -222,8 +217,11 @@ private:
 
     int m_logcount;    
 #endif
+
     QString board_info = NULL;
     quint8 board_version = 0x0;
+    measurement_param m_test_param_tmp{}, m_test_param_ch1{}, m_test_param_ch2{};
+    control *m_control;
 };
 
 #endif // MAINWINDOW_H

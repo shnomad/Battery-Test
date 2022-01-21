@@ -2,6 +2,7 @@
 #define CONTROL_H
 
 #include <QObject>
+#include <QThread>
 #include "measurement.h"
 
 class measurement;
@@ -17,11 +18,9 @@ signals:
 
 public slots:
 
-
 private:
-    measurement *m_ch[2];
-    QThread *m_pThread[5];
-
+     measurement *m_ch[2];
+     QThread *m_pThread[2];
 };
 
 #endif // CONTROL_H

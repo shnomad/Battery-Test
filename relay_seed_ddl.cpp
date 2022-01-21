@@ -5,14 +5,19 @@
 #include <sys/ioctl.h>
 #include <linux/i2c-dev.h>
 
-relay_seed_ddl::relay_seed_ddl()
+relay_seed_ddl::relay_seed_ddl(quint8 m_ch, QObject *parent) : QObject(parent)
 {
     if((file_i2c = open(filename, O_RDWR)) < 0)
     {
         exit(0);
     }
 
-    if (ioctl(file_i2c, I2C_SLAVE, DEVICE_ID_I) < 0)
+    if(m_ch == 0x1)
+        device_id = 0x10;
+    else
+        device_id = 0x13;
+
+    if (ioctl(file_i2c, I2C_SLAVE, device_id) < 0)
     {
         exit(0);
     }

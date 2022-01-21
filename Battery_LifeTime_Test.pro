@@ -40,13 +40,13 @@ HEADERS += \
         control.h \
         mainwindow.h \
         measurement.h \
-        measurement_param.h \
         relay_seed_ddl.h \
         commondefinition.h \
         settings.h \
         setting_flagname_definition.h \
         builddatetime.h \
-        loggingcategories.h
+        loggingcategories.h \
+        measurement_param.h
 #        serialcom/glucosedownloadprogress.h \
 #        serialcom/serialporttester.h \
 #        serialcom/serialcomm.h \
