@@ -28,7 +28,7 @@ relay_seed_ddl::~relay_seed_ddl()
     close(file_i2c);
 }
 
-void relay_seed_ddl::measure_port_reset()
+void relay_seed_ddl::port_reset()
 {
     length = 2;			//<<< Number of bytes to write
 
@@ -41,13 +41,13 @@ void relay_seed_ddl::measure_port_reset()
     }
 }
 
-void relay_seed_ddl::measure_port_open()
+void relay_seed_ddl::port_open()
 {
 //   for(quint8 Channel=0x5; Channel>0x0; Channel--)
 //       wiringPiI2CWriteReg8(fd_seed_ddl, Channel, 0xff);
 }
 
-void relay_seed_ddl::measure_port_control(relay_seed_ddl::relay_channel Channel, quint8 OnOff)
+void relay_seed_ddl::port_control(relay_seed_ddl::relay_channel Channel, quint8 OnOff)
 {
     buffer[0] = Channel;
     buffer[1] = OnOff;

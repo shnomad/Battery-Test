@@ -22,7 +22,7 @@ public:
 
     public slots:
 
-    void run();
+    void setup();    
     void start();
     void stop();
     void pause();
@@ -30,11 +30,14 @@ public:
     void work_on();
     void third_on();
     void detect_off();
+    void test_count_check();
 
     private:
 
     QTimer *detect_on_timer, *work_on_timer, *third_on_timer, *detect_off_timer, *test_interval_timer;
     relay_seed_ddl *measure_relay;
+    measurement_param m_test_param;
+    quint8 Channel=0;
 };
 
 #endif // MEASUREMENT_H

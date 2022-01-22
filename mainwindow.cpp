@@ -19,7 +19,6 @@
 #include <QTime>
 #include <QApplication>
 #include <QProcess>
-//#include <QRegExp>
 #include <QtNetwork/QNetworkInterface>
 #include "loggingcategories.h"
 #include "control.h"
@@ -28,22 +27,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
       ui->setupUi(this);
 
-      timer_sec = new QTimer(this);                   //display current time      
+      timer_sec = new QTimer(this);                   //display system time
 
-//    measure_port_init();
+      ui_init_measurement();
 
-//    measurement_timer_setup();
+      ui_system_info_setup();
 
-      measurement_ui_setup();
+      ui_create_measurement();
 
-      system_info_setup();
-
-//    hub_port_close();
-
-      m_control = new control;
+//    m_control = new control;
 }
 
-void MainWindow::measurement_ui_setup()
+void MainWindow::ui_init_measurement()
 {
 
     /*
@@ -187,6 +182,25 @@ void MainWindow::measurement_ui_setup()
     ui->download_ch2->setEnabled(false);
 }
 
+void MainWindow::ui_create_measurement()
+{
+    m_ch[0] = new measurement(0x1);
+    m_ch[1] = new measurement(0x2);
+
+    m_pThread[0] = new QThread(this);
+    m_pThread[1] = new QThread(this);
+
+    m_ch[0]->moveToThread(m_pThread[0]);
+    m_ch[1]->moveToThread(m_pThread[1]);
+
+    connect(this, SIGNAL(measure_start_ch1()), m_ch[0], SLOT(start()));
+    connect(this, SIGNAL(measure_start_ch2()), m_ch[1], SLOT(start()));
+
+    m_pThread[0]->start();
+    m_pThread[1]->start();
+
+}
+
 void MainWindow::ui_set_measurement_start()
 {
     ui->test_start_ch1->setEnabled(false);
@@ -245,6 +259,8 @@ void MainWindow::ui_set_measurement_pause()
 void MainWindow::on_test_start_ch1_clicked()
 {
     //Glucose : detect -> (3.5 sec) -> work/third on -> (7 sec) -> detect off -> (4 sec)
+
+    emit measure_start_ch1();
 
 #if 0
     detect_on_timer->setInterval(detect_on_time);
@@ -518,7 +534,7 @@ void MainWindow::currentMeterIndexChanged(int index)
     memset(&m_test_param_tmp, 0x0, sizeof(m_test_param_tmp));
 }
 
-void MainWindow::system_info_setup()
+void MainWindow::ui_system_info_setup()
 {
     /*Show Build information*/
     ui->build_date->setText("build date : " + build_date);
@@ -581,6 +597,8 @@ void MainWindow::UpdateTime()
 
 MainWindow::~MainWindow()
 {
+    delete m_ch[2];
+    delete m_pThread[2];
     delete ui;
 }
 
@@ -1978,6 +1996,7 @@ void MainWindow::on_sec_interval_3_valueChanged(const QString &arg1)
 
 void MainWindow::on_test_start_ch2_clicked()
 {
+    emit measure_start_ch2();
 
 }
 void MainWindow::on_test_stop_ch2_clicked()

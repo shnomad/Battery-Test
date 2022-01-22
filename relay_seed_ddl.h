@@ -27,9 +27,9 @@ public:
     };
 
 public slots:
-    void measure_port_reset();
-    void measure_port_open();
-    void measure_port_control(relay_channel, quint8 OnOff);
+    void port_reset();
+    void port_open();
+    void port_control(relay_channel, quint8 OnOff);
 
 private:
 

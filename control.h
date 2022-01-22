@@ -5,7 +5,7 @@
 #include <QThread>
 #include "measurement.h"
 
-class measurement;
+//class measurement;
 
 class control : public QObject
 {
@@ -19,8 +19,8 @@ signals:
 public slots:
 
 private:
-     measurement *m_ch[2];
-     QThread *m_pThread[2];
+//     measurement *m_ch[2];
+//     QThread *m_pThread[2];
 };
 
 #endif // CONTROL_H
