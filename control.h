@@ -14,13 +14,12 @@ public:
     explicit control(QObject *parent = nullptr);
     ~control();
 
+    measurement *m_ch[2];
+    QThread *m_pThread[2];
+
 signals:
 
 public slots:
-
-private:
-//     measurement *m_ch[2];
-//     QThread *m_pThread[2];
 };
 
 #endif // CONTROL_H

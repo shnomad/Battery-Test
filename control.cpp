@@ -3,7 +3,7 @@
 
 control::control(QObject *parent) : QObject(parent)
 {
-#if 0
+#if 1
     m_ch[0] = new measurement(0x1);
     m_ch[1] = new measurement(0x2);
 
@@ -18,6 +18,7 @@ control::control(QObject *parent) : QObject(parent)
 
     m_pThread[0]->start();
     m_pThread[1]->start();
+
 #endif
 
 }

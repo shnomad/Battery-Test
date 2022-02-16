@@ -7,9 +7,7 @@
 #include "measurement.h"
 #include "measurement_param.h"
 #include "commondefinition.h"
-//#include "serialcom/serialprotocol.h"
-//#include "serialcom/serialcomm.h"
-//#include "serialcom/serialprotocol3.h"
+#include "control.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -22,6 +20,7 @@ QT_END_NAMESPACE
 
 class measurement_param;
 class measurement;
+class control;
 
 #define RASPBERRY_PI3_B         0x0
 #define RASPBERRY_PI3_B_PLUS    0x1
@@ -110,9 +109,12 @@ private:
     quint8 board_version = 0x0;
     measurement_param m_test_param_tmp{}, m_test_param_ch1{}, m_test_param_ch2{};
 
+   /*measurement thread control*/
+    control *m_control;
+
    /*measurement thread */
-    measurement *m_ch[2];
-    QThread *m_pThread[2];
+//  measurement *m_ch[2];
+//  QThread *m_pThread[2];
 };
 
 #endif // MAINWINDOW_H

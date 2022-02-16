@@ -181,35 +181,26 @@ void MainWindow::ui_init_measurement()
 
 void MainWindow::ui_create_measurement()
 {
-    m_ch[0] = new measurement(0x1);
-    m_ch[1] = new measurement(0x2);
 
-    m_pThread[0] = new QThread(this);
-    m_pThread[1] = new QThread(this);
+    m_control = new control;
 
-    m_ch[0]->moveToThread(m_pThread[0]);
-    m_ch[1]->moveToThread(m_pThread[1]);
+    connect(this, SIGNAL(measure_setup_ch1(measurement_param)), m_control->m_ch[0], SLOT(setup(measurement_param)));
+    connect(this, SIGNAL(measure_setup_ch2(measurement_param)), m_control->m_ch[1], SLOT(setup(measurement_param)));
 
-    connect(this, SIGNAL(measure_setup_ch1(measurement_param)), m_ch[0], SLOT(setup(measurement_param)));
-    connect(this, SIGNAL(measure_setup_ch2(measurement_param)), m_ch[1], SLOT(setup(measurement_param)));
+    connect(this, SIGNAL(measure_start_ch1()), m_control->m_ch[0], SLOT(start()));
+    connect(this, SIGNAL(measure_start_ch2()), m_control->m_ch[1], SLOT(start()));
 
-    connect(this, SIGNAL(measure_start_ch1()), m_ch[0], SLOT(start()));
-    connect(this, SIGNAL(measure_start_ch2()), m_ch[1], SLOT(start()));
+    connect(this, SIGNAL(measure_stop_ch1()), m_control->m_ch[0], SLOT(stop()));
+    connect(this, SIGNAL(measure_stop_ch2()), m_control->m_ch[1], SLOT(stop()));
 
-    connect(this, SIGNAL(measure_stop_ch1()), m_ch[0], SLOT(stop()));
-    connect(this, SIGNAL(measure_stop_ch2()), m_ch[1], SLOT(stop()));
+    connect(this, SIGNAL(measure_pause_ch1()), m_control->m_ch[0], SLOT(pause()));
+    connect(this, SIGNAL(measure_pause_ch2()), m_control->m_ch[1], SLOT(pause()));
 
-    connect(this, SIGNAL(measure_pause_ch1()), m_ch[0], SLOT(pause()));
-    connect(this, SIGNAL(measure_pause_ch2()), m_ch[1], SLOT(pause()));
+    connect(m_control->m_ch[0], SIGNAL(update_test_count(int)), this, SLOT(ui_test_count_ch1(int)));
+    connect(m_control->m_ch[1], SIGNAL(update_test_count(int)), this, SLOT(ui_test_count_ch2(int)));
 
-    connect(m_ch[0], SIGNAL(update_test_count(int)), this, SLOT(ui_test_count_ch1(int)));
-    connect(m_ch[1], SIGNAL(update_test_count(int)), this, SLOT(ui_test_count_ch2(int)));
-
-    connect(m_ch[0], SIGNAL(update_action(QString)), this, SLOT(ui_action_status_ch1(QString)));
-    connect(m_ch[1], SIGNAL(update_action(QString)), this, SLOT(ui_action_status_ch2(QString)));
-
-    m_pThread[0]->start();
-    m_pThread[1]->start();
+    connect(m_control->m_ch[0], SIGNAL(update_action(QString)), this, SLOT(ui_action_status_ch1(QString)));
+    connect(m_control->m_ch[1], SIGNAL(update_action(QString)), this, SLOT(ui_action_status_ch2(QString)));
 }
 
 void MainWindow::ui_set_measurement_start_ch1()
@@ -690,9 +681,8 @@ void MainWindow::UpdateTime()
 
 MainWindow::~MainWindow()
 {
-    delete m_ch[2];
-    delete m_pThread[2];
-    delete ui;
+      delete m_control;
+      delete ui;
 }
 
 void MainWindow::on_reboot_clicked()

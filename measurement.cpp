@@ -164,11 +164,9 @@ void measurement::test_count_check()
      {
         Log() <<"Target test count is 1000 or less";
 
-       //Target count is 1000                             //target count is under 1000
+       //Target count is 1000                          //target count is under 1000
       if((current_test_count == meter_mem_capacity) || (current_test_count == target_test_count_rest))
       {
-//        current_test_count=0;
-
           emit update_action("stop");
 
           emit stop();
