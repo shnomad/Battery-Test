@@ -19,10 +19,12 @@ public:
         ~measurement();
 
     signals:
+    void update_action(QString);
+    void update_test_count(int);
 
     public slots:
 
-    void setup();    
+    void setup(measurement_param);
     void start();
     void stop();
     void pause();
@@ -34,10 +36,11 @@ public:
 
     private:
 
-    QTimer *detect_on_timer, *work_on_timer, *third_on_timer, *detect_off_timer, *test_interval_timer;
+    QTimer *detect_on_timer, *work_on_timer, *third_on_timer, *detect_off_timer, *count_check_timer, *test_interval_timer;
     relay_seed_ddl *measure_relay;
-    measurement_param m_test_param;
+    measurement_param m_test_param{};
     quint8 Channel=0;
+    quint32 target_test_count=0, current_test_count=0, target_test_count_rest=0, meter_mem_capacity=0;
 };
 
 #endif // MEASUREMENT_H

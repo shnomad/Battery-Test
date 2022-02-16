@@ -561,7 +561,7 @@
         <rect>
          <x>13</x>
          <y>27</y>
-         <width>250</width>
+         <width>320</width>
          <height>16</height>
         </rect>
        </property>
@@ -1365,7 +1365,7 @@
         <rect>
          <x>13</x>
          <y>27</y>
-         <width>250</width>
+         <width>320</width>
          <height>16</height>
         </rect>
        </property>
@@ -1691,7 +1691,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Power Off</string>
+     <string>Quit</string>
     </property>
    </widget>
    <widget class="QPushButton" name="reboot">
