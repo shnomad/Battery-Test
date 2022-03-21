@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1024</width>
-    <height>600</height>
+    <width>800</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="font">
@@ -19,90 +19,22 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QGroupBox" name="sys_info">
-    <property name="geometry">
-     <rect>
-      <x>114</x>
-      <y>476</y>
-      <width>901</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>6</pointsize>
-     </font>
-    </property>
-    <property name="title">
-     <string>System Information</string>
-    </property>
-    <widget class="QLabel" name="system_time">
-     <property name="geometry">
-      <rect>
-       <x>6</x>
-       <y>24</y>
-       <width>279</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>6</pointsize>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>* Time :</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="ip_address">
-     <property name="geometry">
-      <rect>
-       <x>339</x>
-       <y>26</y>
-       <width>231</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>6</pointsize>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>* IP Address :</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="build_date">
-     <property name="geometry">
-      <rect>
-       <x>608</x>
-       <y>22</y>
-       <width>286</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>* Build Info.</string>
-     </property>
-    </widget>
-   </widget>
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
       <x>5</x>
       <y>0</y>
-      <width>1012</width>
-      <height>471</height>
+      <width>781</width>
+      <height>420</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>6</pointsize>
+      <pointsize>9</pointsize>
      </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">selection-background-color: rgb(255, 255, 127);</string>
     </property>
     <property name="currentIndex">
      <number>0</number>
@@ -122,7 +54,7 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>5</pointsize>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <bold>false</bold>
        </font>
@@ -134,8 +66,8 @@
      <widget class="QGroupBox" name="Test_operation">
       <property name="geometry">
        <rect>
-        <x>9</x>
-        <y>11</y>
+        <x>7</x>
+        <y>7</y>
         <width>191</width>
         <height>91</height>
        </rect>
@@ -143,7 +75,7 @@
       <property name="font">
        <font>
         <family>DejaVu Sans</family>
-        <pointsize>6</pointsize>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <bold>false</bold>
        </font>
@@ -169,14 +101,20 @@
         </font>
        </property>
        <property name="text">
-        <string/>
+        <string notr="true"/>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
        </property>
       </widget>
       <widget class="QPushButton" name="test_stop_ch1">
        <property name="geometry">
         <rect>
-         <x>130</x>
-         <y>33</y>
+         <x>129</x>
+         <y>32</y>
          <width>50</width>
          <height>50</height>
         </rect>
@@ -214,6 +152,9 @@
         <string/>
        </property>
       </widget>
+      <zorder>test_start_ch1</zorder>
+      <zorder>test_pause_ch1</zorder>
+      <zorder>test_stop_ch1</zorder>
      </widget>
      <widget class="QGroupBox" name="test_option">
       <property name="geometry">
@@ -226,7 +167,7 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>7</pointsize>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <bold>false</bold>
        </font>
@@ -240,12 +181,13 @@
          <x>140</x>
          <y>24</y>
          <width>190</width>
-         <height>26</height>
+         <height>30</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <pointsize>6</pointsize>
+         <family>DejaVu Sans</family>
+         <pointsize>11</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -255,14 +197,14 @@
        <property name="geometry">
         <rect>
          <x>140</x>
-         <y>137</y>
+         <y>139</y>
          <width>100</width>
          <height>35</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <pointsize>6</pointsize>
+         <pointsize>11</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -272,14 +214,14 @@
        <property name="geometry">
         <rect>
          <x>140</x>
-         <y>55</y>
+         <y>57</y>
          <width>100</width>
          <height>35</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <pointsize>6</pointsize>
+         <pointsize>11</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -289,14 +231,14 @@
        <property name="geometry">
         <rect>
          <x>140</x>
-         <y>178</y>
+         <y>180</y>
          <width>100</width>
          <height>35</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <pointsize>6</pointsize>
+         <pointsize>11</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -306,249 +248,224 @@
        <property name="geometry">
         <rect>
          <x>140</x>
-         <y>96</y>
+         <y>98</y>
          <width>100</width>
          <height>35</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <pointsize>6</pointsize>
+         <pointsize>11</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
       </widget>
-      <widget class="QLabel" name="label_2">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
-         <x>255</x>
-         <y>185</y>
-         <width>30</width>
-         <height>16</height>
+         <x>243</x>
+         <y>60</y>
+         <width>47</width>
+         <height>151</height>
         </rect>
        </property>
-       <property name="font">
-        <font>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Sec.</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>12</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>times</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>12</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Sec.</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_4">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>12</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Sec.</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>12</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Sec.</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
-      <widget class="QLabel" name="label_4">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
-         <x>256</x>
-         <y>145</y>
-         <width>30</width>
-         <height>16</height>
+         <x>9</x>
+         <y>24</y>
+         <width>95</width>
+         <height>191</height>
         </rect>
        </property>
-       <property name="font">
-        <font>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Sec.</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label">
-       <property name="geometry">
-        <rect>
-         <x>253</x>
-         <y>68</y>
-         <width>50</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>times</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_3">
-       <property name="geometry">
-        <rect>
-         <x>256</x>
-         <y>106</y>
-         <width>30</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Sec.</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="capacity_2">
-       <property name="geometry">
-        <rect>
-         <x>12</x>
-         <y>31</y>
-         <width>90</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-         <kerning>false</kerning>
-        </font>
-       </property>
-       <property name="text">
-        <string>Meter Type</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="capacity_3">
-       <property name="geometry">
-        <rect>
-         <x>11</x>
-         <y>105</y>
-         <width>90</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-         <kerning>false</kerning>
-        </font>
-       </property>
-       <property name="text">
-        <string>Start Delay</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="capacity">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>65</y>
-         <width>110</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-         <kerning>false</kerning>
-        </font>
-       </property>
-       <property name="text">
-        <string>Target count</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="interval">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>185</y>
-         <width>110</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-         <kerning>false</kerning>
-        </font>
-       </property>
-       <property name="text">
-        <string>Test Interval</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="capacity_4">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>145</y>
-         <width>120</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-         <kerning>false</kerning>
-        </font>
-       </property>
-       <property name="text">
-        <string>Det. Off Delay</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QLabel" name="capacity_2">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>10</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+            <kerning>false</kerning>
+           </font>
+          </property>
+          <property name="text">
+           <string>Meter Type</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="capacity">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>10</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+            <kerning>false</kerning>
+           </font>
+          </property>
+          <property name="text">
+           <string>Target count</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="capacity_3">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>10</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+            <kerning>false</kerning>
+           </font>
+          </property>
+          <property name="text">
+           <string>Start Delay</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="capacity_4">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>10</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+            <kerning>false</kerning>
+           </font>
+          </property>
+          <property name="text">
+           <string>Det. Off Delay</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="interval">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>10</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+            <kerning>false</kerning>
+           </font>
+          </property>
+          <property name="text">
+           <string>Test Interval</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
      <widget class="QGroupBox" name="Test_status">
       <property name="geometry">
        <rect>
-        <x>8</x>
-        <y>337</y>
-        <width>341</width>
-        <height>101</height>
+        <x>361</x>
+        <y>238</y>
+        <width>301</width>
+        <height>91</height>
        </rect>
       </property>
       <property name="font">
        <font>
         <family>DejaVu Sans</family>
-        <pointsize>6</pointsize>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <bold>false</bold>
        </font>
@@ -556,82 +473,76 @@
       <property name="title">
        <string>Meter Test Status</string>
       </property>
-      <widget class="QLabel" name="test_start_time_ch1">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
-         <x>13</x>
-         <y>27</y>
-         <width>320</width>
-         <height>16</height>
+         <x>11</x>
+         <y>25</y>
+         <width>281</width>
+         <height>59</height>
         </rect>
        </property>
-       <property name="font">
-        <font>
-         <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Start :</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="test_step_ch1">
-       <property name="geometry">
-        <rect>
-         <x>13</x>
-         <y>51</y>
-         <width>250</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Action :</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="test_count_ch1">
-       <property name="geometry">
-        <rect>
-         <x>13</x>
-         <y>75</y>
-         <width>250</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Count :</string>
-       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="QLabel" name="test_start_time_ch1">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>9</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Start :</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="test_step_ch1">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>9</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Action :</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="test_count_ch1">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>9</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Count :</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
      <widget class="QGroupBox" name="Test_comm">
       <property name="geometry">
        <rect>
         <x>360</x>
-        <y>10</y>
+        <y>5</y>
         <width>301</width>
         <height>151</height>
        </rect>
       </property>
       <property name="font">
        <font>
-        <pointsize>6</pointsize>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <bold>false</bold>
        </font>
@@ -651,7 +562,7 @@
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
+         <pointsize>8</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -672,7 +583,7 @@
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
+         <pointsize>8</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -693,7 +604,7 @@
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
+         <pointsize>8</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -714,7 +625,7 @@
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <pointsize>4</pointsize>
+         <pointsize>9</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -734,7 +645,7 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>6</pointsize>
+         <pointsize>8</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -757,7 +668,7 @@
          <widget class="QRadioButton" name="micro_usb_ch1">
           <property name="font">
            <font>
-            <pointsize>6</pointsize>
+            <pointsize>8</pointsize>
             <weight>50</weight>
             <bold>false</bold>
            </font>
@@ -771,7 +682,7 @@
          <widget class="QRadioButton" name="phone_jack_ch1">
           <property name="font">
            <font>
-            <pointsize>6</pointsize>
+            <pointsize>8</pointsize>
             <weight>50</weight>
             <bold>false</bold>
            </font>
@@ -788,15 +699,15 @@
       <property name="geometry">
        <rect>
         <x>361</x>
-        <y>177</y>
+        <y>160</y>
         <width>300</width>
-        <height>261</height>
+        <height>61</height>
        </rect>
       </property>
       <property name="font">
        <font>
         <family>DejaVu Sans</family>
-        <pointsize>6</pointsize>
+        <pointsize>9</pointsize>
        </font>
       </property>
       <property name="title">
@@ -806,50 +717,49 @@
        <property name="geometry">
         <rect>
          <x>9</x>
-         <y>33</y>
+         <y>24</y>
          <width>281</width>
-         <height>221</height>
+         <height>31</height>
         </rect>
        </property>
       </widget>
      </widget>
-     <widget class="QLabel" name="preview_ch1">
+     <widget class="QPushButton" name="reboot">
       <property name="geometry">
        <rect>
-        <x>677</x>
-        <y>40</y>
-        <width>320</width>
-        <height>360</height>
+        <x>682</x>
+        <y>16</y>
+        <width>80</width>
+        <height>20</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
       </property>
       <property name="text">
-       <string>Preview</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
+       <string>Reboot</string>
       </property>
      </widget>
-     <widget class="QGroupBox" name="Camera_view">
+     <widget class="QPushButton" name="quit">
       <property name="geometry">
        <rect>
-        <x>671</x>
-        <y>10</y>
-        <width>330</width>
-        <height>425</height>
+        <x>682</x>
+        <y>46</y>
+        <width>80</width>
+        <height>20</height>
        </rect>
       </property>
-      <property name="title">
-       <string>Camera View</string>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Quit</string>
       </property>
      </widget>
-     <zorder>Camera_view</zorder>
-     <zorder>audo_download_ch1</zorder>
-     <zorder>Test_operation</zorder>
-     <zorder>test_option</zorder>
-     <zorder>Test_status</zorder>
-     <zorder>Test_comm</zorder>
-     <zorder>Test_info</zorder>
-     <zorder>preview_ch1</zorder>
     </widget>
     <widget class="QWidget" name="tab2">
      <attribute name="title">
@@ -859,14 +769,14 @@
       <property name="geometry">
        <rect>
         <x>360</x>
-        <y>10</y>
+        <y>6</y>
         <width>301</width>
         <height>151</height>
        </rect>
       </property>
       <property name="font">
        <font>
-        <pointsize>6</pointsize>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <bold>false</bold>
        </font>
@@ -886,7 +796,7 @@
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
+         <pointsize>8</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -907,7 +817,7 @@
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
+         <pointsize>8</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -928,7 +838,7 @@
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
+         <pointsize>8</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -949,7 +859,7 @@
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <pointsize>4</pointsize>
+         <pointsize>9</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -969,7 +879,7 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>6</pointsize>
+         <pointsize>8</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -992,7 +902,7 @@
          <widget class="QRadioButton" name="micro_usb_ch2">
           <property name="font">
            <font>
-            <pointsize>6</pointsize>
+            <pointsize>8</pointsize>
             <weight>50</weight>
             <bold>false</bold>
            </font>
@@ -1006,7 +916,7 @@
          <widget class="QRadioButton" name="phone_jack_ch2">
           <property name="font">
            <font>
-            <pointsize>6</pointsize>
+            <pointsize>8</pointsize>
             <weight>50</weight>
             <bold>false</bold>
            </font>
@@ -1030,7 +940,7 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>7</pointsize>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <bold>false</bold>
        </font>
@@ -1044,121 +954,29 @@
          <x>140</x>
          <y>24</y>
          <width>190</width>
-         <height>26</height>
+         <height>30</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <pointsize>6</pointsize>
+         <pointsize>11</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_8">
-       <property name="geometry">
-        <rect>
-         <x>246</x>
-         <y>145</y>
-         <width>50</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Sec.</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_7">
-       <property name="geometry">
-        <rect>
-         <x>246</x>
-         <y>106</y>
-         <width>50</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Sec.</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_6">
-       <property name="geometry">
-        <rect>
-         <x>253</x>
-         <y>68</y>
-         <width>50</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>times</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_9">
-       <property name="geometry">
-        <rect>
-         <x>245</x>
-         <y>185</y>
-         <width>50</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Sec.</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
        </property>
       </widget>
       <widget class="QSpinBox" name="sec_interval_ch2">
        <property name="geometry">
         <rect>
          <x>140</x>
-         <y>178</y>
+         <y>180</y>
          <width>100</width>
          <height>35</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <pointsize>6</pointsize>
+         <pointsize>11</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -1168,14 +986,14 @@
        <property name="geometry">
         <rect>
          <x>140</x>
-         <y>96</y>
+         <y>98</y>
          <width>100</width>
          <height>35</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <pointsize>6</pointsize>
+         <pointsize>11</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -1185,174 +1003,237 @@
        <property name="geometry">
         <rect>
          <x>140</x>
-         <y>137</y>
+         <y>139</y>
          <width>100</width>
          <height>35</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <pointsize>6</pointsize>
+         <pointsize>11</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
-       </property>
-      </widget>
-      <widget class="QLabel" name="capacity_6">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>65</y>
-         <width>110</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-         <kerning>false</kerning>
-        </font>
-       </property>
-       <property name="text">
-        <string>Target count</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="capacity_8">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>145</y>
-         <width>110</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-         <kerning>false</kerning>
-        </font>
-       </property>
-       <property name="text">
-        <string>Det. Off Delay</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="capacity_5">
-       <property name="geometry">
-        <rect>
-         <x>12</x>
-         <y>31</y>
-         <width>110</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-         <kerning>false</kerning>
-        </font>
-       </property>
-       <property name="text">
-        <string>Meter Type</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="capacity_7">
-       <property name="geometry">
-        <rect>
-         <x>11</x>
-         <y>105</y>
-         <width>110</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-         <kerning>false</kerning>
-        </font>
-       </property>
-       <property name="text">
-        <string>Start Delay</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="interval_2">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>185</y>
-         <width>110</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-         <kerning>false</kerning>
-        </font>
-       </property>
-       <property name="text">
-        <string>Test Interval</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QSpinBox" name="measure_count_ch2">
        <property name="geometry">
         <rect>
          <x>140</x>
-         <y>55</y>
+         <y>57</y>
          <width>100</width>
          <height>35</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <pointsize>6</pointsize>
+         <pointsize>11</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
       </widget>
+      <widget class="QWidget" name="layoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>243</x>
+         <y>60</y>
+         <width>47</width>
+         <height>151</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLabel" name="label_6">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>times</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_7">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Sec.</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_8">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Sec.</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_9">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Sec.</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="layoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>9</x>
+         <y>23</y>
+         <width>95</width>
+         <height>191</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QLabel" name="capacity_5">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>10</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+            <kerning>false</kerning>
+           </font>
+          </property>
+          <property name="text">
+           <string>Meter Type</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="capacity_6">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>10</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+            <kerning>false</kerning>
+           </font>
+          </property>
+          <property name="text">
+           <string>Target count</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="capacity_7">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>10</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+            <kerning>false</kerning>
+           </font>
+          </property>
+          <property name="text">
+           <string>Start Delay</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="capacity_8">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>10</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+            <kerning>false</kerning>
+           </font>
+          </property>
+          <property name="text">
+           <string>Det. Off Delay</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="interval_2">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>10</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+            <kerning>false</kerning>
+           </font>
+          </property>
+          <property name="text">
+           <string>Test Interval</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
      <widget class="QGroupBox" name="groupBox_8">
       <property name="geometry">
        <rect>
-        <x>8</x>
-        <y>337</y>
-        <width>341</width>
-        <height>101</height>
+        <x>361</x>
+        <y>238</y>
+        <width>301</width>
+        <height>91</height>
        </rect>
       </property>
       <property name="font">
        <font>
         <family>DejaVu Sans</family>
-        <pointsize>6</pointsize>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <bold>false</bold>
        </font>
@@ -1360,68 +1241,62 @@
       <property name="title">
        <string>Meter Test Status</string>
       </property>
-      <widget class="QLabel" name="test_start_time_ch2">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
-         <x>13</x>
-         <y>27</y>
-         <width>320</width>
-         <height>16</height>
+         <x>11</x>
+         <y>25</y>
+         <width>281</width>
+         <height>59</height>
         </rect>
        </property>
-       <property name="font">
-        <font>
-         <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Start :</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="test_step_ch2">
-       <property name="geometry">
-        <rect>
-         <x>13</x>
-         <y>51</y>
-         <width>250</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Action :</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="test_count_ch2">
-       <property name="geometry">
-        <rect>
-         <x>13</x>
-         <y>75</y>
-         <width>250</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Count :</string>
-       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
+         <widget class="QLabel" name="test_start_time_ch2">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>9</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Start :</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="test_step_ch2">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>9</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Action :</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="test_count_ch2">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+            <pointsize>9</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Count :</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
      <widget class="QCheckBox" name="audo_download_2">
@@ -1435,7 +1310,7 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>5</pointsize>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <bold>false</bold>
        </font>
@@ -1447,8 +1322,8 @@
      <widget class="QGroupBox" name="groupBox_9">
       <property name="geometry">
        <rect>
-        <x>9</x>
-        <y>11</y>
+        <x>7</x>
+        <y>6</y>
         <width>191</width>
         <height>91</height>
        </rect>
@@ -1456,7 +1331,7 @@
       <property name="font">
        <font>
         <family>DejaVu Sans</family>
-        <pointsize>6</pointsize>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <bold>false</bold>
        </font>
@@ -1532,15 +1407,15 @@
       <property name="geometry">
        <rect>
         <x>361</x>
-        <y>177</y>
+        <y>160</y>
         <width>300</width>
-        <height>261</height>
+        <height>61</height>
        </rect>
       </property>
       <property name="font">
        <font>
         <family>DejaVu Sans</family>
-        <pointsize>6</pointsize>
+        <pointsize>9</pointsize>
        </font>
       </property>
       <property name="title">
@@ -1550,41 +1425,12 @@
        <property name="geometry">
         <rect>
          <x>9</x>
-         <y>33</y>
+         <y>25</y>
          <width>281</width>
-         <height>221</height>
+         <height>31</height>
         </rect>
        </property>
       </widget>
-     </widget>
-     <widget class="QGroupBox" name="groupBox_11">
-      <property name="geometry">
-       <rect>
-        <x>671</x>
-        <y>10</y>
-        <width>330</width>
-        <height>421</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Camera View</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="preview_ch2">
-      <property name="geometry">
-       <rect>
-        <x>677</x>
-        <y>39</y>
-        <width>320</width>
-        <height>360</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Preview</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="Tab3">
@@ -1602,7 +1448,7 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>6</pointsize>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <bold>false</bold>
        </font>
@@ -1657,72 +1503,77 @@
        </item>
       </layout>
      </widget>
-     <widget class="QSpinBox" name="sec_interval_3">
-      <property name="geometry">
-       <rect>
-        <x>380</x>
-        <y>240</y>
-        <width>100</width>
-        <height>40</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>9</pointsize>
-        <weight>50</weight>
-        <bold>false</bold>
-       </font>
-      </property>
-     </widget>
     </widget>
    </widget>
-   <widget class="QPushButton" name="quit">
+   <widget class="QLabel" name="build_date">
     <property name="geometry">
      <rect>
-      <x>8</x>
-      <y>508</y>
-      <width>80</width>
+      <x>521</x>
+      <y>378</y>
+      <width>251</width>
       <height>17</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>5</pointsize>
+      <family>DejaVu Sans</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
     <property name="text">
-     <string>Quit</string>
+     <string>* Build Info.</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="reboot">
+   <widget class="QLabel" name="ip_address">
     <property name="geometry">
      <rect>
-      <x>8</x>
-      <y>484</y>
-      <width>80</width>
+      <x>324</x>
+      <y>378</y>
+      <width>191</width>
       <height>17</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>5</pointsize>
+      <family>DejaVu Sans</family>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
     <property name="text">
-     <string>Reboot</string>
+     <string>* IP Address :</string>
     </property>
    </widget>
-   <zorder>quit</zorder>
-   <zorder>reboot</zorder>
-   <zorder>tabWidget</zorder>
-   <zorder>sys_info</zorder>
+   <widget class="QLabel" name="system_time">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>378</y>
+      <width>301</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>* Time :</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1024</width>
+     <width>800</width>
      <height>20</height>
     </rect>
    </property>

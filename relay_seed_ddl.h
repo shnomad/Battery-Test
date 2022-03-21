@@ -3,7 +3,7 @@
 
 #include <QObject>
 #define DEVICE_ID_CH_1   0x10
-#define DEVICE_ID_CH_2   0x13
+#define DEVICE_ID_CH_2   0x20
 
 #define DDL_CH_ON   0xff
 #define DDL_CH_OFF  0x00
@@ -27,9 +27,9 @@ public:
     };
 
 public slots:
-    void port_reset();
-    void port_open();
-    void port_control(relay_channel, quint8 OnOff);
+    void port_reset(quint8);
+    void port_open(quint8);
+    void port_control(quint8,relay_channel, quint8 OnOff);
 
 private:
 

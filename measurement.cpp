@@ -10,7 +10,7 @@ measurement::measurement(quint8 ch, QObject *parent) : QObject(parent)
 
     //Create Relay function
     measure_relay = new relay_seed_ddl(ch);
-    measure_relay->port_reset();
+    measure_relay->port_reset(Channel);
 
     //Create QTimer for measurement
     detect_on_timer = new QTimer(this);
@@ -89,7 +89,7 @@ void measurement::stop()
     test_interval_timer->stop();
 
     /*relay port reset*/
-    measure_relay->port_reset();
+    measure_relay->port_reset(Channel);
 
     emit update_test_count(current_test_count);
 
@@ -105,7 +105,7 @@ void measurement::pause()
     third_on_timer->stop();
     detect_off_timer->stop();
 
-    measure_relay->port_reset();
+    measure_relay->port_reset(Channel);
 }
 
 void measurement::detect_on()
@@ -114,7 +114,7 @@ void measurement::detect_on()
 
    emit update_action("detect on");
 
-   measure_relay->port_control(measure_relay->relay_channel::CH_1, DDL_CH_ON);
+   measure_relay->port_control(Channel,measure_relay->relay_channel::CH_1, DDL_CH_ON);
 
    work_on_timer->start();
 }
@@ -125,7 +125,7 @@ void measurement::work_on()
 
     emit update_action("work on");
 
-    measure_relay->port_control(measure_relay->relay_channel::CH_2, DDL_CH_ON);
+    measure_relay->port_control(Channel, measure_relay->relay_channel::CH_2, DDL_CH_ON);
 
     third_on_timer->start();
 }
@@ -145,8 +145,8 @@ void measurement::detect_off()
 
     emit update_action("detect off");
 
-    measure_relay->port_control(measure_relay->relay_channel::CH_1, DDL_CH_OFF);
-    measure_relay->port_control(measure_relay->relay_channel::CH_2, DDL_CH_OFF);
+    measure_relay->port_control(Channel,measure_relay->relay_channel::CH_1, DDL_CH_OFF);
+    measure_relay->port_control(Channel,measure_relay->relay_channel::CH_2, DDL_CH_OFF);
 
     current_test_count++;
 
