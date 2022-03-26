@@ -491,8 +491,8 @@ void MainWindow::currentMeterIndexChanged(int index)
 
             Log()<<"GLUCOSE VOICE selected";
 
-                m_test_param_tmp.meter_memory_capacity = 1000;
-                m_test_param_tmp.target_measure_count =1000;
+                m_test_param_tmp.meter_memory_capacity = 500;
+                m_test_param_tmp.target_measure_count =500;
                 m_test_param_tmp.work_on_time = 7000;
                 m_test_param_tmp.third_on_time =0; // 6000;
                 m_test_param_tmp.detect_off_time = 11000; //14000;
