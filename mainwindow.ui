@@ -34,7 +34,7 @@
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">selection-background-color: rgb(255, 255, 127);</string>
+     <string notr="true"/>
     </property>
     <property name="currentIndex">
      <number>0</number>

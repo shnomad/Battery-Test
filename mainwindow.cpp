@@ -41,12 +41,17 @@ void MainWindow::ui_init_measurement()
     /*
     * CHANNEL_1 UI SETTINGS
     */
+
+    QPixmap play_icon("/home/pi/Battery_LifeTime_Test/bin/images/play.png"), \
+            stop_icon("/home/pi/Battery_LifeTime_Test/bin/images/stop.png"), \
+            pause_icon("/home/pi/Battery_LifeTime_Test/bin/images/play.png");
+
     /*Play/Pause/Stop Button*/
-    ui->test_start_ch1->setIcon(QIcon(":/images/play.png"));
+    ui->test_start_ch1->setIcon(QIcon(play_icon));
     ui->test_start_ch1->setIconSize(QSize(45,45));
-    ui->test_stop_ch1->setIcon(QIcon(":/images/stop.png"));
+    ui->test_stop_ch1->setIcon(QIcon(stop_icon));
     ui->test_stop_ch1->setIconSize(QSize(45,45));
-    ui->test_pause_ch1->setIcon(QIcon(":/images/pause.png"));
+    ui->test_pause_ch1->setIcon(QIcon(pause_icon));
     ui->test_pause_ch1->setIconSize(QSize(45,45));
 
     ui->test_stop_ch1->setEnabled(false);
@@ -114,11 +119,11 @@ void MainWindow::ui_init_measurement()
     */
 
     /*Play/Pause/Stop Button*/
-    ui->test_start_ch2->setIcon(QIcon(":/images/play.png"));
+    ui->test_start_ch2->setIcon(QIcon(play_icon));
     ui->test_start_ch2->setIconSize(QSize(45,45));
-    ui->test_stop_ch2->setIcon(QIcon(":/images/stop.png"));
+    ui->test_stop_ch2->setIcon(QIcon(stop_icon));
     ui->test_stop_ch2->setIconSize(QSize(45,45));
-    ui->test_pause_ch2->setIcon(QIcon(":/images/pause.png"));
+    ui->test_pause_ch2->setIcon(QIcon(pause_icon));
     ui->test_pause_ch2->setIconSize(QSize(45,45));
 
     ui->test_stop_ch2->setEnabled(false);
