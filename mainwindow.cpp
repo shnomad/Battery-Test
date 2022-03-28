@@ -229,6 +229,11 @@ void MainWindow::ui_set_measurement_start_ch1()
     ui_test_count_ch1(0);
 
     ui->test_start_time_ch1->setText("Test start :" + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap"));
+
+    /*button color change*/
+    ui->test_pause_ch1->setStyleSheet("default");
+    ui->test_start_ch1->setStyleSheet("background-color:rgb(244,0,0);border-style:insert");
+
 }
 
 void MainWindow::ui_set_measurement_stop_ch1()
@@ -247,6 +252,9 @@ void MainWindow::ui_set_measurement_stop_ch1()
     ui->micro_usb_ch1->setEnabled(true);
     ui->phone_jack_ch1->setEnabled(true);
 
+    ui->test_start_ch1->setStyleSheet("default");
+    ui->test_pause_ch1->setStyleSheet("default");
+
 //  ui->test_step_ch1->setText("Action : stopped");
 }
 
@@ -259,6 +267,9 @@ void MainWindow::ui_set_measurement_pause_ch1()
     ui->device_open_ch1->setEnabled(true);
     ui->micro_usb_ch1->setEnabled(true);
     ui->phone_jack_ch1->setEnabled(true);
+
+    ui->test_start_ch1->setStyleSheet("default");
+    ui->test_pause_ch1->setStyleSheet("background-color:rgb(244,0,0);border-style:insert");
 }
 
 
@@ -284,6 +295,10 @@ void MainWindow::ui_set_measurement_start_ch2()
     ui_test_count_ch2(0);
 
     ui->test_start_time_ch2->setText("Test start :" + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap"));
+
+     /*button color change*/
+    ui->test_pause_ch2->setStyleSheet("default");
+    ui->test_start_ch2->setStyleSheet("background-color:rgb(244,0,0);border-style:insert");
 }
 
 void MainWindow::ui_set_measurement_stop_ch2()
@@ -301,6 +316,10 @@ void MainWindow::ui_set_measurement_stop_ch2()
     ui->device_open_ch2->setEnabled(true);
     ui->micro_usb_ch2->setEnabled(true);
     ui->phone_jack_ch2->setEnabled(true);
+
+    ui->test_start_ch2->setStyleSheet("default");
+    ui->test_pause_ch2->setStyleSheet("default");
+
 }
 
 void MainWindow::ui_set_measurement_pause_ch2()
@@ -312,6 +331,9 @@ void MainWindow::ui_set_measurement_pause_ch2()
     ui->device_open_ch2->setEnabled(true);
     ui->micro_usb_ch2->setEnabled(true);
     ui->phone_jack_ch2->setEnabled(true);
+
+    ui->test_start_ch2->setStyleSheet("default");
+    ui->test_pause_ch2->setStyleSheet("background-color:rgb(244,0,0);border-style:insert");
 }
 
 void MainWindow::ui_action_status_ch1(QString status)
