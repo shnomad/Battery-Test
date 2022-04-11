@@ -155,61 +155,114 @@ void measurement::detect_off()
 
 void measurement::test_count_check()
 {        
-    Log() <<"meter : "<< Channel;
+
+    Log() <<"meter channel: "<< Channel;
+    Log() <<"meter memory capacitor is "<< meter_mem_capacity;
+    Log() <<"Target test count is  "<< target_test_count;
     Log() <<"Current test count is  "<< current_test_count;
+    Log() <<"Target test count rest is  "<< target_test_count_rest;
 
-    emit update_test_count(current_test_count);
+    emit update_test_count(static_cast<int>(current_test_count));
 
-    if(target_test_count<=1000)
-     {
-        Log() <<"Target test count is 1000 or less";
-
-       //Target count is 1000                          //target count is under 1000
-      if((current_test_count == meter_mem_capacity) || (current_test_count == target_test_count_rest))
-      {
-          emit update_action("stop");
-
-          emit stop();
-      }
-      else if(current_test_count < target_test_count)
-      {
-          test_interval_timer->start();
-      }
-    }
-    else    //over 1000
+    if(target_test_count <= meter_mem_capacity)
     {
-        Log() <<"Target test count is over 1000";
+        Log() <<"target count is smaller than meter memory capacitor";
 
-      quint8 th_current = current_test_count/1000;
-      quint8 hund_current = (current_test_count/100)%10;
-      quint8 tens_current = (current_test_count/10)%10;
-      quint8 unit_current = current_test_count%10;
-      quint8 hund_target = (target_test_count/100)%10;
-      quint8 tens_target = (target_test_count/10)%10;
-      quint8 unit_target = target_test_count%10;
+        if(current_test_count < target_test_count)
+        {
+            Log() <<"Target test count : "<< target_test_count;
+            Log() <<"Current test count : "<< current_test_count;
+            Log() <<"Test Continue";
 
-      Log() << "current Count:" << th_current <<hund_current<<tens_current<<unit_current;
-      Log() << "target Count Rest:"  << hund_target<<tens_target<<unit_target;
+            test_interval_timer->start();
+        }
+        else
+        {
+            /*add auto download here*/
+            Log() <<"data download :";
+            Log() <<"Target test count : "<< target_test_count;
+            Log() <<"Current test count : "<< current_test_count;
+            Log() <<"Test Stop : "<< Channel;
 
-      //target count is reached at 1000, 2000, 3000, 4000 .....                 //Targeet count reached at 100, 200, 300, ......
-      if((th_current>=1 && !hund_current && !tens_current && !unit_current) || (target_test_count_rest<1000 && hund_current==hund_target && !tens_target && !unit_target))
-      {
-          //Log()<<"on_device_open_clicked";
-          //emit on_device_open_clicked();
-          current_test_count=0;
+            emit update_action("stop");
+            emit stop();
+        }
+    }
+    else
+    {
+         Log() <<"target count is bigger than meter memory capacitor";
 
-          emit update_action("stop");
+          /*Target count is integer multiple of meter's memory*/
+         if(!(static_cast<uint32_t>(target_test_count)%static_cast<uint32_t>(meter_mem_capacity)))
+         {
+               /*When current test count is reached at multiple of meters memory*/
+               if(!(current_test_count%static_cast<uint32_t>(meter_mem_capacity)))
+               {
+                    /*add auto download here*/
+                   Log() <<"data download :";
+                   Log() <<"Target test count : "<< target_test_count;
+                   Log() <<"Current test count : "<< current_test_count;
 
-          emit stop();
+                   if(current_test_count < target_test_count)
+                   {
+                       Log() <<"Test Continue";
+                       test_interval_timer->start();
+                   }
+                   else
+                   {
+                       Log() <<"Target test count : "<< target_test_count;
+                       Log() <<"Current test count : "<< current_test_count;
+                       Log() <<"Test Stop : "<< Channel;
+                       emit update_action("stop");
+                       emit stop();
+                   }
+               }
+               else
+               {
+                   Log() <<"Test Continue";
+                   test_interval_timer->start();
+               }
+         }
+         else if((static_cast<uint32_t>(target_test_count)%static_cast<uint32_t>(meter_mem_capacity)))
+         {
+             /*When current test count is reached at multiple of meters memory*/
+             if(!(current_test_count%static_cast<uint32_t>(meter_mem_capacity)))
+             {
+                  /*add auto download here*/
+                 Log() <<"data download :";
+                 Log() <<"Target test count : "<< target_test_count;
+                 Log() <<"Current test count : "<< current_test_count;
+                 Log() <<"Test Continue";
+                 test_interval_timer->start();
+             }
+             else if(static_cast<uint32_t>(target_test_count) == current_test_count)
+             {
+                /*add auto download here*/
+                 Log() <<"data download :";
+                 Log() <<"Target test count : "<< target_test_count;
+                 Log() <<"Current test count : "<< current_test_count;
+                 Log() <<"Test Stop : "<< Channel;
+                 emit update_action("stop");
+                 emit stop();
+             }
+             else
+             {
+                 Log() <<"Target test count : "<< target_test_count;
+                 Log() <<"Current test count : "<< current_test_count;
+                 Log() <<"Test Continue";
+                 test_interval_timer->start();
+             }
+         }
+         else
+         {
+             Log() <<"Need to debug";
+             Log() <<"meter channel: "<< Channel;
+             Log() <<"meter memory capacitor is "<< meter_mem_capacity;
+             Log() <<"Target test count is  "<< target_test_count;
+             Log() <<"Current test count is  "<< current_test_count;
+         }
       }
-      else
-      {
-          Log()<<"measure_start";
-            // emit start();
-          test_interval_timer->start();
-      }
 
-     }
 }
 
 measurement::~measurement()
