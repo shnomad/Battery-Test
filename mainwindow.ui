@@ -259,24 +259,7 @@
         <rect>
          <x>140</x>
          <y>137</y>
-         <width>100</width>
-         <height>35</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="measure_count_ch1">
-       <property name="geometry">
-        <rect>
-         <x>140</x>
-         <y>55</y>
-         <width>100</width>
+         <width>120</width>
          <height>35</height>
         </rect>
        </property>
@@ -288,8 +271,89 @@
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">Qspinbox::down-button{width:32px;}
-Qspinbox::up-button{width:32px;}</string>
+        <string notr="true">QSpinBox::up-button
+{	
+	subcontrol-origin:border;
+    subcontrol-position:right;
+    width: 20px;
+    height: 35px;       
+}
+
+QSpinBox::down-button
+{
+	subcontrol-origin:border;
+    subcontrol-position:left;
+    width: 20px;
+    height: 35px;
+}
+
+QSpinBox::up-arrow
+{
+	image: url(:/images/arrow-up.png);
+     width: 30px;
+     height: 30px;
+}
+
+QSpinBox::down-arrow
+{
+	image: url(:/images/arrow-down.png);
+     width: 30px;
+     height: 30px;
+}</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="measure_count_ch1">
+       <property name="geometry">
+        <rect>
+         <x>140</x>
+         <y>55</y>
+         <width>120</width>
+         <height>35</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>6</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QSpinBox::up-button
+{	
+	subcontrol-origin:border;
+    subcontrol-position:right;
+    width: 20px;
+    height: 35px;       
+}
+
+QSpinBox::down-button
+{
+	subcontrol-origin:border;
+    subcontrol-position:left;
+    width: 20px;
+    height: 35px;
+}
+
+QSpinBox::up-arrow
+{
+	image: url(:/images/arrow-up.png);
+     width: 30px;
+     height: 30px;
+}
+
+QSpinBox::down-arrow
+{
+	image: url(:/images/arrow-down.png);
+     width: 30px;
+     height: 30px;
+}</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QSpinBox" name="sec_interval_ch1">
@@ -297,7 +361,7 @@ Qspinbox::up-button{width:32px;}</string>
         <rect>
          <x>140</x>
          <y>178</y>
-         <width>100</width>
+         <width>120</width>
          <height>35</height>
         </rect>
        </property>
@@ -307,6 +371,40 @@ Qspinbox::up-button{width:32px;}</string>
          <weight>50</weight>
          <bold>false</bold>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QSpinBox::up-button
+{	
+	subcontrol-origin:border;
+    subcontrol-position:right;
+    width: 20px;
+    height: 35px;       
+}
+
+QSpinBox::down-button
+{
+	subcontrol-origin:border;
+    subcontrol-position:left;
+    width: 20px;
+    height: 35px;
+}
+
+QSpinBox::up-arrow
+{
+	image: url(:/images/arrow-up.png);
+     width: 30px;
+     height: 30px;
+}
+
+QSpinBox::down-arrow
+{
+	image: url(:/images/arrow-down.png);
+     width: 30px;
+     height: 30px;
+}</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QSpinBox" name="sec_startdelay_ch1">
@@ -314,7 +412,7 @@ Qspinbox::up-button{width:32px;}</string>
         <rect>
          <x>140</x>
          <y>96</y>
-         <width>100</width>
+         <width>120</width>
          <height>35</height>
         </rect>
        </property>
@@ -325,11 +423,45 @@ Qspinbox::up-button{width:32px;}</string>
          <bold>false</bold>
         </font>
        </property>
+       <property name="styleSheet">
+        <string notr="true">QSpinBox::up-button
+{	
+	subcontrol-origin:border;
+    subcontrol-position:right;
+    width: 20px;
+    height: 35px;       
+}
+
+QSpinBox::down-button
+{
+	subcontrol-origin:border;
+    subcontrol-position:left;
+    width: 20px;
+    height: 35px;
+}
+
+QSpinBox::up-arrow
+{
+	image: url(:/images/arrow-up.png);
+     width: 30px;
+     height: 30px;
+}
+
+QSpinBox::down-arrow
+{
+	image: url(:/images/arrow-down.png);
+     width: 30px;
+     height: 30px;
+}</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
       </widget>
       <widget class="QLabel" name="label_2">
        <property name="geometry">
         <rect>
-         <x>255</x>
+         <x>278</x>
          <y>185</y>
          <width>30</width>
          <height>16</height>
@@ -352,7 +484,7 @@ Qspinbox::up-button{width:32px;}</string>
       <widget class="QLabel" name="label_4">
        <property name="geometry">
         <rect>
-         <x>256</x>
+         <x>279</x>
          <y>145</y>
          <width>30</width>
          <height>16</height>
@@ -375,7 +507,7 @@ Qspinbox::up-button{width:32px;}</string>
       <widget class="QLabel" name="label">
        <property name="geometry">
         <rect>
-         <x>253</x>
+         <x>273</x>
          <y>68</y>
          <width>50</width>
          <height>16</height>
@@ -398,7 +530,7 @@ Qspinbox::up-button{width:32px;}</string>
       <widget class="QLabel" name="label_3">
        <property name="geometry">
         <rect>
-         <x>256</x>
+         <x>279</x>
          <y>106</y>
          <width>30</width>
          <height>16</height>
@@ -1065,7 +1197,7 @@ Qspinbox::up-button{width:32px;}</string>
       <widget class="QLabel" name="label_8">
        <property name="geometry">
         <rect>
-         <x>246</x>
+         <x>271</x>
          <y>145</y>
          <width>50</width>
          <height>16</height>
@@ -1088,7 +1220,7 @@ Qspinbox::up-button{width:32px;}</string>
       <widget class="QLabel" name="label_7">
        <property name="geometry">
         <rect>
-         <x>246</x>
+         <x>271</x>
          <y>106</y>
          <width>50</width>
          <height>16</height>
@@ -1111,7 +1243,7 @@ Qspinbox::up-button{width:32px;}</string>
       <widget class="QLabel" name="label_6">
        <property name="geometry">
         <rect>
-         <x>253</x>
+         <x>274</x>
          <y>68</y>
          <width>50</width>
          <height>16</height>
@@ -1134,7 +1266,7 @@ Qspinbox::up-button{width:32px;}</string>
       <widget class="QLabel" name="label_9">
        <property name="geometry">
         <rect>
-         <x>245</x>
+         <x>270</x>
          <y>185</y>
          <width>50</width>
          <height>16</height>
@@ -1159,7 +1291,7 @@ Qspinbox::up-button{width:32px;}</string>
         <rect>
          <x>140</x>
          <y>178</y>
-         <width>100</width>
+         <width>120</width>
          <height>35</height>
         </rect>
        </property>
@@ -1169,6 +1301,40 @@ Qspinbox::up-button{width:32px;}</string>
          <weight>50</weight>
          <bold>false</bold>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QSpinBox::up-button
+{	
+	subcontrol-origin:border;
+    subcontrol-position:right;
+    width: 20px;
+    height: 35px;       
+}
+
+QSpinBox::down-button
+{
+	subcontrol-origin:border;
+    subcontrol-position:left;
+    width: 20px;
+    height: 35px;
+}
+
+QSpinBox::up-arrow
+{
+	image: url(:/images/arrow-up.png);
+     width: 30px;
+     height: 30px;
+}
+
+QSpinBox::down-arrow
+{
+	image: url(:/images/arrow-down.png);
+     width: 30px;
+     height: 30px;
+}</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QSpinBox" name="sec_startdelay_ch2">
@@ -1176,7 +1342,7 @@ Qspinbox::up-button{width:32px;}</string>
         <rect>
          <x>140</x>
          <y>96</y>
-         <width>100</width>
+         <width>120</width>
          <height>35</height>
         </rect>
        </property>
@@ -1186,6 +1352,40 @@ Qspinbox::up-button{width:32px;}</string>
          <weight>50</weight>
          <bold>false</bold>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QSpinBox::up-button
+{	
+	subcontrol-origin:border;
+    subcontrol-position:right;
+    width: 20px;
+    height: 35px;       
+}
+
+QSpinBox::down-button
+{
+	subcontrol-origin:border;
+    subcontrol-position:left;
+    width: 20px;
+    height: 35px;
+}
+
+QSpinBox::up-arrow
+{
+	image: url(:/images/arrow-up.png);
+     width: 30px;
+     height: 30px;
+}
+
+QSpinBox::down-arrow
+{
+	image: url(:/images/arrow-down.png);
+     width: 30px;
+     height: 30px;
+}</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QSpinBox" name="sec_detoffdelay_ch2">
@@ -1193,7 +1393,7 @@ Qspinbox::up-button{width:32px;}</string>
         <rect>
          <x>140</x>
          <y>137</y>
-         <width>100</width>
+         <width>120</width>
          <height>35</height>
         </rect>
        </property>
@@ -1203,6 +1403,40 @@ Qspinbox::up-button{width:32px;}</string>
          <weight>50</weight>
          <bold>false</bold>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QSpinBox::up-button
+{	
+	subcontrol-origin:border;
+    subcontrol-position:right;
+    width: 20px;
+    height: 35px;       
+}
+
+QSpinBox::down-button
+{
+	subcontrol-origin:border;
+    subcontrol-position:left;
+    width: 20px;
+    height: 35px;
+}
+
+QSpinBox::up-arrow
+{
+	image: url(:/images/arrow-up.png);
+     width: 30px;
+     height: 30px;
+}
+
+QSpinBox::down-arrow
+{
+	image: url(:/images/arrow-down.png);
+     width: 30px;
+     height: 30px;
+}</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QLabel" name="capacity_6">
@@ -1334,7 +1568,7 @@ Qspinbox::up-button{width:32px;}</string>
         <rect>
          <x>140</x>
          <y>55</y>
-         <width>100</width>
+         <width>120</width>
          <height>35</height>
         </rect>
        </property>
@@ -1344,6 +1578,40 @@ Qspinbox::up-button{width:32px;}</string>
          <weight>50</weight>
          <bold>false</bold>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QSpinBox::up-button
+{	
+	subcontrol-origin:border;
+    subcontrol-position:right;
+    width: 20px;
+    height: 35px;       
+}
+
+QSpinBox::down-button
+{
+	subcontrol-origin:border;
+    subcontrol-position:left;
+    width: 20px;
+    height: 35px;
+}
+
+QSpinBox::up-arrow
+{
+	image: url(:/images/arrow-up.png);
+     width: 30px;
+     height: 30px;
+}
+
+QSpinBox::down-arrow
+{
+	image: url(:/images/arrow-down.png);
+     width: 30px;
+     height: 30px;
+}</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </widget>
