@@ -30,7 +30,7 @@
     </property>
     <property name="font">
      <font>
-      <pointsize>6</pointsize>
+      <pointsize>10</pointsize>
      </font>
     </property>
     <property name="title">
@@ -47,7 +47,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>6</pointsize>
+       <pointsize>10</pointsize>
        <weight>50</weight>
        <bold>false</bold>
       </font>
@@ -67,7 +67,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>6</pointsize>
+       <pointsize>10</pointsize>
        <weight>50</weight>
        <bold>false</bold>
       </font>
@@ -101,7 +101,10 @@
     </property>
     <property name="font">
      <font>
-      <pointsize>6</pointsize>
+      <family>DejaVu Sans</family>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
      </font>
     </property>
     <property name="styleSheet">
@@ -125,7 +128,8 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>5</pointsize>
+        <family>DejaVu Sans</family>
+        <pointsize>10</pointsize>
         <weight>50</weight>
         <bold>false</bold>
        </font>
@@ -146,7 +150,7 @@
       <property name="font">
        <font>
         <family>DejaVu Sans</family>
-        <pointsize>6</pointsize>
+        <pointsize>10</pointsize>
         <weight>50</weight>
         <bold>false</bold>
        </font>
@@ -229,7 +233,8 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>7</pointsize>
+        <family>DejaVu Sans</family>
+        <pointsize>10</pointsize>
         <weight>50</weight>
         <bold>false</bold>
        </font>
@@ -469,9 +474,10 @@ QSpinBox::down-arrow
        </property>
        <property name="font">
         <font>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
+         <family>DejaVu Sans</family>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
         </font>
        </property>
        <property name="text">
@@ -492,9 +498,10 @@ QSpinBox::down-arrow
        </property>
        <property name="font">
         <font>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
+         <family>DejaVu Sans</family>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
         </font>
        </property>
        <property name="text">
@@ -515,9 +522,10 @@ QSpinBox::down-arrow
        </property>
        <property name="font">
         <font>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
+         <family>DejaVu Sans</family>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
         </font>
        </property>
        <property name="text">
@@ -538,9 +546,10 @@ QSpinBox::down-arrow
        </property>
        <property name="font">
         <font>
-         <pointsize>6</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
+         <family>DejaVu Sans</family>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
         </font>
        </property>
        <property name="text">
@@ -562,7 +571,7 @@ QSpinBox::down-arrow
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
+         <pointsize>10</pointsize>
          <weight>50</weight>
          <bold>false</bold>
          <kerning>false</kerning>
@@ -587,7 +596,7 @@ QSpinBox::down-arrow
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
+         <pointsize>10</pointsize>
          <weight>50</weight>
          <bold>false</bold>
          <kerning>false</kerning>
@@ -612,7 +621,7 @@ QSpinBox::down-arrow
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
+         <pointsize>10</pointsize>
          <weight>50</weight>
          <bold>false</bold>
          <kerning>false</kerning>
@@ -636,7 +645,8 @@ QSpinBox::down-arrow
        </property>
        <property name="font">
         <font>
-         <pointsize>6</pointsize>
+         <family>DejaVu Sans</family>
+         <pointsize>10</pointsize>
          <weight>50</weight>
          <bold>false</bold>
          <kerning>false</kerning>
@@ -661,7 +671,7 @@ QSpinBox::down-arrow
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
+         <pointsize>10</pointsize>
          <weight>50</weight>
          <bold>false</bold>
          <kerning>false</kerning>
@@ -687,7 +697,7 @@ QSpinBox::down-arrow
       <property name="font">
        <font>
         <family>DejaVu Sans</family>
-        <pointsize>6</pointsize>
+        <pointsize>10</pointsize>
         <weight>50</weight>
         <bold>false</bold>
        </font>
@@ -707,7 +717,7 @@ QSpinBox::down-arrow
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
+         <pointsize>10</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -728,7 +738,7 @@ QSpinBox::down-arrow
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
+         <pointsize>10</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -749,7 +759,7 @@ QSpinBox::down-arrow
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
+         <pointsize>10</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -770,7 +780,8 @@ QSpinBox::down-arrow
       </property>
       <property name="font">
        <font>
-        <pointsize>6</pointsize>
+        <family>DejaVu Sans</family>
+        <pointsize>10</pointsize>
         <weight>50</weight>
         <bold>false</bold>
        </font>
@@ -790,7 +801,7 @@ QSpinBox::down-arrow
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
+         <pointsize>8</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -811,7 +822,7 @@ QSpinBox::down-arrow
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
+         <pointsize>8</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -832,7 +843,7 @@ QSpinBox::down-arrow
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <pointsize>6</pointsize>
+         <pointsize>8</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -853,7 +864,7 @@ QSpinBox::down-arrow
        <property name="font">
         <font>
          <family>DejaVu Sans</family>
-         <pointsize>4</pointsize>
+         <pointsize>8</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -873,7 +884,7 @@ QSpinBox::down-arrow
        </property>
        <property name="font">
         <font>
-         <pointsize>6</pointsize>
+         <pointsize>8</pointsize>
          <weight>50</weight>
          <bold>false</bold>
         </font>
@@ -896,7 +907,8 @@ QSpinBox::down-arrow
          <widget class="QRadioButton" name="micro_usb_ch1">
           <property name="font">
            <font>
-            <pointsize>6</pointsize>
+            <family>DejaVu Sans</family>
+            <pointsize>10</pointsize>
             <weight>50</weight>
             <bold>false</bold>
            </font>
@@ -910,7 +922,8 @@ QSpinBox::down-arrow
          <widget class="QRadioButton" name="phone_jack_ch1">
           <property name="font">
            <font>
-            <pointsize>6</pointsize>
+            <family>DejaVu Sans</family>
+            <pointsize>10</pointsize>
             <weight>50</weight>
             <bold>false</bold>
            </font>
@@ -1957,12 +1970,14 @@ QSpinBox::down-arrow
       <x>8</x>
       <y>508</y>
       <width>80</width>
-      <height>17</height>
+      <height>24</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>5</pointsize>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
      </font>
     </property>
     <property name="text">
@@ -1973,14 +1988,16 @@ QSpinBox::down-arrow
     <property name="geometry">
      <rect>
       <x>8</x>
-      <y>484</y>
+      <y>479</y>
       <width>80</width>
-      <height>17</height>
+      <height>24</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>5</pointsize>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
      </font>
     </property>
     <property name="text">
