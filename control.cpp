@@ -3,24 +3,14 @@
 
 control::control(QObject *parent) : QObject(parent)
 {
-#if 1
-    m_ch[0] = new measurement(0x1);
-    m_ch[1] = new measurement(0x2);
-
-    m_pThread[0] = new QThread(this);
-    m_pThread[1] = new QThread(this);
-
-    m_ch[0]->moveToThread(m_pThread[0]);
-    m_ch[1]->moveToThread(m_pThread[1]);
-
-    connect(m_pThread[0], &QThread::finished, m_ch[0], &QObject::deleteLater);
-    connect(m_pThread[1], &QThread::finished, m_ch[1], &QObject::deleteLater);
-
-    m_pThread[0]->start();
-    m_pThread[1]->start();
-
-#endif
-
+    for (quint8 thread_count=0; thread_count<5; thread_count++)
+    {
+        m_ch[thread_count] = new measurement(thread_count+1);
+        m_pThread[thread_count] = new QThread(this);
+        m_ch[thread_count]->moveToThread(m_pThread[thread_count]);
+        connect(m_pThread[thread_count], &QThread::finished, m_ch[thread_count], &QObject::deleteLater);
+        m_pThread[thread_count]->start();
+    }
 }
 
 control::~control()

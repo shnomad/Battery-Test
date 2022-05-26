@@ -14,8 +14,8 @@ public:
     explicit control(QObject *parent = nullptr);
     ~control();
 
-    measurement *m_ch[2];
-    QThread *m_pThread[2];
+    measurement *m_ch[5];
+    QThread *m_pThread[5];
 
 signals:
 

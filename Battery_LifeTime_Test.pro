@@ -23,6 +23,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         control.cpp \
+        gpiocontrol.cpp \
         main.cpp \
         mainwindow.cpp \
         measurement.cpp \
@@ -38,6 +39,7 @@ SOURCES += \
 
 HEADERS += \
         control.h \
+        gpiocontrol.h \
         mainwindow.h \
         measurement.h \
         relay_seed_ddl.h \

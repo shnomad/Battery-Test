@@ -5,52 +5,243 @@
 #include <sys/ioctl.h>
 #include <linux/i2c-dev.h>
 
-relay_seed_ddl::relay_seed_ddl(quint8 m_ch, QObject *parent) : QObject(parent)
+relay_seed_ddl::relay_seed_ddl(quint8 ch, QObject *parent) : GpioControl(parent)
 {
-    if((file_i2c = open(filename, O_RDWR)) < 0)
+    switch (ch)
     {
-        exit(0);
-    }
+        case CH_1:
 
-    if(m_ch == 0x1)
-        device_id = 0x10;
-    else
-        device_id = 0x13;
+            GpioControl::exportGPIO(NO_1);
+            GpioControl::exportGPIO(NO_2);
 
-    if (ioctl(file_i2c, I2C_SLAVE, device_id) < 0)
-    {
-        exit(0);
+            GpioControl::setDirection(NO_1,SET_OUT);
+            GpioControl::setDirection(NO_2,SET_OUT);
+
+            GpioControl::setValue(NO_1, SET_LOW);
+            GpioControl::setValue(NO_2, SET_LOW);
+
+        break;
+
+        case CH_2:
+
+            GpioControl::exportGPIO(NO_3);
+            GpioControl::exportGPIO(NO_4);
+
+            GpioControl::setDirection(NO_3,SET_OUT);
+            GpioControl::setDirection(NO_4,SET_OUT);
+
+            GpioControl::setValue(NO_3, SET_LOW);
+            GpioControl::setValue(NO_4, SET_LOW);
+
+        break;
+
+        case CH_3:
+
+            GpioControl::exportGPIO(NO_5);
+            GpioControl::exportGPIO(NO_6);
+
+            GpioControl::setDirection(NO_5,SET_OUT);
+            GpioControl::setDirection(NO_6,SET_OUT);
+
+            GpioControl::setValue(NO_5, SET_LOW);
+            GpioControl::setValue(NO_6, SET_LOW);
+
+        break;
+
+        case CH_4:
+
+            GpioControl::exportGPIO(NO_7);
+            GpioControl::exportGPIO(NO_8);
+
+            GpioControl::setDirection(NO_7,SET_OUT);
+            GpioControl::setDirection(NO_8,SET_OUT);
+
+            GpioControl::setValue(NO_7, SET_LOW);
+            GpioControl::setValue(NO_8, SET_LOW);
+
+        break;
+
+        case CH_5:
+
+            GpioControl::exportGPIO(NO_9);
+            GpioControl::exportGPIO(NO_10);
+
+            GpioControl::setDirection(NO_9,SET_OUT);
+            GpioControl::setDirection(NO_10,SET_OUT);
+
+            GpioControl::setValue(NO_9, SET_LOW);
+            GpioControl::setValue(NO_10, SET_LOW);
+
+        break;
     }
 }
 
 relay_seed_ddl::~relay_seed_ddl()
 {
-    close(file_i2c);
+
 }
 
-void relay_seed_ddl::port_reset()
+void relay_seed_ddl::port_reset(quint8 ch)
 {
-    length = 2;			//<<< Number of bytes to write
 
-    for (quint8 channel=0x1; channel<0x5; channel++)
+    switch (ch)
     {
-        buffer[0] = channel;
-        buffer[1] = 0x00;
+        case CH_1:
 
-        write(file_i2c, buffer, length);
+            GpioControl::unexportGPIO(NO_1);
+            GpioControl::unexportGPIO(NO_2);
+
+            GpioControl::exportGPIO(NO_1);
+            GpioControl::exportGPIO(NO_2);
+
+            GpioControl::setDirection(NO_1,SET_OUT);
+            GpioControl::setDirection(NO_2,SET_OUT);
+
+            GpioControl::setValue(NO_1, SET_LOW);
+            GpioControl::setValue(NO_2, SET_LOW);
+
+        break;
+
+        case CH_2:
+
+            GpioControl::unexportGPIO(NO_3);
+            GpioControl::unexportGPIO(NO_4);
+
+            GpioControl::exportGPIO(NO_3);
+            GpioControl::exportGPIO(NO_4);
+
+            GpioControl::setDirection(NO_3,SET_OUT);
+            GpioControl::setDirection(NO_4,SET_OUT);
+
+            GpioControl::setValue(NO_3, SET_LOW);
+            GpioControl::setValue(NO_4, SET_LOW);
+
+        break;
+
+        case CH_3:
+
+            GpioControl::unexportGPIO(NO_5);
+            GpioControl::unexportGPIO(NO_6);
+
+            GpioControl::exportGPIO(NO_5);
+            GpioControl::exportGPIO(NO_6);
+
+            GpioControl::setDirection(NO_5,SET_OUT);
+            GpioControl::setDirection(NO_6,SET_OUT);
+
+            GpioControl::setValue(NO_5, SET_LOW);
+            GpioControl::setValue(NO_6, SET_LOW);
+
+        break;
+
+        case CH_4:
+
+            GpioControl::unexportGPIO(NO_7);
+            GpioControl::unexportGPIO(NO_8);
+
+            GpioControl::exportGPIO(NO_7);
+            GpioControl::exportGPIO(NO_8);
+
+            GpioControl::setDirection(NO_7,SET_OUT);
+            GpioControl::setDirection(NO_8,SET_OUT);
+
+            GpioControl::setValue(NO_7, SET_LOW);
+            GpioControl::setValue(NO_8, SET_LOW);
+
+        break;
+
+        case CH_5:
+
+            GpioControl::unexportGPIO(NO_9);
+            GpioControl::unexportGPIO(NO_10);
+
+            GpioControl::exportGPIO(NO_9);
+            GpioControl::exportGPIO(NO_10);
+
+            GpioControl::setDirection(NO_9,SET_OUT);
+            GpioControl::setDirection(NO_10,SET_OUT);
+
+            GpioControl::setValue(NO_9, SET_LOW);
+            GpioControl::setValue(NO_10, SET_LOW);
+
+        break;
     }
+
 }
 
-void relay_seed_ddl::port_open()
+void relay_seed_ddl::port_open(relay_seed_ddl::jig_channel ch)
 {
 //   for(quint8 Channel=0x5; Channel>0x0; Channel--)
 //       wiringPiI2CWriteReg8(fd_seed_ddl, Channel, 0xff);
 }
 
-void relay_seed_ddl::port_control(relay_seed_ddl::relay_channel Channel, quint8 OnOff)
+void relay_seed_ddl::port_control(quint8 ch, sensor_port port, GpioControl::SET_VAL OnOff)
 {
-    buffer[0] = Channel;
-    buffer[1] = OnOff;
+    switch(ch)
+    {
+        case CH_1:
 
-    write(file_i2c, buffer, length);
+            if(port == DETECT)
+            {
+                GpioControl::setValue(NO_1, OnOff);
+            }
+            else
+            {
+                GpioControl::setValue(NO_2, OnOff);
+            }
+
+        break;
+
+        case CH_2:
+
+            if(port == DETECT)
+            {
+                GpioControl::setValue(NO_3, OnOff);
+            }
+            else
+            {
+                GpioControl::setValue(NO_4, OnOff);
+            }
+
+        break;
+
+        case CH_3:
+
+            if(port == DETECT)
+            {
+                GpioControl::setValue(NO_5, OnOff);
+            }
+            else
+            {
+                GpioControl::setValue(NO_6, OnOff);
+            }
+
+        break;
+
+        case CH_4:
+
+            if(port == DETECT)
+            {
+                GpioControl::setValue(NO_7, OnOff);
+            }
+            else
+            {
+                GpioControl::setValue(NO_8, OnOff);
+            }
+
+        break;
+
+        case CH_5:
+
+            if(port == DETECT)
+            {
+                GpioControl::setValue(NO_9, OnOff);
+            }
+            else
+            {
+                GpioControl::setValue(NO_10, OnOff);
+            }
+
+        break;
+    }
 }

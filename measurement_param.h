@@ -8,7 +8,7 @@ using namespace std;
 struct measurement_param
 {    
     enum  meter_type{GLUCOSE_BASIC, GLUCOSE_BLE, GLUCOSE_VOICE, GLUCOSE_VOICE_BLE, KETONE_BASIC, KETONE_BLE};
-    enum  meter_channel{CH_1=0x1, CH_2=0x2};
+    enum  meter_channel{CH_1=0x1, CH_2=0x2, CH_3=0x3, CH_4=0x4, CH_5=0x5};
 
     meter_type type;
     meter_channel channel;

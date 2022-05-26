@@ -10,7 +10,6 @@ measurement::measurement(quint8 ch, QObject *parent) : QObject(parent)
 
     //Create Relay function
     measure_relay = new relay_seed_ddl(ch);
-    measure_relay->port_reset();
 
     //Create QTimer for measurement
     detect_on_timer = new QTimer(this);
@@ -45,7 +44,7 @@ measurement::measurement(quint8 ch, QObject *parent) : QObject(parent)
 void measurement::setup(measurement_param m_test_param)
 {
     //Glucose : detect -> (3.5 sec) -> work/third on -> (7 sec) -> detect off -> (4 sec)
-    Log() << Channel;
+    Log() <<"Channel:"<<Channel;
 
     Log() <<"meter type"<< m_test_param.type;
     Log() <<"test channel"<< m_test_param.channel;
@@ -89,9 +88,14 @@ void measurement::stop()
     test_interval_timer->stop();
 
     /*relay port reset*/
-    measure_relay->port_reset();
+//  measure_relay->port_reset();
+
+    measure_relay->port_control(Channel, relay_seed_ddl::sensor_port::DETECT, GpioControl::SET_VAL::SET_LOW);
+    measure_relay->port_control(Channel, relay_seed_ddl::sensor_port::WORK_THIRD, GpioControl::SET_VAL::SET_LOW);
 
     emit update_test_count(current_test_count);
+
+    emit update_action("Stopeed");
 
     current_test_count=0;
 }
@@ -105,7 +109,7 @@ void measurement::pause()
     third_on_timer->stop();
     detect_off_timer->stop();
 
-    measure_relay->port_reset();
+//    measure_relay->port_reset();
 }
 
 void measurement::detect_on()
@@ -114,7 +118,8 @@ void measurement::detect_on()
 
    emit update_action("detect on");
 
-   measure_relay->port_control(measure_relay->relay_channel::CH_1, DDL_CH_ON);
+// measure_relay->port_control(measure_relay->relay_channel::CH_1, DDL_CH_ON);
+   measure_relay->port_control(Channel, relay_seed_ddl::sensor_port::DETECT, GpioControl::SET_VAL::SET_HIGH);
 
    work_on_timer->start();
 }
@@ -125,7 +130,8 @@ void measurement::work_on()
 
     emit update_action("work on");
 
-    measure_relay->port_control(measure_relay->relay_channel::CH_2, DDL_CH_ON);
+//  measure_relay->port_control(measure_relay->relay_channel::CH_2, DDL_CH_ON);
+    measure_relay->port_control(Channel, relay_seed_ddl::sensor_port::WORK_THIRD, GpioControl::SET_VAL::SET_HIGH);
 
     third_on_timer->start();
 }
@@ -144,9 +150,13 @@ void measurement::detect_off()
     Log() <<"meter : "<< Channel;
 
     emit update_action("detect off");
+//  measure_relay->port_reset(Channel);
 
-    measure_relay->port_control(measure_relay->relay_channel::CH_1, DDL_CH_OFF);
-    measure_relay->port_control(measure_relay->relay_channel::CH_2, DDL_CH_OFF);
+//  measure_relay->port_control(measure_relay->relay_channel::CH_1, DDL_CH_OFF);
+//  measure_relay->port_control(measure_relay->relay_channel::CH_2, DDL_CH_OFF);
+
+    measure_relay->port_control(Channel, relay_seed_ddl::sensor_port::DETECT, GpioControl::SET_VAL::SET_LOW);
+    measure_relay->port_control(Channel, relay_seed_ddl::sensor_port::WORK_THIRD, GpioControl::SET_VAL::SET_LOW);
 
     current_test_count++;
 
