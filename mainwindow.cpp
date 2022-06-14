@@ -43,11 +43,21 @@ void MainWindow::ui_init_measurement()
     */
 
     /*Play/Pause/Stop Button*/
-    ui->test_start_ch1->setIcon(QIcon(":/images/play.png"));
-    ui->test_start_ch1->setIconSize(QSize(45,45));
-    ui->test_stop_ch1->setIcon(QIcon(":/images/stop.png"));
-    ui->test_stop_ch1->setIconSize(QSize(45,45));
+/*  ui->test_start_ch1->setIcon(QIcon(":/images/play.png"));
+    ui->test_stop_ch1->setIcon(QIcon(":/images/stop.png"));    
     ui->test_pause_ch1->setIcon(QIcon(":/images/pause.png"));
+*/
+
+    QPixmap play_icon("/home/pi/Battery_LifeTime_Test/bin/images/play.png"), \
+            stop_icon("/home/pi/Battery_LifeTime_Test/bin/images/stop.png"), \
+            pause_icon("/home/pi/Battery_LifeTime_Test/bin/images/pause.png");
+
+    ui->test_start_ch1->setIcon(QIcon(play_icon));
+    ui->test_stop_ch1->setIcon(QIcon(stop_icon));
+    ui->test_pause_ch1->setIcon(QIcon(pause_icon));
+
+    ui->test_start_ch1->setIconSize(QSize(45,45));
+    ui->test_stop_ch1->setIconSize(QSize(45,45));
     ui->test_pause_ch1->setIconSize(QSize(45,45));
 
     ui->test_stop_ch1->setEnabled(false);
@@ -118,11 +128,16 @@ void MainWindow::ui_init_measurement()
     */
 
     /*Play/Pause/Stop Button*/
-    ui->test_start_ch2->setIcon(QIcon(":/images/play.png"));
+//    ui->test_start_ch2->setIcon(QIcon(":/images/play.png"));
+//    ui->test_stop_ch2->setIcon(QIcon(":/images/stop.png"));
+//    ui->test_pause_ch2->setIcon(QIcon(":/images/pause.png"));
+
+    ui->test_start_ch2->setIcon(QIcon(play_icon));
+    ui->test_stop_ch2->setIcon(QIcon(stop_icon));
+    ui->test_pause_ch2->setIcon(QIcon(pause_icon));
+
     ui->test_start_ch2->setIconSize(QSize(45,45));
-    ui->test_stop_ch2->setIcon(QIcon(":/images/stop.png"));
     ui->test_stop_ch2->setIconSize(QSize(45,45));
-    ui->test_pause_ch2->setIcon(QIcon(":/images/pause.png"));
     ui->test_pause_ch2->setIconSize(QSize(45,45));
 
     ui->test_stop_ch2->setEnabled(false);
@@ -170,6 +185,9 @@ void MainWindow::ui_init_measurement()
     currentMeterIndexChanged(m_test_param_tmp.type);
     connect(ui->meter_type_ch2,SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
 
+    /*Init Action Status*/
+    ui->test_step_ch2->setText("Current Action :  Stopeed");
+
     /*USB Interface select*/
     ui->micro_usb_ch2->setEnabled(true);
     ui->micro_usb_ch2->setChecked(true);
@@ -186,11 +204,16 @@ void MainWindow::ui_init_measurement()
     */
 
     /*Play/Pause/Stop Button*/
-    ui->test_start_ch3->setIcon(QIcon(":/images/play.png"));
-    ui->test_start_ch3->setIconSize(QSize(45,45));
-    ui->test_stop_ch3->setIcon(QIcon(":/images/stop.png"));
-    ui->test_stop_ch3->setIconSize(QSize(45,45));
+/*  ui->test_start_ch3->setIcon(QIcon(":/images/play.png"));
+    ui->test_stop_ch3->setIcon(QIcon(":/images/stop.png"));    
     ui->test_pause_ch3->setIcon(QIcon(":/images/pause.png"));
+*/
+    ui->test_start_ch3->setIcon(QIcon(play_icon));
+    ui->test_stop_ch3->setIcon(QIcon(stop_icon));
+    ui->test_pause_ch3->setIcon(QIcon(pause_icon));
+
+    ui->test_start_ch3->setIconSize(QSize(45,45));
+    ui->test_stop_ch3->setIconSize(QSize(45,45));
     ui->test_pause_ch3->setIconSize(QSize(45,45));
 
     ui->test_stop_ch3->setEnabled(false);
@@ -238,6 +261,9 @@ void MainWindow::ui_init_measurement()
     currentMeterIndexChanged(m_test_param_tmp.type);
     connect(ui->meter_type_ch3,SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
 
+    /*Init Action Status*/
+    ui->test_step_ch3->setText("Current Action :  Stopeed");
+
     /*USB Interface select*/
     ui->micro_usb_ch3->setEnabled(true);
     ui->micro_usb_ch3->setChecked(true);
@@ -254,11 +280,18 @@ void MainWindow::ui_init_measurement()
     */
 
     /*Play/Pause/Stop Button*/
+    /*
     ui->test_start_ch4->setIcon(QIcon(":/images/play.png"));
-    ui->test_start_ch4->setIconSize(QSize(45,45));
-    ui->test_stop_ch4->setIcon(QIcon(":/images/stop.png"));
-    ui->test_stop_ch4->setIconSize(QSize(45,45));
+    ui->test_stop_ch4->setIcon(QIcon(":/images/stop.png"));    
     ui->test_pause_ch4->setIcon(QIcon(":/images/pause.png"));
+    */
+
+    ui->test_start_ch4->setIcon(QIcon(play_icon));
+    ui->test_stop_ch4->setIcon(QIcon(stop_icon));
+    ui->test_pause_ch4->setIcon(QIcon(pause_icon));
+
+    ui->test_start_ch4->setIconSize(QSize(45,45));
+    ui->test_stop_ch4->setIconSize(QSize(45,45));
     ui->test_pause_ch4->setIconSize(QSize(45,45));
 
     ui->test_stop_ch4->setEnabled(false);
@@ -306,6 +339,9 @@ void MainWindow::ui_init_measurement()
     currentMeterIndexChanged(m_test_param_tmp.type);
     connect(ui->meter_type_ch4,SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
 
+    /*Init Action Status*/
+    ui->test_step_ch4->setText("Current Action :  Stopeed");
+
     /*USB Interface select*/
     ui->micro_usb_ch4->setEnabled(true);
     ui->micro_usb_ch4->setChecked(true);
@@ -322,11 +358,17 @@ void MainWindow::ui_init_measurement()
     */
 
     /*Play/Pause/Stop Button*/
-    ui->test_start_ch5->setIcon(QIcon(":/images/play.png"));
-    ui->test_start_ch5->setIconSize(QSize(45,45));
-    ui->test_stop_ch5->setIcon(QIcon(":/images/stop.png"));
-    ui->test_stop_ch5->setIconSize(QSize(45,45));
+ /*
+    ui->test_start_ch5->setIcon(QIcon(":/images/play.png"));    
+    ui->test_stop_ch5->setIcon(QIcon(":/images/stop.png"));    
     ui->test_pause_ch5->setIcon(QIcon(":/images/pause.png"));
+ */
+    ui->test_start_ch5->setIcon(QIcon(play_icon));
+    ui->test_stop_ch5->setIcon(QIcon(stop_icon));
+    ui->test_pause_ch5->setIcon(QIcon(pause_icon));
+
+    ui->test_start_ch5->setIconSize(QSize(45,45));
+    ui->test_stop_ch5->setIconSize(QSize(45,45));
     ui->test_pause_ch5->setIconSize(QSize(45,45));
 
     ui->test_stop_ch5->setEnabled(false);
@@ -373,6 +415,9 @@ void MainWindow::ui_init_measurement()
 
     currentMeterIndexChanged(m_test_param_tmp.type);
     connect(ui->meter_type_ch5,SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
+
+    /*Init Action Status*/
+    ui->test_step_ch5->setText("Current Action :  Stopeed");
 
     /*USB Interface select*/
     ui->micro_usb_ch5->setEnabled(true);

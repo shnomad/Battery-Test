@@ -111,7 +111,7 @@
      <string notr="true">QTabBar::tab:selected { color: #ffffff; background-color: rgb(0,0,255);}</string>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>4</number>
     </property>
     <widget class="QWidget" name="Channel1">
      <attribute name="title">
@@ -296,14 +296,14 @@ QSpinBox::down-button
 
 QSpinBox::up-arrow
 {
-	image: url(:/images/arrow-up.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-up.png&quot;);
      width: 30px;
      height: 30px;
 }
 
 QSpinBox::down-arrow
 {
-	image: url(:/images/arrow-down.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-down.png&quot;);
      width: 30px;
      height: 30px;
 }</string>
@@ -348,14 +348,14 @@ QSpinBox::down-button
 
 QSpinBox::up-arrow
 {
-	image: url(:/images/arrow-up.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-up.png&quot;);
      width: 30px;
      height: 30px;
 }
 
 QSpinBox::down-arrow
 {
-	image: url(:/images/arrow-down.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-down.png&quot;);
      width: 30px;
      height: 30px;
 }</string>
@@ -400,14 +400,14 @@ QSpinBox::down-button
 
 QSpinBox::up-arrow
 {
-	image: url(:/images/arrow-up.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-up.png&quot;);
      width: 30px;
      height: 30px;
 }
 
 QSpinBox::down-arrow
 {
-	image: url(:/images/arrow-down.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-down.png&quot;);
      width: 30px;
      height: 30px;
 }</string>
@@ -452,14 +452,14 @@ QSpinBox::down-button
 
 QSpinBox::up-arrow
 {
-	image: url(:/images/arrow-up.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-up.png&quot;);
      width: 30px;
      height: 30px;
 }
 
 QSpinBox::down-arrow
 {
-	image: url(:/images/arrow-down.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-down.png&quot;);
      width: 30px;
      height: 30px;
 }</string>
@@ -1349,14 +1349,14 @@ QSpinBox::down-button
 
 QSpinBox::up-arrow
 {
-	image: url(:/images/arrow-up.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-up.png&quot;);
      width: 30px;
      height: 30px;
 }
 
 QSpinBox::down-arrow
 {
-	image: url(:/images/arrow-down.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-down.png&quot;);
      width: 30px;
      height: 30px;
 }</string>
@@ -1401,14 +1401,14 @@ QSpinBox::down-button
 
 QSpinBox::up-arrow
 {
-	image: url(:/images/arrow-up.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-up.png&quot;);
      width: 30px;
      height: 30px;
 }
 
 QSpinBox::down-arrow
 {
-	image: url(:/images/arrow-down.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-down.png&quot;);
      width: 30px;
      height: 30px;
 }</string>
@@ -1453,14 +1453,14 @@ QSpinBox::down-button
 
 QSpinBox::up-arrow
 {
-	image: url(:/images/arrow-up.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-up.png&quot;);
      width: 30px;
      height: 30px;
 }
 
 QSpinBox::down-arrow
 {
-	image: url(:/images/arrow-down.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-down.png&quot;);
      width: 30px;
      height: 30px;
 }</string>
@@ -1630,14 +1630,14 @@ QSpinBox::down-button
 
 QSpinBox::up-arrow
 {
-	image: url(:/images/arrow-up.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-up.png&quot;);
      width: 30px;
      height: 30px;
 }
 
 QSpinBox::down-arrow
 {
-	image: url(:/images/arrow-down.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-down.png&quot;);
      width: 30px;
      height: 30px;
 }</string>
@@ -2180,14 +2180,14 @@ QSpinBox::down-button
 
 QSpinBox::up-arrow
 {
-	image: url(:/images/arrow-up.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-up.png&quot;);
      width: 30px;
      height: 30px;
 }
 
 QSpinBox::down-arrow
 {
-	image: url(:/images/arrow-down.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-down.png&quot;);
      width: 30px;
      height: 30px;
 }</string>
@@ -2232,14 +2232,14 @@ QSpinBox::down-button
 
 QSpinBox::up-arrow
 {
-	image: url(:/images/arrow-up.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-up.png&quot;);
      width: 30px;
      height: 30px;
 }
 
 QSpinBox::down-arrow
 {
-	image: url(:/images/arrow-down.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-down.png&quot;);
      width: 30px;
      height: 30px;
 }</string>
@@ -2284,14 +2284,14 @@ QSpinBox::down-button
 
 QSpinBox::up-arrow
 {
-	image: url(:/images/arrow-up.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-up.png&quot;);
      width: 30px;
      height: 30px;
 }
 
 QSpinBox::down-arrow
 {
-	image: url(:/images/arrow-down.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-down.png&quot;);
      width: 30px;
      height: 30px;
 }</string>
@@ -2461,14 +2461,14 @@ QSpinBox::down-button
 
 QSpinBox::up-arrow
 {
-	image: url(:/images/arrow-up.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-up.png&quot;);
      width: 30px;
      height: 30px;
 }
 
 QSpinBox::down-arrow
 {
-	image: url(:/images/arrow-down.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-down.png&quot;);
      width: 30px;
      height: 30px;
 }</string>
@@ -3044,14 +3044,14 @@ QSpinBox::down-button
 
 QSpinBox::up-arrow
 {
-	image: url(:/images/arrow-up.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-up.png&quot;);
      width: 30px;
      height: 30px;
 }
 
 QSpinBox::down-arrow
 {
-	image: url(:/images/arrow-down.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-down.png&quot;);
      width: 30px;
      height: 30px;
 }</string>
@@ -3096,14 +3096,14 @@ QSpinBox::down-button
 
 QSpinBox::up-arrow
 {
-	image: url(:/images/arrow-up.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-up.png&quot;);
      width: 30px;
      height: 30px;
 }
 
 QSpinBox::down-arrow
 {
-	image: url(:/images/arrow-down.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-down.png&quot;);
      width: 30px;
      height: 30px;
 }</string>
@@ -3148,14 +3148,14 @@ QSpinBox::down-button
 
 QSpinBox::up-arrow
 {
-	image: url(:/images/arrow-up.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-up.png&quot;);
      width: 30px;
      height: 30px;
 }
 
 QSpinBox::down-arrow
 {
-	image: url(:/images/arrow-down.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-down.png&quot;);
      width: 30px;
      height: 30px;
 }</string>
@@ -3325,14 +3325,14 @@ QSpinBox::down-button
 
 QSpinBox::up-arrow
 {
-	image: url(:/images/arrow-up.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-up.png&quot;);
      width: 30px;
      height: 30px;
 }
 
 QSpinBox::down-arrow
 {
-	image: url(:/images/arrow-down.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-down.png&quot;);
      width: 30px;
      height: 30px;
 }</string>
@@ -3908,14 +3908,14 @@ QSpinBox::down-button
 
 QSpinBox::up-arrow
 {
-	image: url(:/images/arrow-up.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-up.png&quot;);
      width: 30px;
      height: 30px;
 }
 
 QSpinBox::down-arrow
 {
-	image: url(:/images/arrow-down.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-down.png&quot;);
      width: 30px;
      height: 30px;
 }</string>
@@ -3960,14 +3960,14 @@ QSpinBox::down-button
 
 QSpinBox::up-arrow
 {
-	image: url(:/images/arrow-up.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-up.png&quot;);
      width: 30px;
      height: 30px;
 }
 
 QSpinBox::down-arrow
 {
-	image: url(:/images/arrow-down.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-down.png&quot;);
      width: 30px;
      height: 30px;
 }</string>
@@ -4012,14 +4012,14 @@ QSpinBox::down-button
 
 QSpinBox::up-arrow
 {
-	image: url(:/images/arrow-up.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-up.png&quot;);
      width: 30px;
      height: 30px;
 }
 
 QSpinBox::down-arrow
 {
-	image: url(:/images/arrow-down.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-down.png&quot;);
      width: 30px;
      height: 30px;
 }</string>
@@ -4189,14 +4189,14 @@ QSpinBox::down-button
 
 QSpinBox::up-arrow
 {
-	image: url(:/images/arrow-up.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-up.png&quot;);
      width: 30px;
      height: 30px;
 }
 
 QSpinBox::down-arrow
 {
-	image: url(:/images/arrow-down.png);
+     image: url(&quot;/home/pi/Battery_LifeTime_Test/bin/images/arrow-down.png&quot;);
      width: 30px;
      height: 30px;
 }</string>
