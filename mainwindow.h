@@ -21,6 +21,7 @@ QT_END_NAMESPACE
 class measurement_param;
 class measurement;
 class control;
+class TcpSocketRW;
 
 #define RASPBERRY_PI3_B         0x0
 #define RASPBERRY_PI3_B_PLUS    0x1
@@ -41,6 +42,7 @@ private slots:
     void UpdateTime();
     void ui_action_status_ch1(QString);
     void ui_test_count_ch1(int);
+    void ui_interval_time_update(int);
 
     void ui_action_status_ch2(QString);
     void ui_test_count_ch2(int);
@@ -53,6 +55,9 @@ private slots:
 
     void ui_action_status_ch5(QString);
     void ui_test_count_ch5(int);
+
+    void daq970a_working_status(QString);
+    void daq970a_working_req();
 
 private Q_SLOTS:
 
@@ -113,6 +118,11 @@ private Q_SLOTS:
     void on_reboot_clicked();
     void on_quit_clicked();
 
+    void on_daq970a_start_clicked();
+    void on_daq970a_stop_clicked();
+
+    void on_daq970_capture_stateChanged(int arg1);
+
 signals:
     void measure_setup_ch1(measurement_param);
     void measure_start_ch1();
@@ -141,6 +151,12 @@ signals:
 
     void update_action(QString);
     void update_test_count(int);
+    void update_interval_time(int);
+
+    /* DAQ970A command/response */
+    void send_socket_command(const QByteArray &data);
+    void send_sock_command_tmp(qint64);
+    void read_socket_response(QString);
 
 Q_SIGNALS:
     void currentIndexChanged(int index);
@@ -181,6 +197,14 @@ private:
 
    /*measurement thread control*/
     control *m_control;
+
+   /*socket create for DAQ970a*/
+    TcpSocketRW *m_sock;
+    QThread *m_sock_pThread;
+    QString server_ip;
+    QByteArray sock_cmd;
+    QTimer *timer_daq970;
+    quint8 interval_ble_voltage_check_count=0;
 };
 
 #endif // MAINWINDOW_H

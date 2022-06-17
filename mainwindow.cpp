@@ -18,7 +18,7 @@
 #include <QProcess>
 #include <QtNetwork/QNetworkInterface>
 #include "loggingcategories.h"
-#include "control.h"
+#include "tcpsocketrw.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -27,12 +27,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
       qRegisterMetaType<measurement_param>();
 
       timer_sec = new QTimer(this);                   //display system time
+      timer_daq970 = new QTimer(this);                //DAQ 970 voltage capture command
 
       ui_create_measurement();
 
       ui_init_measurement();
 
-      ui_system_info_setup();
+      ui_system_info_setup();           
 }
 
 void MainWindow::ui_init_measurement()
@@ -204,7 +205,8 @@ void MainWindow::ui_init_measurement()
     */
 
     /*Play/Pause/Stop Button*/
-/*  ui->test_start_ch3->setIcon(QIcon(":/images/play.png"));
+/*
+ *  ui->test_start_ch3->setIcon(QIcon(":/images/play.png"));
     ui->test_stop_ch3->setIcon(QIcon(":/images/stop.png"));    
     ui->test_pause_ch3->setIcon(QIcon(":/images/pause.png"));
 */
@@ -429,6 +431,7 @@ void MainWindow::ui_init_measurement()
     ui->time_sync_ch5->setEnabled(false);
     ui->mem_delete_ch5->setEnabled(false);
     ui->download_ch5->setEnabled(false);
+
 }
 
 void MainWindow::ui_create_measurement()
@@ -471,6 +474,9 @@ void MainWindow::ui_create_measurement()
     connect(m_control->m_ch[2], SIGNAL(update_action(QString)), this, SLOT(ui_action_status_ch3(QString)));
     connect(m_control->m_ch[3], SIGNAL(update_action(QString)), this, SLOT(ui_action_status_ch4(QString)));
     connect(m_control->m_ch[4], SIGNAL(update_action(QString)), this, SLOT(ui_action_status_ch5(QString)));
+
+    connect(m_control->m_ch[0], SIGNAL(update_interval_time(int)), this, SLOT(ui_interval_time_update(int)));
+
 }
 
 void MainWindow::ui_set_measurement_start_ch1()
@@ -822,6 +828,29 @@ void MainWindow::ui_action_status_ch1(QString status)
 {
     ui->test_step_ch1->setText("Current Action :  "+status);
 
+    if(ui->daq970_capture->isChecked())
+    {                
+        if(status == "detect on")
+        {
+             emit send_sock_command_tmp(m_sock->socket_command::COMMAND_INST_START);
+        }
+        else if(status == "work on")
+        {
+            emit send_sock_command_tmp(m_sock->socket_command::COMMAND_INST_START);
+        }
+        else if(status == "detect off")
+        {
+            emit send_sock_command_tmp(m_sock->socket_command::COMMAND_INST_START);
+
+            if(m_test_param_ch1.type = measurement_param::meter_type::GLUCOSE_BLE)
+            {
+                QObject::connect(timer_daq970, SIGNAL(timeout()), this, SLOT(daq970a_working_req()));
+                timer_daq970->start(5000);
+            }
+
+        }
+    }
+
     if(status=="stop")
         ui_set_measurement_stop_ch1();
 }
@@ -829,6 +858,11 @@ void MainWindow::ui_action_status_ch1(QString status)
 void MainWindow::ui_test_count_ch1(int count)
 {
     ui->test_count_ch1->setText("Count :     " +  QString::number(count));
+}
+
+void MainWindow::ui_interval_time_update(int interval_time)
+{
+   ui->test_interval_ch1->setText("Interval Count (Sec.) :   " + QString::number(interval_time));
 }
 
 void MainWindow::ui_action_status_ch2(QString status)
@@ -1522,7 +1556,17 @@ void MainWindow::ui_system_info_setup()
     /*Show Build information*/
     ui->build_date->setText("build date : " + build_date);
 
-    //Print local machine's IP address
+    //Print local machine's eth0 IP address
+
+#if 0
+
+    QNetworkInterface *qnet;
+    qnet = new QNetworkInterface();
+    *qnet = qnet->interfaceFromName(QString("%1").arg("eth0"));
+    server_ip = qnet->addressEntries().at(0).ip().toString();
+    ui->ip_address->setText("IP Address : " + qnet->addressEntries().at(0).ip().toString());
+
+#else
     QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
 
     for (int i = 0; i < interfaces.count(); i++)
@@ -1537,9 +1581,13 @@ void MainWindow::ui_system_info_setup()
                 qDebug() << entries.at(j).netmask().toString();
 
                 ui->ip_address->setText("IP Address : " + entries.at(j).ip().toString());
+
+                server_ip = entries.at(j).ip().toString();
             }
         }
     }
+
+#endif
 
     board_info = QString::fromStdString(do_console_command_get_result ("cat /proc/device-tree/model"));
 
@@ -1578,4 +1626,62 @@ MainWindow::~MainWindow()
 {
       delete m_control;
       delete ui;
+}
+
+void MainWindow::on_daq970a_start_clicked()
+{
+
+//    QProcess process;
+//    process.startDetached("python3 /home/pi/DAQ970/test-server.py &");
+
+    m_sock = new TcpSocketRW(server_ip);
+    m_sock_pThread = new QThread(this);
+    m_sock->moveToThread(m_sock_pThread);
+    connect(m_sock_pThread, &QThread::finished, m_sock, &QObject::deleteLater);
+    m_sock_pThread->start();
+
+//  connect(this, SIGNAL(send_socket_command(const QbyteArray)), m_sock, SLOT(writedata(const QbyteArray)));
+    connect(this, SIGNAL(send_sock_command_tmp(qint64)), m_sock, SLOT(bytesWritten(qint64)));
+    connect(m_sock, SIGNAL(read_socket_response(QString)), this, SLOT(daq970a_working_status(QString)));
+
+    ui->daq970a_start->setStyleSheet("background-color:rgb(244,0,0);border-style:insert");
+    ui->daq970a_stop->setStyleSheet("default");
+}
+
+void MainWindow::on_daq970a_stop_clicked()
+{
+    ui->daq970a_start->setStyleSheet("default");
+    ui->daq970a_status->clear();
+    delete m_sock;
+}
+
+void MainWindow::daq970a_working_status(QString status)
+{
+     ui->daq970a_status->append(status);
+
+     /*If Error occured, should on_daq970a_stop_clicked() */
+}
+
+void MainWindow::on_daq970_capture_stateChanged(int arg1)
+{
+    if(ui->daq970_capture->isChecked())
+     m_test_param_ch1.use_daq970 = true;
+    else
+     m_test_param_ch1.use_daq970 = false;
+
+     emit measure_setup_ch1(m_test_param_ch1);
+}
+
+void MainWindow::daq970a_working_req()
+{
+    if(interval_ble_voltage_check_count < 2)
+    {
+        emit send_sock_command_tmp(m_sock->socket_command::COMMAND_INST_START);
+        interval_ble_voltage_check_count++;
+    }
+    else
+    {
+        timer_daq970->stop();
+        interval_ble_voltage_check_count = 0;
+    }
 }

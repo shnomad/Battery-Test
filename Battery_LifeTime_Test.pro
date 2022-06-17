@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT       += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -29,7 +30,8 @@ SOURCES += \
         measurement.cpp \
         relay_seed_ddl.cpp \
         settings.cpp \
-        loggingcategories.cpp
+        loggingcategories.cpp \
+        tcpsocketrw.cpp
 #        serialcom/serialporttester.cpp \
 #        serialcom/serialcomm.cpp \
 #        serialcom/serialprotocol3.cpp \
@@ -48,7 +50,8 @@ HEADERS += \
         setting_flagname_definition.h \
         builddatetime.h \
         loggingcategories.h \
-        measurement_param.h
+        measurement_param.h  \
+        tcpsocketrw.h
 #        serialcom/glucosedownloadprogress.h \
 #        serialcom/serialporttester.h \
 #        serialcom/serialcomm.h \
@@ -73,8 +76,8 @@ INCLUDEPATH +=/opt/qt5pi/sysroot/usr/include
 
 #LIBS += -L/opt/qt5pi/sysroot/usr/lib -lwiringPi \
 LIBS += -L/opt/qt5rpi3/sysroot/usr/lib -lhidapi-hidraw \
-        -L/opt/qt5rpi3/sysroot/usr/local/qt5pi/lib -lQt5Network \
-        -L/opt/qt5rpi3/sysroot/usr/local/qt5pi/lib -lQt5SerialPort
+#        -L/opt/qt5rpi3/sysroot/usr/local/qt5pi/lib -lQt5Network \
+#        -L/opt/qt5rpi3/sysroot/usr/local/qt5pi/lib -lQt5SerialPort
 
 QMAKE_CFLAGS_ISYSTEM = -I
 
@@ -83,5 +86,5 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /home/pi/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-RESOURCES += \
-    resource.qrc
+#RESOURCES += \
+#    resource.qrc

@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QThread>
 #include "measurement.h"
+#include "tcpsocketrw.h"
 
 //class measurement;
 

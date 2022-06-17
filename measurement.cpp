@@ -18,6 +18,7 @@ measurement::measurement(quint8 ch, QObject *parent) : QObject(parent)
     detect_off_timer = new QTimer(this);
     test_interval_timer = new QTimer(this);
     count_check_timer = new QTimer(this);
+    interval_count_display_timer = new QTimer(this);
 
     detect_on_timer->setSingleShot(true);
     work_on_timer->setSingleShot(true);
@@ -32,6 +33,7 @@ measurement::measurement(quint8 ch, QObject *parent) : QObject(parent)
     connect(third_on_timer, SIGNAL(timeout()),SLOT(third_on()));
     connect(detect_off_timer, SIGNAL(timeout()),SLOT(detect_off()));
     connect(count_check_timer, SIGNAL(timeout()),SLOT(test_count_check()));
+    connect(interval_count_display_timer, SIGNAL(timeout()),SLOT(interva_time_check()));
     connect(test_interval_timer, &QTimer::timeout,[=]()
         {
            //emit measure_cnt_check(SIGNAL_FROM_MEASURE_DETECT_OFF);
@@ -54,6 +56,7 @@ void measurement::setup(measurement_param m_test_param)
     Log() <<"third_on_time"<< m_test_param.third_on_time;
     Log() <<"detect_off_time"<< m_test_param.detect_off_time;
     Log() <<"test_interval_time"<< m_test_param.test_interval_time;
+    Log() <<"use daq970a instrument"<<m_test_param.use_daq970;
 
      meter_mem_capacity = m_test_param.meter_memory_capacity;
      target_test_count=m_test_param.target_measure_count;
@@ -65,6 +68,9 @@ void measurement::setup(measurement_param m_test_param)
 
 //   default teset interval                    //15 Sec
      test_interval_timer->setInterval(m_test_param.test_interval_time);
+
+     interval_timer_count =  (m_test_param.test_interval_time)/1000;
+     interval_timer_count_tmp = interval_timer_count;
 }
 
 void measurement::start()
@@ -73,7 +79,7 @@ void measurement::start()
 
     detect_on_timer->start();
 
-    emit update_test_count(current_test_count);
+    emit update_test_count(static_cast<int>(current_test_count));
 }
 
 void measurement::stop()
@@ -93,11 +99,14 @@ void measurement::stop()
     measure_relay->port_control(Channel, relay_seed_ddl::sensor_port::DETECT, GpioControl::SET_VAL::SET_LOW);
     measure_relay->port_control(Channel, relay_seed_ddl::sensor_port::WORK_THIRD, GpioControl::SET_VAL::SET_LOW);
 
-    emit update_test_count(current_test_count);
-
+    emit update_test_count(static_cast<int>(current_test_count));
     emit update_action("Stopeed");
+    emit update_interval_time(static_cast<int>(interval_timer_count));
 
     current_test_count=0;
+
+    interval_count_display_timer->stop();
+
 }
 
 void measurement::pause()
@@ -108,13 +117,16 @@ void measurement::pause()
     work_on_timer->stop();
     third_on_timer->stop();
     detect_off_timer->stop();
-
-//    measure_relay->port_reset();
+    interval_count_display_timer->stop();
+//  measure_relay->port_reset();
 }
 
 void measurement::detect_on()
 {    
    Log() <<"meter : "<<Channel ;
+
+   //   display the interval count decrease
+   interval_count_display_timer->stop();
 
    emit update_action("detect on");
 
@@ -160,7 +172,7 @@ void measurement::detect_off()
 
     current_test_count++;
 
-    count_check_timer->start();
+    count_check_timer->start();    
 }
 
 void measurement::test_count_check()
@@ -185,6 +197,9 @@ void measurement::test_count_check()
             Log() <<"Test Continue";
 
             test_interval_timer->start();
+
+            //   display the interval count decrease
+            interval_count_display_timer->start(1000);
         }
         else
         {
@@ -217,6 +232,9 @@ void measurement::test_count_check()
                    {
                        Log() <<"Test Continue";
                        test_interval_timer->start();
+
+                       //   display the interval count decrease
+                       interval_count_display_timer->start(1000);
                    }
                    else
                    {
@@ -231,6 +249,9 @@ void measurement::test_count_check()
                {
                    Log() <<"Test Continue";
                    test_interval_timer->start();
+
+                   //   display the interval count decrease
+                   interval_count_display_timer->start(1000);
                }
          }
          else if((static_cast<uint32_t>(target_test_count)%static_cast<uint32_t>(meter_mem_capacity)))
@@ -244,6 +265,9 @@ void measurement::test_count_check()
                  Log() <<"Current test count : "<< current_test_count;
                  Log() <<"Test Continue";
                  test_interval_timer->start();
+
+                 // display the interval count decrease
+                 interval_count_display_timer->start(1000);
              }
              else if(static_cast<uint32_t>(target_test_count) == current_test_count)
              {
@@ -261,6 +285,9 @@ void measurement::test_count_check()
                  Log() <<"Current test count : "<< current_test_count;
                  Log() <<"Test Continue";
                  test_interval_timer->start();
+
+                 //   display the interval count decrease
+                 interval_count_display_timer->start(1000);
              }
          }
          else
@@ -271,8 +298,22 @@ void measurement::test_count_check()
              Log() <<"Target test count is  "<< target_test_count;
              Log() <<"Current test count is  "<< current_test_count;
          }
-      }
+      }      
+}
 
+void measurement::interva_time_check()
+{
+     interval_timer_count_tmp--;
+
+    if(interval_timer_count_tmp > 0)
+    {
+       emit update_interval_time((int)interval_timer_count_tmp);
+    }
+    else
+    {
+       interval_timer_count_tmp = interval_timer_count;
+       interval_count_display_timer->stop();
+    }
 }
 
 measurement::~measurement()
