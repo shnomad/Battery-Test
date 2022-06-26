@@ -1,6 +1,7 @@
 #include "measurement.h"
 #include "relay_seed_ddl.h"
 #include "commondefinition.h"
+#include "python_wrapper.h"
 
 measurement::measurement(quint8 ch, QObject *parent) : QObject(parent)
 {

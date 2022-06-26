@@ -44,6 +44,7 @@ HEADERS += \
         gpiocontrol.h \
         mainwindow.h \
         measurement.h \
+        python_wrapper.h \
         relay_seed_ddl.h \
         commondefinition.h \
         settings.h \
@@ -51,6 +52,7 @@ HEADERS += \
         builddatetime.h \
         loggingcategories.h \
         measurement_param.h  \
+        python_wrapper.h \
         tcpsocketrw.h
 #        serialcom/glucosedownloadprogress.h \
 #        serialcom/serialporttester.h \
@@ -76,6 +78,7 @@ INCLUDEPATH +=/opt/qt5pi/sysroot/usr/include
 
 #LIBS += -L/opt/qt5pi/sysroot/usr/lib -lwiringPi \
 LIBS += -L/opt/qt5rpi3/sysroot/usr/lib -lhidapi-hidraw \
+        -L/opt/qt5rpi3/sysroot/usr/lib/python3.7/config-3.7m-arm-linux-gnueabihf -lpython3.7
 #        -L/opt/qt5rpi3/sysroot/usr/local/qt5pi/lib -lQt5Network \
 #        -L/opt/qt5rpi3/sysroot/usr/local/qt5pi/lib -lQt5SerialPort
 

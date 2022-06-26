@@ -4593,7 +4593,7 @@ QSpinBox::down-arrow
        </rect>
       </property>
       <property name="title">
-       <string>DAQ970A Control</string>
+       <string>DMM Control</string>
       </property>
       <widget class="QTextEdit" name="daq970a_status">
        <property name="geometry">
