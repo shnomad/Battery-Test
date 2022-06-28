@@ -17,6 +17,7 @@ public:
 
     measurement *m_ch[5];
     QThread *m_pThread[5];
+    void delay_mSec(unsigned int);
 
 signals:
 

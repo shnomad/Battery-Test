@@ -102,7 +102,6 @@
 #define TEMPERATURE_RANGE_5_45          "5~45(ºC)"
 #define TEMPERATURE_RANGE_6_44          "6~44(ºC)"
 
-
 #define APNKEY_KT  "alwayson-r6.ktfwing.com"
 #define APNKEY_SKT "web.sktelecom.com"
 
@@ -125,4 +124,3 @@
 #define ANIMAL_TYPE_CAT     "고양이"
 
 #endif // COMMONDEFINITION
-

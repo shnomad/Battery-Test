@@ -197,6 +197,7 @@ private:
 
    /*measurement thread control*/
     control *m_control;
+    bool system_init_done=false;
 
    /*socket create for DAQ970a*/
     TcpSocketRW *m_sock;

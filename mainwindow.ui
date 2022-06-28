@@ -734,7 +734,7 @@ QSpinBox::down-arrow
       <widget class="QLabel" name="test_count_ch1">
        <property name="geometry">
         <rect>
-         <x>13</x>
+         <x>15</x>
          <y>57</y>
          <width>250</width>
          <height>16</height>
@@ -770,7 +770,7 @@ QSpinBox::down-arrow
         </font>
        </property>
        <property name="text">
-        <string>Interval Count (Sec.) :</string>
+        <string>Interval Time (Sec.) :</string>
        </property>
       </widget>
      </widget>
