@@ -111,7 +111,7 @@
      <string notr="true">QTabBar::tab:selected { color: #ffffff; background-color: rgb(0,0,255);}</string>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="Channel1">
      <attribute name="title">
@@ -734,7 +734,7 @@ QSpinBox::down-arrow
       <widget class="QLabel" name="test_count_ch1">
        <property name="geometry">
         <rect>
-         <x>15</x>
+         <x>12</x>
          <y>57</y>
          <width>250</width>
          <height>16</height>
@@ -755,7 +755,7 @@ QSpinBox::down-arrow
       <widget class="QLabel" name="test_interval_ch1">
        <property name="geometry">
         <rect>
-         <x>15</x>
+         <x>12</x>
          <y>84</y>
          <width>271</width>
          <height>16</height>
@@ -1065,7 +1065,7 @@ QSpinBox::down-arrow
       <property name="geometry">
        <rect>
         <x>360</x>
-        <y>70</y>
+        <y>64</y>
         <width>301</width>
         <height>151</height>
        </rect>
@@ -1692,9 +1692,9 @@ QSpinBox::down-arrow
       <property name="geometry">
        <rect>
         <x>360</x>
-        <y>230</y>
+        <y>220</y>
         <width>301</width>
-        <height>101</height>
+        <height>111</height>
        </rect>
       </property>
       <property name="font">
@@ -1711,8 +1711,8 @@ QSpinBox::down-arrow
       <widget class="QLabel" name="test_step_ch2">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>36</y>
+         <x>12</x>
+         <y>30</y>
          <width>250</width>
          <height>16</height>
         </rect>
@@ -1732,8 +1732,8 @@ QSpinBox::down-arrow
       <widget class="QLabel" name="test_count_ch2">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>71</y>
+         <x>12</x>
+         <y>57</y>
          <width>250</width>
          <height>16</height>
         </rect>
@@ -1748,6 +1748,27 @@ QSpinBox::down-arrow
        </property>
        <property name="text">
         <string>Test Count :</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="test_interval_ch2">
+       <property name="geometry">
+        <rect>
+         <x>12</x>
+         <y>84</y>
+         <width>250</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans</family>
+         <pointsize>12</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Interval Time (Sec.) :</string>
        </property>
       </widget>
      </widget>
@@ -2523,9 +2544,9 @@ QSpinBox::down-arrow
       <property name="geometry">
        <rect>
         <x>360</x>
-        <y>230</y>
+        <y>220</y>
         <width>301</width>
-        <height>101</height>
+        <height>111</height>
        </rect>
       </property>
       <property name="font">
@@ -2542,8 +2563,8 @@ QSpinBox::down-arrow
       <widget class="QLabel" name="test_step_ch3">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>36</y>
+         <x>12</x>
+         <y>30</y>
          <width>250</width>
          <height>16</height>
         </rect>
@@ -2563,8 +2584,8 @@ QSpinBox::down-arrow
       <widget class="QLabel" name="test_count_ch3">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>71</y>
+         <x>12</x>
+         <y>57</y>
          <width>250</width>
          <height>16</height>
         </rect>
@@ -2579,6 +2600,27 @@ QSpinBox::down-arrow
        </property>
        <property name="text">
         <string>Test Count :</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="test_interval_ch3">
+       <property name="geometry">
+        <rect>
+         <x>12</x>
+         <y>84</y>
+         <width>250</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans</family>
+         <pointsize>12</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Interval Time (Sec.) :</string>
        </property>
       </widget>
      </widget>
@@ -2602,7 +2644,7 @@ QSpinBox::down-arrow
       <property name="geometry">
        <rect>
         <x>360</x>
-        <y>70</y>
+        <y>64</y>
         <width>301</width>
         <height>151</height>
        </rect>
@@ -3387,9 +3429,9 @@ QSpinBox::down-arrow
       <property name="geometry">
        <rect>
         <x>360</x>
-        <y>230</y>
+        <y>220</y>
         <width>301</width>
-        <height>101</height>
+        <height>111</height>
        </rect>
       </property>
       <property name="font">
@@ -3406,8 +3448,8 @@ QSpinBox::down-arrow
       <widget class="QLabel" name="test_step_ch4">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>36</y>
+         <x>12</x>
+         <y>30</y>
          <width>250</width>
          <height>16</height>
         </rect>
@@ -3427,8 +3469,8 @@ QSpinBox::down-arrow
       <widget class="QLabel" name="test_count_ch4">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>71</y>
+         <x>12</x>
+         <y>57</y>
          <width>250</width>
          <height>16</height>
         </rect>
@@ -3443,6 +3485,27 @@ QSpinBox::down-arrow
        </property>
        <property name="text">
         <string>Test Count :</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="test_interval_ch4">
+       <property name="geometry">
+        <rect>
+         <x>12</x>
+         <y>84</y>
+         <width>250</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans</family>
+         <pointsize>12</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Interval Time (Sec.) :</string>
        </property>
       </widget>
      </widget>
@@ -3466,7 +3529,7 @@ QSpinBox::down-arrow
       <property name="geometry">
        <rect>
         <x>360</x>
-        <y>70</y>
+        <y>64</y>
         <width>301</width>
         <height>151</height>
        </rect>
@@ -4251,9 +4314,9 @@ QSpinBox::down-arrow
       <property name="geometry">
        <rect>
         <x>360</x>
-        <y>230</y>
+        <y>220</y>
         <width>301</width>
-        <height>101</height>
+        <height>111</height>
        </rect>
       </property>
       <property name="font">
@@ -4270,8 +4333,8 @@ QSpinBox::down-arrow
       <widget class="QLabel" name="test_step_ch5">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>36</y>
+         <x>12</x>
+         <y>30</y>
          <width>250</width>
          <height>16</height>
         </rect>
@@ -4291,8 +4354,8 @@ QSpinBox::down-arrow
       <widget class="QLabel" name="test_count_ch5">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>71</y>
+         <x>12</x>
+         <y>57</y>
          <width>250</width>
          <height>16</height>
         </rect>
@@ -4307,6 +4370,27 @@ QSpinBox::down-arrow
        </property>
        <property name="text">
         <string>Test Count :</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="test_interval_ch5">
+       <property name="geometry">
+        <rect>
+         <x>12</x>
+         <y>84</y>
+         <width>250</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans</family>
+         <pointsize>12</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Interval Time (Sec.) :</string>
        </property>
       </widget>
      </widget>
@@ -4330,7 +4414,7 @@ QSpinBox::down-arrow
       <property name="geometry">
        <rect>
         <x>360</x>
-        <y>70</y>
+        <y>64</y>
         <width>301</width>
         <height>151</height>
        </rect>

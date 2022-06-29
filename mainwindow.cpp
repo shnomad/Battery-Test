@@ -443,10 +443,10 @@ void MainWindow::ui_create_measurement()
     connect(this, SIGNAL(measure_pause_ch1()), m_control->m_ch[0], SLOT(pause()));
     connect(m_control->m_ch[0], SIGNAL(update_test_count(int)), this, SLOT(ui_test_count_ch1(int)));
     connect(m_control->m_ch[0], SIGNAL(update_action(QString)), this, SLOT(ui_action_status_ch1(QString)));
-    connect(m_control->m_ch[0], SIGNAL(update_interval_time(int)), this, SLOT(ui_interval_time_update(int)));
+    connect(m_control->m_ch[0], SIGNAL(update_interval_time(int)), this, SLOT(ui_interval_time_update_ch1(int)));
     connect(ui->meter_type_ch1,SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
 
-#if 0
+#if 1
     /*Channel 2*/
     connect(this, SIGNAL(measure_setup_ch2(measurement_param)), m_control->m_ch[1], SLOT(setup(measurement_param)));
     connect(this, SIGNAL(measure_start_ch2()), m_control->m_ch[1], SLOT(start()));
@@ -454,6 +454,7 @@ void MainWindow::ui_create_measurement()
     connect(this, SIGNAL(measure_pause_ch2()), m_control->m_ch[1], SLOT(pause()));
     connect(m_control->m_ch[1], SIGNAL(update_test_count(int)), this, SLOT(ui_test_count_ch2(int)));
     connect(m_control->m_ch[1], SIGNAL(update_action(QString)), this, SLOT(ui_action_status_ch2(QString)));
+    connect(m_control->m_ch[1], SIGNAL(update_interval_time(int)), this, SLOT(ui_interval_time_update_ch2(int)));
     connect(ui->meter_type_ch2,SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
 
     /*Channel 3*/
@@ -463,6 +464,7 @@ void MainWindow::ui_create_measurement()
     connect(this, SIGNAL(measure_pause_ch3()), m_control->m_ch[2], SLOT(pause()));
     connect(m_control->m_ch[2], SIGNAL(update_test_count(int)), this, SLOT(ui_test_count_ch3(int)));
     connect(m_control->m_ch[2], SIGNAL(update_action(QString)), this, SLOT(ui_action_status_ch3(QString)));
+    connect(m_control->m_ch[2], SIGNAL(update_interval_time(int)), this, SLOT(ui_interval_time_update_ch3(int)));
     connect(ui->meter_type_ch3,SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
 
     /*Channel 4*/
@@ -472,6 +474,7 @@ void MainWindow::ui_create_measurement()
     connect(this, SIGNAL(measure_pause_ch4()), m_control->m_ch[3], SLOT(pause()));
     connect(m_control->m_ch[3], SIGNAL(update_test_count(int)), this, SLOT(ui_test_count_ch4(int)));
     connect(m_control->m_ch[3], SIGNAL(update_action(QString)), this, SLOT(ui_action_status_ch4(QString)));
+    connect(m_control->m_ch[3], SIGNAL(update_interval_time(int)), this, SLOT(ui_interval_time_update_ch4(int)));
     connect(ui->meter_type_ch4, SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
 
     /*Channel 5*/
@@ -480,7 +483,8 @@ void MainWindow::ui_create_measurement()
     connect(this, SIGNAL(measure_stop_ch5()), m_control->m_ch[4], SLOT(stop()));
     connect(this, SIGNAL(measure_pause_ch5()), m_control->m_ch[4], SLOT(pause()));
     connect(m_control->m_ch[4], SIGNAL(update_test_count(int)), this, SLOT(ui_test_count_ch5(int)));
-    connect(m_control->m_ch[4], SIGNAL(update_action(QString)), this, SLOT(ui_action_status_ch5(QString)));    
+    connect(m_control->m_ch[4], SIGNAL(update_action(QString)), this, SLOT(ui_action_status_ch5(QString)));
+    connect(m_control->m_ch[4], SIGNAL(update_interval_time(int)), this, SLOT(ui_interval_time_update_ch5(int)));
     connect(ui->meter_type_ch5,SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
 
 #endif
@@ -868,7 +872,7 @@ void MainWindow::ui_test_count_ch1(int count)
     ui->test_count_ch1->setText("Test Count :     " +  QString::number(count));
 }
 
-void MainWindow::ui_interval_time_update(int interval_time)
+void MainWindow::ui_interval_time_update_ch1(int interval_time)
 {
    ui->test_interval_ch1->setText("Interval Time (Sec.) :   " + QString::number(interval_time));
 }
@@ -886,6 +890,11 @@ void MainWindow::ui_test_count_ch2(int count)
     ui->test_count_ch2->setText("Count :     " + QString::number(count));
 }
 
+void MainWindow::ui_interval_time_update_ch2(int interval_time)
+{
+   ui->test_interval_ch2->setText("Interval Time (Sec.) :   " + QString::number(interval_time));
+}
+
 void MainWindow::ui_action_status_ch3(QString status)
 {
     ui->test_step_ch3->setText("Current Action :  " + status);
@@ -897,6 +906,11 @@ void MainWindow::ui_action_status_ch3(QString status)
 void MainWindow::ui_test_count_ch3(int count)
 {
     ui->test_count_ch3->setText("Count :     " + QString::number(count));
+}
+
+void MainWindow::ui_interval_time_update_ch3(int interval_time)
+{
+   ui->test_interval_ch3->setText("Interval Time (Sec.) :   " + QString::number(interval_time));
 }
 
 void MainWindow::ui_action_status_ch4(QString status)
@@ -912,6 +926,11 @@ void MainWindow::ui_test_count_ch4(int count)
     ui->test_count_ch4->setText("Count :     " + QString::number(count));
 }
 
+void MainWindow::ui_interval_time_update_ch4(int interval_time)
+{
+   ui->test_interval_ch4->setText("Interval Time (Sec.) :   " + QString::number(interval_time));
+}
+
 void MainWindow::ui_action_status_ch5(QString status)
 {
     ui->test_step_ch5->setText("Current Action :  " + status);
@@ -923,6 +942,11 @@ void MainWindow::ui_action_status_ch5(QString status)
 void MainWindow::ui_test_count_ch5(int count)
 {
     ui->test_count_ch5->setText("Count :     " + QString::number(count));
+}
+
+void MainWindow::ui_interval_time_update_ch5(int interval_time)
+{
+   ui->test_interval_ch5->setText("Interval Time (Sec.) :   " + QString::number(interval_time));
 }
 
 void MainWindow::on_test_start_ch1_clicked()

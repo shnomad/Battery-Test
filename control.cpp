@@ -2,7 +2,7 @@
 
 control::control(QObject *parent) : QObject(parent)
 {
-    for (quint8 thread_count=0; thread_count<1; thread_count++)
+    for (quint8 thread_count=0; thread_count<5; thread_count++)
     {
         m_ch[thread_count] = new measurement(thread_count+1);
         m_pThread[thread_count] = new QThread(this);

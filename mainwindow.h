@@ -42,19 +42,23 @@ private slots:
     void UpdateTime();
     void ui_action_status_ch1(QString);
     void ui_test_count_ch1(int);
-    void ui_interval_time_update(int);
+    void ui_interval_time_update_ch1(int);
 
     void ui_action_status_ch2(QString);
     void ui_test_count_ch2(int);
+    void ui_interval_time_update_ch2(int);
 
     void ui_action_status_ch3(QString);
     void ui_test_count_ch3(int);
+    void ui_interval_time_update_ch3(int);
 
     void ui_action_status_ch4(QString);
     void ui_test_count_ch4(int);
+    void ui_interval_time_update_ch4(int);
 
     void ui_action_status_ch5(QString);
     void ui_test_count_ch5(int);
+    void ui_interval_time_update_ch5(int);
 
     void daq970a_working_status(QString);
     void daq970a_working_req();
