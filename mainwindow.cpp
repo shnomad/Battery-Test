@@ -27,13 +27,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
       qRegisterMetaType<measurement_param>();
 
       timer_sec = new QTimer(this);                   //display system time
-      timer_daq970 = new QTimer(this);                //DAQ 970 voltage capture command
 
       ui_create_measurement();
 
       ui_init_measurement();
 
       ui_system_info_setup();
+
+      connect(ui->meter_type_ch1, SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
+      connect(ui->meter_type_ch2, SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
+      connect(ui->meter_type_ch3, SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
+      connect(ui->meter_type_ch4, SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
+      connect(ui->meter_type_ch5, SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
 
       system_init_done = true;
 }
@@ -184,7 +189,7 @@ void MainWindow::ui_init_measurement()
     m_test_param_tmp.channel = measurement_param::CH_2;
     m_test_param_tmp.type = measurement_param::GLUCOSE_BASIC;
 
-//  currentMeterIndexChanged(m_test_param_tmp.type);
+    currentMeterIndexChanged(m_test_param_tmp.type);
 
     /*Init Action Status*/
     ui->test_step_ch2->setText("Current Action :  Stopeed");
@@ -260,7 +265,7 @@ void MainWindow::ui_init_measurement()
     m_test_param_tmp.channel = measurement_param::CH_3;
     m_test_param_tmp.type = measurement_param::GLUCOSE_BASIC;
 
-//  currentMeterIndexChanged(m_test_param_tmp.type);
+    currentMeterIndexChanged(m_test_param_tmp.type);
 
     /*Init Action Status*/
     ui->test_step_ch3->setText("Current Action :  Stopeed");
@@ -337,7 +342,7 @@ void MainWindow::ui_init_measurement()
     m_test_param_tmp.channel = measurement_param::CH_4;
     m_test_param_tmp.type = measurement_param::GLUCOSE_BASIC;
 
-//  currentMeterIndexChanged(m_test_param_tmp.type);
+    currentMeterIndexChanged(m_test_param_tmp.type);
 
     /*Init Action Status*/
     ui->test_step_ch4->setText("Current Action :  Stopeed");
@@ -413,7 +418,7 @@ void MainWindow::ui_init_measurement()
     m_test_param_tmp.channel = measurement_param::CH_5;
     m_test_param_tmp.type = measurement_param::GLUCOSE_BASIC;
 
-//  currentMeterIndexChanged(m_test_param_tmp.type);
+    currentMeterIndexChanged(m_test_param_tmp.type);
 
     /*Init Action Status*/
     ui->test_step_ch5->setText("Current Action :  Stopeed");
@@ -444,9 +449,8 @@ void MainWindow::ui_create_measurement()
     connect(m_control->m_ch[0], SIGNAL(update_test_count(int)), this, SLOT(ui_test_count_ch1(int)));
     connect(m_control->m_ch[0], SIGNAL(update_action(QString)), this, SLOT(ui_action_status_ch1(QString)));
     connect(m_control->m_ch[0], SIGNAL(update_interval_time(int)), this, SLOT(ui_interval_time_update_ch1(int)));
-    connect(ui->meter_type_ch1,SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
+    connect(m_control->m_ch[0], SIGNAL(update_dmm_status(QString)), this, SLOT(dmm_working_status(QString)));
 
-#if 1
     /*Channel 2*/
     connect(this, SIGNAL(measure_setup_ch2(measurement_param)), m_control->m_ch[1], SLOT(setup(measurement_param)));
     connect(this, SIGNAL(measure_start_ch2()), m_control->m_ch[1], SLOT(start()));
@@ -455,7 +459,7 @@ void MainWindow::ui_create_measurement()
     connect(m_control->m_ch[1], SIGNAL(update_test_count(int)), this, SLOT(ui_test_count_ch2(int)));
     connect(m_control->m_ch[1], SIGNAL(update_action(QString)), this, SLOT(ui_action_status_ch2(QString)));
     connect(m_control->m_ch[1], SIGNAL(update_interval_time(int)), this, SLOT(ui_interval_time_update_ch2(int)));
-    connect(ui->meter_type_ch2,SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
+
 
     /*Channel 3*/
     connect(this, SIGNAL(measure_setup_ch3(measurement_param)), m_control->m_ch[2], SLOT(setup(measurement_param)));
@@ -465,7 +469,6 @@ void MainWindow::ui_create_measurement()
     connect(m_control->m_ch[2], SIGNAL(update_test_count(int)), this, SLOT(ui_test_count_ch3(int)));
     connect(m_control->m_ch[2], SIGNAL(update_action(QString)), this, SLOT(ui_action_status_ch3(QString)));
     connect(m_control->m_ch[2], SIGNAL(update_interval_time(int)), this, SLOT(ui_interval_time_update_ch3(int)));
-    connect(ui->meter_type_ch3,SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
 
     /*Channel 4*/
     connect(this, SIGNAL(measure_setup_ch4(measurement_param)), m_control->m_ch[3], SLOT(setup(measurement_param)));
@@ -474,8 +477,7 @@ void MainWindow::ui_create_measurement()
     connect(this, SIGNAL(measure_pause_ch4()), m_control->m_ch[3], SLOT(pause()));
     connect(m_control->m_ch[3], SIGNAL(update_test_count(int)), this, SLOT(ui_test_count_ch4(int)));
     connect(m_control->m_ch[3], SIGNAL(update_action(QString)), this, SLOT(ui_action_status_ch4(QString)));
-    connect(m_control->m_ch[3], SIGNAL(update_interval_time(int)), this, SLOT(ui_interval_time_update_ch4(int)));
-    connect(ui->meter_type_ch4, SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
+    connect(m_control->m_ch[3], SIGNAL(update_interval_time(int)), this, SLOT(ui_interval_time_update_ch4(int)));   
 
     /*Channel 5*/
     connect(this, SIGNAL(measure_setup_ch5(measurement_param)), m_control->m_ch[4], SLOT(setup(measurement_param)));
@@ -484,10 +486,7 @@ void MainWindow::ui_create_measurement()
     connect(this, SIGNAL(measure_pause_ch5()), m_control->m_ch[4], SLOT(pause()));
     connect(m_control->m_ch[4], SIGNAL(update_test_count(int)), this, SLOT(ui_test_count_ch5(int)));
     connect(m_control->m_ch[4], SIGNAL(update_action(QString)), this, SLOT(ui_action_status_ch5(QString)));
-    connect(m_control->m_ch[4], SIGNAL(update_interval_time(int)), this, SLOT(ui_interval_time_update_ch5(int)));
-    connect(ui->meter_type_ch5,SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
-
-#endif
+    connect(m_control->m_ch[4], SIGNAL(update_interval_time(int)), this, SLOT(ui_interval_time_update_ch5(int)));    
 
 }
 
@@ -507,6 +506,7 @@ void MainWindow::ui_set_measurement_start_ch1()
     ui->sec_interval_ch1->setEnabled(false);
     ui->audo_download_ch1->setEnabled(false);
     ui->all_channel_select->setEnabled(false);
+    ui->dmm_capture->setEnabled(false);
 
     //Comm Interface option
     ui->micro_usb_ch1->setEnabled(false);
@@ -536,6 +536,7 @@ void MainWindow::ui_set_measurement_stop_ch1()
     ui->sec_interval_ch1->setEnabled(true);
     ui->audo_download_ch1->setEnabled(true);
     ui->all_channel_select->setEnabled(true);
+    ui->dmm_capture->setEnabled(true);
 
     ui->device_open_ch1->setEnabled(true);
     ui->micro_usb_ch1->setEnabled(true);
@@ -838,30 +839,7 @@ void MainWindow::ui_set_measurement_pause_ch5()
 
 void MainWindow::ui_action_status_ch1(QString status)
 {
-    ui->test_step_ch1->setText("Current Action :  "+status);
-
-    if(ui->daq970_capture->isChecked())
-    {                
-        if(status == "detect on")
-        {
-             emit send_sock_command_tmp(m_sock->socket_command::COMMAND_INST_START);
-        }
-        else if(status == "work on")
-        {
-            emit send_sock_command_tmp(m_sock->socket_command::COMMAND_INST_START);
-        }
-        else if(status == "detect off")
-        {
-            emit send_sock_command_tmp(m_sock->socket_command::COMMAND_INST_START);
-
-            if(m_test_param_ch1.type = measurement_param::meter_type::GLUCOSE_BLE)
-            {
-                QObject::connect(timer_daq970, SIGNAL(timeout()), this, SLOT(daq970a_working_req()));
-                timer_daq970->start(5000);
-            }
-
-        }
-    }
+    ui->test_step_ch1->setText("Current Action :  "+status);    
 
     if(status=="stop")
         ui_set_measurement_stop_ch1();
@@ -1104,7 +1082,12 @@ void MainWindow::on_measure_count_ch1_valueChanged(const QString &arg1)
      m_test_param_ch1.target_measure_count = arg1.toInt(0,10);
 
     if(system_init_done)
-      emit measure_setup_ch1(m_test_param_ch1);
+    {
+        if(meter_type_index_selected_measure_count == false)
+           emit measure_setup_ch1(m_test_param_ch1);
+
+        meter_type_index_selected_measure_count = false;
+    }
 
      if(ui->all_channel_select->isChecked())
      {
@@ -1127,7 +1110,12 @@ void MainWindow::on_sec_startdelay_ch1_valueChanged(const QString &arg1)
      m_test_param_ch1.work_on_time = arg1.toInt(0,10)*1000;
 
      if(system_init_done)
-        emit measure_setup_ch1(m_test_param_ch1);
+     {
+        if(meter_type_index_selected_start_delay == false)
+             emit measure_setup_ch1(m_test_param_ch1);
+
+        meter_type_index_selected_start_delay = false;
+     }
 
      if(ui->all_channel_select->isChecked())
      {
@@ -1151,7 +1139,12 @@ void MainWindow::on_sec_detoffdelay_ch1_valueChanged(const QString &arg1)
      m_test_param_ch1.detect_off_time = arg1.toInt(0,10)*1000;
 
      if(system_init_done)
-        emit measure_setup_ch1(m_test_param_ch1);
+     {
+        if(meter_type_index_selected_detoff_delay == false)
+             emit measure_setup_ch1(m_test_param_ch1);
+
+        meter_type_index_selected_detoff_delay = false;
+     }
 
      if(ui->all_channel_select->isChecked())
      {
@@ -1174,7 +1167,12 @@ void MainWindow::on_sec_interval_ch1_valueChanged(const QString &arg1)
      m_test_param_ch1.test_interval_time = arg1.toInt(0,10)*1000;
 
      if(system_init_done)
-        emit measure_setup_ch1(m_test_param_ch1);
+     {
+        if(meter_type_index_selected_interval == false)
+             emit measure_setup_ch1(m_test_param_ch1);
+
+         meter_type_index_selected_interval = false;
+     }
 
      if(ui->all_channel_select->isChecked())
      {
@@ -1201,28 +1199,52 @@ void MainWindow::on_measure_count_ch2_valueChanged(const QString &arg1)
 {
      m_test_param_ch2.target_measure_count = arg1.toInt(0,10);
 
-     emit measure_setup_ch2(m_test_param_ch2);
+     if(system_init_done)
+     {
+        if(meter_type_index_selected_measure_count == false)
+            emit measure_setup_ch2(m_test_param_ch2);
+
+         meter_type_index_selected_measure_count = false;
+     }
 }
 
 void MainWindow::on_sec_startdelay_ch2_valueChanged(const QString &arg1)
 {
      m_test_param_ch2.work_on_time = arg1.toInt(0,10)*1000;
 
-     emit measure_setup_ch2(m_test_param_ch2);
+     if(system_init_done)
+     {
+           if(meter_type_index_selected_start_delay == false)
+                emit measure_setup_ch2(m_test_param_ch2);
+
+           meter_type_index_selected_start_delay = false;
+     }
 }
 
 void MainWindow::on_sec_detoffdelay_ch2_valueChanged(const QString &arg1)
 {
      m_test_param_ch2.detect_off_time = arg1.toInt(0,10)*1000;
 
-     emit measure_setup_ch2(m_test_param_ch2);
+     if(system_init_done)
+     {
+         if(meter_type_index_selected_detoff_delay == false)
+            emit measure_setup_ch2(m_test_param_ch2);
+
+          meter_type_index_selected_detoff_delay = false;
+     }
 }
 
 void MainWindow::on_sec_interval_ch2_valueChanged(const QString &arg1)
 {
      m_test_param_ch2.test_interval_time = arg1.toInt(0,10)*1000;
 
-     emit measure_setup_ch2(m_test_param_ch2);
+     if(system_init_done)
+     {
+        if(meter_type_index_selected_interval == false)
+            emit measure_setup_ch2(m_test_param_ch2);
+
+        meter_type_index_selected_interval = false;
+     }
 }
 
 void MainWindow::on_meter_type_ch3_activated(const QString &arg1)
@@ -1234,28 +1256,53 @@ void MainWindow::on_measure_count_ch3_valueChanged(const QString &arg1)
 {
     m_test_param_ch3.target_measure_count = arg1.toInt(0,10);
 
-    emit measure_setup_ch3(m_test_param_ch3);
+    if(system_init_done)
+    {
+        if(meter_type_index_selected_measure_count == false)
+            emit measure_setup_ch3(m_test_param_ch3);
+
+        meter_type_index_selected_measure_count = false;
+    }
 }
 
 void MainWindow::on_sec_startdelay_ch3_valueChanged(const QString &arg1)
 {
     m_test_param_ch3.work_on_time = arg1.toInt(0,10)*1000;
 
-    emit measure_setup_ch3(m_test_param_ch3);
+    if(system_init_done)
+    {
+         if(meter_type_index_selected_start_delay == false)
+            emit measure_setup_ch3(m_test_param_ch3);
+
+         meter_type_index_selected_start_delay = false;
+    }
 }
 
 void MainWindow::on_sec_detoffdelay_ch3_valueChanged(const QString &arg1)
 {
     m_test_param_ch3.detect_off_time = arg1.toInt(0,10)*1000;
 
-    emit measure_setup_ch3(m_test_param_ch3);
+    if(system_init_done)
+    {
+
+       if(meter_type_index_selected_detoff_delay == false)
+           emit measure_setup_ch3(m_test_param_ch3);
+
+        meter_type_index_selected_detoff_delay =false;
+    }
 }
 
 void MainWindow::on_sec_interval_ch3_valueChanged(const QString &arg1)
 {
     m_test_param_ch3.test_interval_time = arg1.toInt(0,10)*1000;
 
-    emit measure_setup_ch3(m_test_param_ch3);
+    if(system_init_done)
+    {
+        if(meter_type_index_selected_interval == false)
+            emit measure_setup_ch3(m_test_param_ch3);
+
+        meter_type_index_selected_interval = false;
+    }
 }
 
 void MainWindow::on_meter_type_ch4_activated(const QString &arg1)
@@ -1267,28 +1314,52 @@ void MainWindow::on_measure_count_ch4_valueChanged(const QString &arg1)
 {
     m_test_param_ch4.target_measure_count = arg1.toInt(0,10);
 
-    emit measure_setup_ch4(m_test_param_ch4);
+    if(system_init_done)
+    {
+         if(meter_type_index_selected_measure_count == false)
+            emit measure_setup_ch4(m_test_param_ch4);
+
+         meter_type_index_selected_measure_count = false;
+    }
 }
 
 void MainWindow::on_sec_startdelay_ch4_valueChanged(const QString &arg1)
 {
     m_test_param_ch4.work_on_time = arg1.toInt(0,10)*1000;
 
-    emit measure_setup_ch4(m_test_param_ch4);
+    if(system_init_done)
+    {
+        if(meter_type_index_selected_start_delay == false)
+            emit measure_setup_ch4(m_test_param_ch4);
+
+        meter_type_index_selected_start_delay = false;
+    }
 }
 
 void MainWindow::on_sec_detoffdelay_ch4_valueChanged(const QString &arg1)
 {
     m_test_param_ch4.detect_off_time = arg1.toInt(0,10)*1000;
 
-    emit measure_setup_ch4(m_test_param_ch4);
+    if(system_init_done)
+    {
+        if(meter_type_index_selected_detoff_delay == false)
+            emit measure_setup_ch4(m_test_param_ch4);
+
+        meter_type_index_selected_detoff_delay = false;
+    }
 }
 
 void MainWindow::on_sec_interval_ch4_valueChanged(const QString &arg1)
 {
     m_test_param_ch4.test_interval_time = arg1.toInt(0,10)*1000;
 
-    emit measure_setup_ch4(m_test_param_ch4);
+    if(system_init_done)
+    {
+         if(meter_type_index_selected_interval == false)
+            emit measure_setup_ch4(m_test_param_ch4);
+
+         meter_type_index_selected_interval = false;
+    }
 }
 
 void MainWindow::on_meter_type_ch5_activated(const QString &arg1)
@@ -1300,28 +1371,52 @@ void MainWindow::on_measure_count_ch5_valueChanged(const QString &arg1)
 {
     m_test_param_ch5.target_measure_count = arg1.toInt(0,10);
 
-    emit measure_setup_ch5(m_test_param_ch5);
+    if(system_init_done)
+    {
+         if(meter_type_index_selected_measure_count == false)
+            emit measure_setup_ch5(m_test_param_ch5);
+
+         meter_type_index_selected_measure_count = false;
+    }
 }
 
 void MainWindow::on_sec_startdelay_ch5_valueChanged(const QString &arg1)
 {
     m_test_param_ch5.work_on_time = arg1.toInt(0,10)*1000;
 
-    emit measure_setup_ch5(m_test_param_ch5);
+    if(system_init_done)
+    {
+        if(meter_type_index_selected_start_delay == false)
+           emit measure_setup_ch5(m_test_param_ch5);
+
+        meter_type_index_selected_start_delay = false;
+    }
 }
 
 void MainWindow::on_sec_detoffdelay_ch5_valueChanged(const QString &arg1)
 {
     m_test_param_ch5.detect_off_time = arg1.toInt(0,10)*1000;
 
-    emit measure_setup_ch5(m_test_param_ch5);
+    if(system_init_done)
+    {
+         if(meter_type_index_selected_detoff_delay == false)
+            emit measure_setup_ch5(m_test_param_ch5);
+
+         meter_type_index_selected_detoff_delay = false;
+    }
 }
 
 void MainWindow::on_sec_interval_ch5_valueChanged(const QString &arg1)
 {
     m_test_param_ch5.test_interval_time = arg1.toInt(0,10)*1000;
 
-    emit measure_setup_ch5(m_test_param_ch4);
+    if(system_init_done)
+    {
+        if(meter_type_index_selected_interval == false)
+            emit measure_setup_ch5(m_test_param_ch5);
+
+        meter_type_index_selected_interval = false;
+    }
 }
 
 void MainWindow::on_download_ch2_clicked()
@@ -1431,8 +1526,14 @@ void MainWindow::currentMeterIndexChanged(int index)
         qDebug()<<"received signal";
 
         /*Set test parameter on spin box*/
+
         if(sender() == ui->meter_type_ch1)
         {
+             meter_type_index_selected_measure_count = true;
+             meter_type_index_selected_start_delay = true;
+             meter_type_index_selected_detoff_delay = true;
+             meter_type_index_selected_interval = true;
+
              memcpy(&m_test_param_ch1, &m_test_param_tmp, sizeof(m_test_param_tmp));
 
              ui->measure_count_ch1->setValue(static_cast<int>(m_test_param_ch1.target_measure_count));
@@ -1458,6 +1559,11 @@ void MainWindow::currentMeterIndexChanged(int index)
         }
        else if(sender() == ui->meter_type_ch2)
         {
+            meter_type_index_selected_measure_count = true;
+            meter_type_index_selected_start_delay = true;
+            meter_type_index_selected_detoff_delay = true;
+            meter_type_index_selected_interval = true;
+
             memcpy(&m_test_param_ch2, &m_test_param_tmp, sizeof(m_test_param_tmp));
 
             ui->measure_count_ch2->setValue(static_cast<int>(m_test_param_ch2.target_measure_count));
@@ -1469,6 +1575,11 @@ void MainWindow::currentMeterIndexChanged(int index)
         }
         else if(sender() == ui->meter_type_ch3)
         {
+            meter_type_index_selected_measure_count = true;
+            meter_type_index_selected_start_delay = true;
+            meter_type_index_selected_detoff_delay = true;
+            meter_type_index_selected_interval = true;
+
             memcpy(&m_test_param_ch3, &m_test_param_tmp, sizeof(m_test_param_tmp));
 
             ui->measure_count_ch3->setValue(static_cast<int>(m_test_param_ch3.target_measure_count));
@@ -1481,6 +1592,11 @@ void MainWindow::currentMeterIndexChanged(int index)
         }
         else if(sender() == ui->meter_type_ch4)
         {
+            meter_type_index_selected_measure_count = true;
+            meter_type_index_selected_start_delay = true;
+            meter_type_index_selected_detoff_delay = true;
+            meter_type_index_selected_interval = true;
+
             memcpy(&m_test_param_ch4, &m_test_param_tmp, sizeof(m_test_param_tmp));
 
             ui->measure_count_ch4->setValue(static_cast<int>(m_test_param_ch4.target_measure_count));
@@ -1492,6 +1608,11 @@ void MainWindow::currentMeterIndexChanged(int index)
         }
         else if(sender() == ui->meter_type_ch5)
         {
+            meter_type_index_selected_measure_count = true;
+            meter_type_index_selected_start_delay = true;
+            meter_type_index_selected_detoff_delay = true;
+            meter_type_index_selected_interval = true;
+
             memcpy(&m_test_param_ch5, &m_test_param_tmp, sizeof(m_test_param_tmp));
 
             ui->measure_count_ch5->setValue(static_cast<int>(m_test_param_ch5.target_measure_count));
@@ -1645,6 +1766,11 @@ void MainWindow::UpdateTime()
       ui->system_time->setText("Time: " + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap"));
 }
 
+void MainWindow::dmm_working_status(QString dmm_status)
+{
+    ui->dmm_status->setText("[ " + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap") +" ] " + dmm_status);
+}
+
 void MainWindow::on_reboot_clicked()
 {
 
@@ -1662,62 +1788,4 @@ MainWindow::~MainWindow()
 {
       delete m_control;
       delete ui;
-}
-
-void MainWindow::on_daq970a_start_clicked()
-{
-
-//    QProcess process;
-//    process.startDetached("python3 /home/pi/DAQ970/test-server.py &");
-
-    m_sock = new TcpSocketRW(server_ip);
-    m_sock_pThread = new QThread(this);
-    m_sock->moveToThread(m_sock_pThread);
-    connect(m_sock_pThread, &QThread::finished, m_sock, &QObject::deleteLater);
-    m_sock_pThread->start();
-
-//  connect(this, SIGNAL(send_socket_command(const QbyteArray)), m_sock, SLOT(writedata(const QbyteArray)));
-    connect(this, SIGNAL(send_sock_command_tmp(qint64)), m_sock, SLOT(bytesWritten(qint64)));
-    connect(m_sock, SIGNAL(read_socket_response(QString)), this, SLOT(daq970a_working_status(QString)));
-
-    ui->daq970a_start->setStyleSheet("background-color:rgb(244,0,0);border-style:insert");
-    ui->daq970a_stop->setStyleSheet("default");
-}
-
-void MainWindow::on_daq970a_stop_clicked()
-{
-    ui->daq970a_start->setStyleSheet("default");
-    ui->daq970a_status->clear();
-    delete m_sock;
-}
-
-void MainWindow::daq970a_working_status(QString status)
-{
-     ui->daq970a_status->append(status);
-
-     /*If Error occured, should on_daq970a_stop_clicked() */
-}
-
-void MainWindow::on_daq970_capture_stateChanged(int arg1)
-{
-    if(ui->daq970_capture->isChecked())
-     m_test_param_ch1.use_daq970 = true;
-    else
-     m_test_param_ch1.use_daq970 = false;
-
-     emit measure_setup_ch1(m_test_param_ch1);
-}
-
-void MainWindow::daq970a_working_req()
-{
-    if(interval_ble_voltage_check_count < 2)
-    {
-        emit send_sock_command_tmp(m_sock->socket_command::COMMAND_INST_START);
-        interval_ble_voltage_check_count++;
-    }
-    else
-    {
-        timer_daq970->stop();
-        interval_ble_voltage_check_count = 0;
-    }
 }

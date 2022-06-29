@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <QObject>
 #include "measurement_param.h"
+#include "python_wrapper.h"
 
 class relay_seed_ddl;
 
@@ -17,10 +18,13 @@ public:
     explicit measurement(quint8,QObject *parent = nullptr);
         ~measurement();
 
+    void dmm_operation();
+
     signals:
     void update_action(QString);
     void update_test_count(int);
     void update_interval_time(int);
+    void update_dmm_status(QString);
     void set_start();
     void set_detect();
     void set_work_on();

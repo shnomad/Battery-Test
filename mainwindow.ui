@@ -111,7 +111,7 @@
      <string notr="true">QTabBar::tab:selected { color: #ffffff; background-color: rgb(0,0,255);}</string>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="Channel1">
      <attribute name="title">
@@ -1027,11 +1027,11 @@ QSpinBox::down-arrow
        <string>All Channel Select</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="daq970_capture">
+     <widget class="QCheckBox" name="dmm_capture">
       <property name="geometry">
        <rect>
-        <x>528</x>
-        <y>31</y>
+        <x>220</x>
+        <y>60</y>
         <width>131</width>
         <height>31</height>
        </rect>
@@ -1043,7 +1043,7 @@ QSpinBox::down-arrow
        </font>
       </property>
       <property name="text">
-       <string>daq970 capture</string>
+       <string>DMM capture</string>
       </property>
      </widget>
      <zorder>Camera_view</zorder>
@@ -1055,7 +1055,7 @@ QSpinBox::down-arrow
      <zorder>Test_info</zorder>
      <zorder>preview_ch1</zorder>
      <zorder>all_channel_select</zorder>
-     <zorder>daq970_capture</zorder>
+     <zorder>dmm_capture</zorder>
     </widget>
     <widget class="QWidget" name="Channel2">
      <attribute name="title">
@@ -4672,47 +4672,26 @@ QSpinBox::down-arrow
        <rect>
         <x>160</x>
         <y>18</y>
-        <width>841</width>
+        <width>801</width>
         <height>401</height>
        </rect>
       </property>
-      <property name="title">
-       <string>DMM Control</string>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
       </property>
-      <widget class="QTextEdit" name="daq970a_status">
+      <property name="title">
+       <string>DMM Control Status</string>
+      </property>
+      <widget class="QTextEdit" name="dmm_status">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>60</y>
-         <width>821</width>
-         <height>331</height>
+         <y>30</y>
+         <width>781</width>
+         <height>361</height>
         </rect>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="daq970a_start">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>25</y>
-         <width>80</width>
-         <height>30</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Start</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="daq970a_stop">
-       <property name="geometry">
-        <rect>
-         <x>99</x>
-         <y>25</y>
-         <width>80</width>
-         <height>30</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Stop</string>
        </property>
       </widget>
      </widget>

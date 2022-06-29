@@ -1,7 +1,6 @@
 #include "measurement.h"
 #include "relay_seed_ddl.h"
 #include "commondefinition.h"
-#include "python_wrapper.h"
 
 measurement::measurement(quint8 ch, QObject *parent) : QObject(parent)
 {
@@ -38,7 +37,7 @@ void measurement::setup(measurement_param m_test_param)
     Log()<<Channel <<": third_on_time"<< m_test_param.third_on_time;
     Log()<<Channel <<": detect_off_time"<< m_test_param.detect_off_time;
     Log()<<Channel <<": test_interval_time"<< m_test_param.test_interval_time;
-    Log()<<Channel <<": use daq970a instrument"<<m_test_param.use_daq970;
+    Log()<<Channel <<": use dmm instrument"<<m_test_param.use_u1272a;
 
      meter_mem_capacity = m_test_param.meter_memory_capacity;
      target_test_count=m_test_param.target_measure_count;
@@ -55,6 +54,9 @@ void measurement::setup(measurement_param m_test_param)
      Log()<<Channel<<": detect_to_work_on_delay"<<m_test_param_delay.work_on_time;
      Log()<<Channel<<": third_on_to_detect_off_delay"<<m_test_param_delay.detect_off_time;
      Log()<<Channel<<": detect_off_to_measurement_interval_delay" <<m_test_param_delay.test_interval_time;
+
+     if(Channel == 0x1 && m_test_param.use_u1272a == true)
+         dmm_operation();
 }
 
 void measurement::start()
@@ -336,6 +338,61 @@ void measurement::meter_working_status()
         break;
 
     }
+}
+
+void measurement::dmm_operation()
+{
+
+    PyObject *pModule, *klass, *Instance, *pyResult, *pyValue;
+
+    Py_Initialize();
+
+    PyRun_SimpleStringFlags("import sys", nullptr);
+
+    PyRun_SimpleStringFlags("sys.path", nullptr);
+
+    PyRun_SimpleStringFlags("sys.path.append('/home/pi/DMM')", nullptr);
+
+    pModule = PyImport_ImportModule("U1272A");
+
+    if(!pModule)
+    {
+        qDebug()<<"Error loading module";
+    }
+
+    PyObject_HasAttrString(pModule, "u1272a_operation");
+
+    klass = PyObject_GetAttrString(pModule, "u1272a_operation");
+
+    if(klass)
+    {
+          Instance = PyObject_CallObject(klass, nullptr);
+
+          if(Instance)
+          {
+               pyResult = PyObject_CallMethod(Instance, "inst_open", nullptr);
+
+               QString res =  PyUnicode_AsUTF8(pyResult);
+
+               emit update_dmm_status(res);
+
+               qDebug()<<res;
+
+               pyValue = PyObject_CallMethod(Instance, "inst_read_simple", nullptr);
+
+               QString res1 =  PyUnicode_AsUTF8(pyValue);
+
+               qDebug()<< res1;
+          }
+
+          Py_XDECREF(Instance);
+    }
+
+    Py_XDECREF(klass);
+
+    Py_XDECREF(pModule);
+
+    Py_Finalize();
 }
 
 measurement::~measurement()

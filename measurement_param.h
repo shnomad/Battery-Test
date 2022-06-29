@@ -23,7 +23,6 @@ struct measurement_param
     quint32 hub_port_delay_time;        //2000;
     quint32 measure_count_read_from_meter;
     bool use_u1272a;
-    bool use_daq970;
     bool auto_download;
 }; Q_DECLARE_METATYPE(measurement_param)
 

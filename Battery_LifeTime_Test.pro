@@ -30,8 +30,8 @@ SOURCES += \
         measurement.cpp \
         relay_seed_ddl.cpp \
         settings.cpp \
-        loggingcategories.cpp \
-        tcpsocketrw.cpp
+        loggingcategories.cpp
+#        tcpsocketrw.cpp
 #        serialcom/serialporttester.cpp \
 #        serialcom/serialcomm.cpp \
 #        serialcom/serialprotocol3.cpp \
@@ -52,8 +52,8 @@ HEADERS += \
         builddatetime.h \
         loggingcategories.h \
         measurement_param.h  \
-        python_wrapper.h \
-        tcpsocketrw.h
+        python_wrapper.h
+#        tcpsocketrw.h
 #        serialcom/glucosedownloadprogress.h \
 #        serialcom/serialporttester.h \
 #        serialcom/serialcomm.h \
