@@ -121,6 +121,8 @@ private Q_SLOTS:
     void on_reboot_clicked();
     void on_quit_clicked();
 
+    void on_dmm_capture_stateChanged(int arg1);
+
 signals:
     void measure_setup_ch1(measurement_param);
     void measure_start_ch1();

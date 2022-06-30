@@ -113,6 +113,8 @@ void MainWindow::ui_init_measurement()
 
     currentMeterIndexChanged(m_test_param_tmp.type);
 
+    m_control->delay_mSec(50);
+
     /*Init Action Status*/
     ui->test_step_ch1->setText("Current Action :  Stopeed");
 
@@ -191,6 +193,8 @@ void MainWindow::ui_init_measurement()
 
     currentMeterIndexChanged(m_test_param_tmp.type);
 
+    m_control->delay_mSec(50);
+
     /*Init Action Status*/
     ui->test_step_ch2->setText("Current Action :  Stopeed");
 
@@ -266,6 +270,8 @@ void MainWindow::ui_init_measurement()
     m_test_param_tmp.type = measurement_param::GLUCOSE_BASIC;
 
     currentMeterIndexChanged(m_test_param_tmp.type);
+
+    m_control->delay_mSec(50);
 
     /*Init Action Status*/
     ui->test_step_ch3->setText("Current Action :  Stopeed");
@@ -344,6 +350,8 @@ void MainWindow::ui_init_measurement()
 
     currentMeterIndexChanged(m_test_param_tmp.type);
 
+    m_control->delay_mSec(50);
+
     /*Init Action Status*/
     ui->test_step_ch4->setText("Current Action :  Stopeed");
 
@@ -419,6 +427,8 @@ void MainWindow::ui_init_measurement()
     m_test_param_tmp.type = measurement_param::GLUCOSE_BASIC;
 
     currentMeterIndexChanged(m_test_param_tmp.type);
+
+    m_control->delay_mSec(50);
 
     /*Init Action Status*/
     ui->test_step_ch5->setText("Current Action :  Stopeed");
@@ -505,8 +515,7 @@ void MainWindow::ui_set_measurement_start_ch1()
     ui->sec_detoffdelay_ch1->setEnabled(false);
     ui->sec_interval_ch1->setEnabled(false);
     ui->audo_download_ch1->setEnabled(false);
-    ui->all_channel_select->setEnabled(false);
-    ui->dmm_capture->setEnabled(false);
+    ui->all_channel_select->setEnabled(false);    
 
     //Comm Interface option
     ui->micro_usb_ch1->setEnabled(false);
@@ -1768,12 +1777,12 @@ void MainWindow::UpdateTime()
 
 void MainWindow::dmm_working_status(QString dmm_status)
 {
-    ui->dmm_status->setText("[ " + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap") +" ] " + dmm_status);
+    //ui->dmm_status->setText("[ " + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap") +" ] " + dmm_status);
+      ui->dmm_status->append("[ " + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap") +" ] " + dmm_status);
 }
 
 void MainWindow::on_reboot_clicked()
 {
-
     QProcess process;
     process.startDetached("sudo reboot");
 }
@@ -1782,6 +1791,20 @@ void MainWindow::on_quit_clicked()
 {
      QProcess process;
      process.startDetached("sudo poweroff");
+}
+
+void MainWindow::on_dmm_capture_stateChanged(int arg1)
+{
+    if(system_init_done)
+    {
+
+        if(arg1)
+           m_test_param_ch1.use_u1272a = true;
+        else
+           m_test_param_ch1.use_u1272a = false;
+
+        emit measure_setup_ch1(m_test_param_ch1);
+    }
 }
 
 MainWindow::~MainWindow()

@@ -8,7 +8,7 @@ control::control(QObject *parent) : QObject(parent)
         m_pThread[thread_count] = new QThread(this);
         m_ch[thread_count]->moveToThread(m_pThread[thread_count]);
         connect(m_pThread[thread_count], &QThread::finished, m_ch[thread_count], &QObject::deleteLater);
-        m_pThread[thread_count]->start();
+        m_pThread[thread_count]->start();        
     }
 }
 

@@ -1027,25 +1027,6 @@ QSpinBox::down-arrow
        <string>All Channel Select</string>
       </property>
      </widget>
-     <widget class="QCheckBox" name="dmm_capture">
-      <property name="geometry">
-       <rect>
-        <x>220</x>
-        <y>60</y>
-        <width>131</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>DejaVu Sans</family>
-        <pointsize>10</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>DMM capture</string>
-      </property>
-     </widget>
      <zorder>Camera_view</zorder>
      <zorder>audo_download_ch1</zorder>
      <zorder>Test_operation</zorder>
@@ -1055,7 +1036,6 @@ QSpinBox::down-arrow
      <zorder>Test_info</zorder>
      <zorder>preview_ch1</zorder>
      <zorder>all_channel_select</zorder>
-     <zorder>dmm_capture</zorder>
     </widget>
     <widget class="QWidget" name="Channel2">
      <attribute name="title">
@@ -4597,9 +4577,9 @@ QSpinBox::down-arrow
       </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="Settings">
+    <widget class="QWidget" name="Utility">
      <attribute name="title">
-      <string>Settings</string>
+      <string>Utility</string>
      </attribute>
      <widget class="QGroupBox" name="DebugCount">
       <property name="geometry">
@@ -4673,7 +4653,7 @@ QSpinBox::down-arrow
         <x>160</x>
         <y>18</y>
         <width>801</width>
-        <height>401</height>
+        <height>421</height>
        </rect>
       </property>
       <property name="font">
@@ -4690,8 +4670,27 @@ QSpinBox::down-arrow
          <x>10</x>
          <y>30</y>
          <width>781</width>
-         <height>361</height>
+         <height>381</height>
         </rect>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="dmm_capture">
+       <property name="geometry">
+        <rect>
+         <x>690</x>
+         <y>-4</y>
+         <width>131</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans</family>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>DMM capture</string>
        </property>
       </widget>
      </widget>

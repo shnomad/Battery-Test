@@ -56,7 +56,11 @@ void measurement::setup(measurement_param m_test_param)
      Log()<<Channel<<": detect_off_to_measurement_interval_delay" <<m_test_param_delay.test_interval_time;
 
      if(Channel == 0x1 && m_test_param.use_u1272a == true)
-         dmm_operation();
+     {
+         if(dmm_init())         
+            dmm_open();
+     }
+
 }
 
 void measurement::start()
@@ -338,13 +342,13 @@ void measurement::meter_working_status()
         break;
 
     }
+
+    if(Channel == 0x1 && m_test_param_delay.use_u1272a == true)
+        dmm_read();
 }
 
-void measurement::dmm_operation()
+bool measurement::dmm_init()
 {
-
-    PyObject *pModule, *klass, *Instance, *pyResult, *pyValue;
-
     Py_Initialize();
 
     PyRun_SimpleStringFlags("import sys", nullptr);
@@ -357,8 +361,19 @@ void measurement::dmm_operation()
 
     if(!pModule)
     {
+        emit update_dmm_status("U1272A Initialize Failed");
+
         qDebug()<<"Error loading module";
+
+        return false;
     }
+
+    return true;
+}
+
+bool measurement::dmm_open()
+{
+    QString res;
 
     PyObject_HasAttrString(pModule, "u1272a_operation");
 
@@ -372,27 +387,72 @@ void measurement::dmm_operation()
           {
                pyResult = PyObject_CallMethod(Instance, "inst_open", nullptr);
 
-               QString res =  PyUnicode_AsUTF8(pyResult);
+               res =  PyUnicode_AsUTF8(pyResult);
 
-               emit update_dmm_status(res);
+               if(res=="")
+               {
+                   res="U1272A Open Failed";
+
+                   emit update_dmm_status(res);
+
+                   dmm_close();
+
+                   return false;
+               }
 
                qDebug()<<res;
-
-               pyValue = PyObject_CallMethod(Instance, "inst_read_simple", nullptr);
-
-               QString res1 =  PyUnicode_AsUTF8(pyValue);
-
-               qDebug()<< res1;
           }
+          else
+          {
+              emit update_dmm_status("U1272A Open Failed");
 
-          Py_XDECREF(Instance);
+              dmm_close();
+
+              return false;
+          }
     }
 
-    Py_XDECREF(klass);
+    emit update_dmm_status(res);
 
+    return true;
+}
+
+void measurement::dmm_read()
+{
+    pyValue = PyObject_CallMethod(Instance, "inst_read_simple", nullptr);
+
+    QString measure =  PyUnicode_AsUTF8(pyValue);
+
+    Log()<<"read value: "<<measure;
+
+    emit update_dmm_status(measure);
+
+    Py_XDECREF(pyValue);
+}
+
+void measurement::dmm_close()
+{
+
+    Py_XDECREF(Instance);
+    Py_XDECREF(klass);
     Py_XDECREF(pModule);
+    Py_XDECREF(pyValue);
+    Py_XDECREF(pyResult);
 
     Py_Finalize();
+}
+
+/*create csv file*/
+bool measurement::init_csv()
+{
+
+    return true;
+}
+
+bool measurement::write_csv()
+{
+
+    return true;
 }
 
 measurement::~measurement()
