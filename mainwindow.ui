@@ -45,7 +45,7 @@
        <height>31</height>
       </rect>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="system_information_lay_out">
       <item>
        <widget class="QLabel" name="ip_address">
         <property name="font">
@@ -260,7 +260,7 @@
       <property name="title">
        <string>BGMS Test Option</string>
       </property>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget1">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -800,7 +800,7 @@ QSpinBox::down-arrow
       <property name="title">
        <string>BGMS Test Status</string>
       </property>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget2">
        <property name="geometry">
         <rect>
          <x>12</x>
@@ -864,7 +864,7 @@ QSpinBox::down-arrow
         <x>690</x>
         <y>112</y>
         <width>500</width>
-        <height>400</height>
+        <height>518</height>
        </rect>
       </property>
       <property name="font">
@@ -878,7 +878,7 @@ QSpinBox::down-arrow
       <property name="title">
        <string>BGMS Communication</string>
       </property>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget3">
        <property name="geometry">
         <rect>
          <x>22</x>
@@ -956,14 +956,14 @@ QSpinBox::down-arrow
          <x>21</x>
          <y>220</y>
          <width>465</width>
-         <height>160</height>
+         <height>280</height>
         </rect>
        </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
       </widget>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget4">
        <property name="geometry">
         <rect>
          <x>21</x>
@@ -1145,7 +1145,7 @@ QSpinBox::down-arrow
        </property>
       </widget>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="layoutWidget5">
       <property name="geometry">
        <rect>
         <x>690</x>
@@ -1154,7 +1154,7 @@ QSpinBox::down-arrow
         <height>32</height>
        </rect>
       </property>
-      <layout class="QHBoxLayout" name="download_ch1_2">
+      <layout class="QHBoxLayout" name="download_ch1_1">
        <item>
         <widget class="QCheckBox" name="audo_download_ch1">
          <property name="font">
@@ -1208,7 +1208,7 @@ QSpinBox::down-arrow
         <x>691</x>
         <y>112</y>
         <width>500</width>
-        <height>400</height>
+        <height>518</height>
        </rect>
       </property>
       <property name="font">
@@ -1231,7 +1231,7 @@ QSpinBox::down-arrow
          <height>41</height>
         </rect>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <layout class="QHBoxLayout" name="comm_port_ch2">
         <item>
          <widget class="QRadioButton" name="micro_usb_ch2">
           <property name="minimumSize">
@@ -1300,14 +1300,14 @@ QSpinBox::down-arrow
          <x>20</x>
          <y>220</y>
          <width>465</width>
-         <height>160</height>
+         <height>280</height>
         </rect>
        </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
       </widget>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget6">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -1316,7 +1316,7 @@ QSpinBox::down-arrow
          <height>108</height>
         </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayout">
+       <layout class="QGridLayout" name="comm_operation_ch2">
         <property name="spacing">
          <number>2</number>
         </property>
@@ -1477,7 +1477,7 @@ QSpinBox::down-arrow
       <property name="title">
        <string>BGMS Test Option</string>
       </property>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget7">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -1486,7 +1486,7 @@ QSpinBox::down-arrow
          <height>281</height>
         </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayout_2">
+       <layout class="QGridLayout" name="options_ch2">
         <item row="0" column="0">
          <widget class="QLabel" name="capacity_5">
           <property name="minimumSize">
@@ -2013,7 +2013,7 @@ QSpinBox::down-arrow
        </layout>
       </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_8">
+     <widget class="QGroupBox" name="Test_status_ch2">
       <property name="geometry">
        <rect>
         <x>370</x>
@@ -2033,7 +2033,7 @@ QSpinBox::down-arrow
       <property name="title">
        <string>BGMS Test Status</string>
       </property>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget8">
        <property name="geometry">
         <rect>
          <x>12</x>
@@ -2042,7 +2042,7 @@ QSpinBox::down-arrow
          <height>111</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
+       <layout class="QVBoxLayout" name="status_ch2">
         <item>
          <widget class="QLabel" name="test_step_ch2">
           <property name="font">
@@ -2450,7 +2450,7 @@ QSpinBox::down-arrow
       <property name="title">
        <string>BGMS Test Option</string>
       </property>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget9">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -2459,7 +2459,7 @@ QSpinBox::down-arrow
          <height>281</height>
         </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayout_3">
+       <layout class="QGridLayout" name="options_ch3">
         <item row="0" column="0">
          <widget class="QLabel" name="capacity_15">
           <property name="minimumSize">
@@ -3006,7 +3006,7 @@ QSpinBox::down-arrow
       <property name="title">
        <string>BGMS Test Status</string>
       </property>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget10">
        <property name="geometry">
         <rect>
          <x>12</x>
@@ -3015,7 +3015,7 @@ QSpinBox::down-arrow
          <height>111</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QVBoxLayout" name="status_ch3">
         <item>
          <widget class="QLabel" name="test_step_ch3">
           <property name="font">
@@ -3070,7 +3070,7 @@ QSpinBox::down-arrow
         <x>691</x>
         <y>112</y>
         <width>500</width>
-        <height>400</height>
+        <height>518</height>
        </rect>
       </property>
       <property name="font">
@@ -3093,7 +3093,7 @@ QSpinBox::down-arrow
          <height>41</height>
         </rect>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_8">
+       <layout class="QHBoxLayout" name="comm_port_ch3">
         <item>
          <widget class="QRadioButton" name="micro_usb_ch3">
           <property name="minimumSize">
@@ -3162,14 +3162,14 @@ QSpinBox::down-arrow
          <x>20</x>
          <y>220</y>
          <width>465</width>
-         <height>160</height>
+         <height>280</height>
         </rect>
        </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
       </widget>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget11">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -3178,7 +3178,7 @@ QSpinBox::down-arrow
          <height>108</height>
         </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayout_4">
+       <layout class="QGridLayout" name="comm_operation_ch3">
         <property name="spacing">
          <number>2</number>
         </property>
@@ -3516,7 +3516,7 @@ QSpinBox::down-arrow
       <property name="title">
        <string>BGMS Test Option</string>
       </property>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget12">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -3525,7 +3525,7 @@ QSpinBox::down-arrow
          <height>281</height>
         </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayout_5">
+       <layout class="QGridLayout" name="options_ch4">
         <item row="0" column="0">
          <widget class="QLabel" name="capacity_19">
           <property name="minimumSize">
@@ -4070,7 +4070,7 @@ QSpinBox::down-arrow
       <property name="title">
        <string>BGMS Test Status</string>
       </property>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget13">
        <property name="geometry">
         <rect>
          <x>12</x>
@@ -4079,7 +4079,7 @@ QSpinBox::down-arrow
          <height>111</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <layout class="QVBoxLayout" name="status_ch4">
         <item>
          <widget class="QLabel" name="test_step_ch4">
           <property name="font">
@@ -4134,7 +4134,7 @@ QSpinBox::down-arrow
         <x>690</x>
         <y>112</y>
         <width>500</width>
-        <height>400</height>
+        <height>518</height>
        </rect>
       </property>
       <property name="font">
@@ -4155,7 +4155,7 @@ QSpinBox::down-arrow
          <height>42</height>
         </rect>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_9">
+       <layout class="QHBoxLayout" name="comm_port_ch4">
         <item>
          <widget class="QRadioButton" name="micro_usb_ch4">
           <property name="minimumSize">
@@ -4224,14 +4224,14 @@ QSpinBox::down-arrow
          <x>20</x>
          <y>220</y>
          <width>465</width>
-         <height>160</height>
+         <height>280</height>
         </rect>
        </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
       </widget>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget14">
        <property name="geometry">
         <rect>
          <x>21</x>
@@ -4240,7 +4240,7 @@ QSpinBox::down-arrow
          <height>108</height>
         </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayout_6">
+       <layout class="QGridLayout" name="comm_operation_ch4">
         <property name="spacing">
          <number>2</number>
         </property>
@@ -4579,7 +4579,7 @@ QSpinBox::down-arrow
       <property name="title">
        <string>BGMS Test Option</string>
       </property>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget15">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -4588,7 +4588,7 @@ QSpinBox::down-arrow
          <height>281</height>
         </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayout_8">
+       <layout class="QGridLayout" name="options_ch5">
         <item row="0" column="0">
          <widget class="QLabel" name="capacity_23">
           <property name="minimumSize">
@@ -5135,7 +5135,7 @@ QSpinBox::down-arrow
       <property name="title">
        <string>BGMS Test Status</string>
       </property>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget16">
        <property name="geometry">
         <rect>
          <x>12</x>
@@ -5144,7 +5144,7 @@ QSpinBox::down-arrow
          <height>111</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <layout class="QVBoxLayout" name="status_ch5">
         <item>
          <widget class="QLabel" name="test_step_ch5">
           <property name="font">
@@ -5199,7 +5199,7 @@ QSpinBox::down-arrow
         <x>690</x>
         <y>112</y>
         <width>500</width>
-        <height>400</height>
+        <height>518</height>
        </rect>
       </property>
       <property name="font">
@@ -5222,7 +5222,7 @@ QSpinBox::down-arrow
          <height>42</height>
         </rect>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_10">
+       <layout class="QHBoxLayout" name="comm_port_ch5">
         <item>
          <widget class="QRadioButton" name="micro_usb_ch5">
           <property name="minimumSize">
@@ -5291,14 +5291,14 @@ QSpinBox::down-arrow
          <x>20</x>
          <y>220</y>
          <width>465</width>
-         <height>160</height>
+         <height>280</height>
         </rect>
        </property>
        <property name="readOnly">
         <bool>true</bool>
        </property>
       </widget>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget17">
        <property name="geometry">
         <rect>
          <x>21</x>
@@ -5307,7 +5307,7 @@ QSpinBox::down-arrow
          <height>108</height>
         </rect>
        </property>
-       <layout class="QGridLayout" name="gridLayout_7">
+       <layout class="QGridLayout" name="comm_operation_ch5">
         <property name="spacing">
          <number>2</number>
         </property>

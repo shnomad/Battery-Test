@@ -25,6 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         control.cpp \
         gpiocontrol.cpp \
+        hid_uart_comm.cpp \
         main.cpp \
         mainwindow.cpp \
         measurement.cpp \
@@ -42,6 +43,7 @@ SOURCES += \
 HEADERS += \
         control.h \
         gpiocontrol.h \
+        hid_uart_comm.h \
         mainwindow.h \
         measurement.h \
         python_wrapper.h \

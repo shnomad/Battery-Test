@@ -114,7 +114,7 @@ void MainWindow::ui_init_measurement()
     ui->test_step_ch1->setText("Current Action :  Stopeed");
 
     /*Test capacity*/
- //  target_measure_count_rest = 1000;
+ // target_measure_count_rest = 1000;
 
     /*USB Interface select*/
     ui->micro_usb_ch1->setEnabled(true);
@@ -984,11 +984,9 @@ void MainWindow::on_test_start_ch2_clicked()
 }
 void MainWindow::on_test_stop_ch2_clicked()
 {
-
     ui_set_measurement_stop_ch2();
 
     emit measure_stop_ch2();
-
 }
 
 void MainWindow::on_test_pause_ch2_clicked()
@@ -1767,7 +1765,7 @@ void MainWindow::UpdateTime()
 void MainWindow::dmm_working_status(QString dmm_status)
 {
     //ui->dmm_status->setText("[ " + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap") +" ] " + dmm_status);
-//    ui->dmm_status->append("[ " + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap") +" ] " + dmm_status);
+    //ui->dmm_status->append("[ " + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap") +" ] " + dmm_status);
 }
 
 void MainWindow::on_reboot_clicked()

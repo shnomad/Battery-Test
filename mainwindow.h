@@ -201,7 +201,8 @@ private:
     QString server_ip;
 
     /*simplized the code*/
-    QStringList meter_types = {"BGMS BASIC", "BGMS BLE", "BGMS VOICE", "BGMS VOICE_BLE", "KETONE BASIC", "KETONE BLE"};
+    const QStringList meter_types = {"BGMS BASIC", "BGMS BLE", "BGMS VOICE", "BGMS VOICE_BLE", "KETONE BASIC", "KETONE BLE"};
+    const QString hid_path[3] ={"/dev/uart-hid-1", "/dev/uart-hid-2", "/dev/uart-hid-3"};
 };
 
 #endif // MAINWINDOW_H
