@@ -15,11 +15,16 @@ measurement::measurement(quint8 ch, QObject *parent) : QObject(parent)
     meter_working_status_timer = new QTimer(this);
     connect(meter_working_status_timer, SIGNAL(timeout()),SLOT(meter_working_status()));
 
+    m_measurement_start = new QTimer(this);
+    m_measurement_start->setSingleShot(true);
+    connect(m_measurement_start, SIGNAL(timeout()),SLOT(meter_working_status()));
+
     connect(this, SIGNAL(set_start()),SLOT(start()));
     connect(this, SIGNAL(set_detect()),SLOT(detect_on()));
     connect(this, SIGNAL(set_work_on()),SLOT(work_on()));
     connect(this, SIGNAL(set_detect_off()),SLOT(detect_off()));
     connect(this, SIGNAL(set_test_count_check()),SLOT(test_count_check()));
+    connect(this, SIGNAL(set_stop()),SLOT(stop()));
 
     m_measure_status = measurement_param::meter_status::STAND_BY;
 }
@@ -71,13 +76,15 @@ void measurement::start()
 
     m_measure_status = measurement_param::meter_status::MEASURE_START;
     emit update_test_count(static_cast<int>(current_test_count));
+    emit update_interval_time(static_cast<int>(m_test_param_delay.test_interval_time/1000));
 
     Log()<<Channel <<": detect_on_time"<< m_test_param_delay.detect_on_time;
     Log()<<Channel <<": work_on_time"<< m_test_param_delay.work_on_time;
     Log()<<Channel <<": detect_off_time"<< m_test_param_delay.detect_off_time;
     Log()<<Channel <<": test_interval_time"<< m_test_param_delay.test_interval_time;
 
-    meter_working_status_timer->start(1000);
+//  meter_working_status_timer->start(1000);
+    m_measurement_start->start(1);
 }
 
 void measurement::stop()
@@ -176,6 +183,9 @@ void measurement::test_count_check()
             Log() <<"Current test count : "<< current_test_count;
             Log() <<"Test Continue";
 
+            m_measure_status = measurement_param::meter_status::MEASURE_INTERVAL;
+            meter_working_status_timer->start(1000);
+
         }
         else
         {
@@ -186,7 +196,7 @@ void measurement::test_count_check()
             Log() <<"Test Stop : "<< Channel;
 
             emit update_action("stop");
-            emit stop();
+            emit set_stop();
         }
     }
     else
@@ -214,7 +224,7 @@ void measurement::test_count_check()
                        Log() <<"Current test count : "<< current_test_count;
                        Log() <<"Test Stop : "<< Channel;
                        emit update_action("stop");
-                       emit stop();
+                       emit set_stop();
                    }
                }
                else
@@ -233,6 +243,9 @@ void measurement::test_count_check()
                  Log() <<"Current test count : "<< current_test_count;
                  Log() <<"Test Continue";
 
+                 m_measure_status = measurement_param::meter_status::MEASURE_INTERVAL;
+                 meter_working_status_timer->start(1000);
+
              }
              else if(static_cast<uint32_t>(target_test_count) == current_test_count)
              {
@@ -242,13 +255,16 @@ void measurement::test_count_check()
                  Log() <<"Current test count : "<< current_test_count;
                  Log() <<"Test Stop : "<< Channel;
                  emit update_action("stop");
-                 emit stop();
+                 emit set_stop();
              }
              else
              {
                  Log() <<"Target test count : "<< target_test_count;
                  Log() <<"Current test count : "<< current_test_count;
                  Log() <<"Test Continue";
+
+                 m_measure_status = measurement_param::meter_status::MEASURE_INTERVAL;
+                 meter_working_status_timer->start(1000);
              }
          }
          else
@@ -259,10 +275,7 @@ void measurement::test_count_check()
              Log() <<"Target test count is  "<< target_test_count;
              Log() <<"Current test count is  "<< current_test_count;
          }
-      }
-
-    m_measure_status = measurement_param::meter_status::MEASURE_INTERVAL;
-    meter_working_status_timer->start(1000);
+      }    
 }
 
 void measurement::meter_working_status()
@@ -274,9 +287,11 @@ void measurement::meter_working_status()
     {
         case measurement_param::meter_status::MEASURE_START :
 
+            meter_working_status_timer->start(1000);
+
             if(m_test_param_delay.detect_on_time > 0)
             {
-                Log()<<"start_delay :"<< m_test_param_delay.detect_on_time;
+//                Log()<<"start_delay :"<< m_test_param_delay.detect_on_time;
                 m_test_param_delay.detect_on_time -=1000;
             }
             else
@@ -290,7 +305,7 @@ void measurement::meter_working_status()
 
             if(m_test_param_delay.work_on_time > 0)
             {
-                Log()<<"detect_on_delay :"<< m_test_param_delay.work_on_time;
+//                Log()<<"detect_on_delay :"<< m_test_param_delay.work_on_time;
                 m_test_param_delay.work_on_time -=1000;
             }
             else
@@ -305,7 +320,7 @@ void measurement::meter_working_status()
 
             if(m_test_param_delay.detect_off_time > 0)
             {
-                Log()<<"work_on_delay :"<<m_test_param_delay.detect_off_time;
+//                Log()<<"work_on_delay :"<<m_test_param_delay.detect_off_time;
                  m_test_param_delay.detect_off_time -=1000;
             }
             else
@@ -325,7 +340,7 @@ void measurement::meter_working_status()
 
             if(m_test_param_delay.test_interval_time > 0)
             {
-                Log()<<"measurement_interval_delay :"<<m_test_param_delay.test_interval_time;
+//                Log()<<"measurement_interval_delay :"<<m_test_param_delay.test_interval_time;
 
                 emit update_interval_time(static_cast<int>(m_test_param_delay.test_interval_time/1000));
 
@@ -349,6 +364,7 @@ void measurement::meter_working_status()
 
 bool measurement::dmm_init()
 {
+#if 0
     Py_Initialize();
 
     PyRun_SimpleStringFlags("import sys", nullptr);
@@ -367,12 +383,14 @@ bool measurement::dmm_init()
 
         return false;
     }
+#endif
 
     return true;
 }
 
 bool measurement::dmm_open()
 {
+#if 0
     QString res;
 
     PyObject_HasAttrString(pModule, "u1272a_operation");
@@ -413,12 +431,14 @@ bool measurement::dmm_open()
     }
 
     emit update_dmm_status(res);
+#endif
 
     return true;
 }
 
 void measurement::dmm_read()
 {
+#if 0
     pyValue = PyObject_CallMethod(Instance, "inst_read_simple", nullptr);
 
     QString measure =  PyUnicode_AsUTF8(pyValue);
@@ -428,11 +448,12 @@ void measurement::dmm_read()
     emit update_dmm_status(measure);
 
     Py_XDECREF(pyValue);
+#endif
 }
 
 void measurement::dmm_close()
 {
-
+#if 0
     Py_XDECREF(Instance);
     Py_XDECREF(klass);
     Py_XDECREF(pModule);
@@ -440,6 +461,7 @@ void measurement::dmm_close()
     Py_XDECREF(pyResult);
 
     Py_Finalize();
+#endif
 }
 
 /*create csv file*/

@@ -6,7 +6,7 @@
 #include <QTimer>
 #include <QObject>
 #include "measurement_param.h"
-#include "python_wrapper.h"
+//#include "python_wrapper.h"
 
 class relay_seed_ddl;
 
@@ -29,6 +29,7 @@ public:
     void set_detect_off();
     void set_test_count_check();
     void set_detect_off_interval();
+    void set_stop();
 
     public slots:
 
@@ -55,7 +56,7 @@ public:
 
     private:
 
-    QTimer *meter_working_status_timer;
+    QTimer *meter_working_status_timer, *m_measurement_start;
     relay_seed_ddl *measure_relay;
     measurement_param m_test_param{}, m_test_param_tmp{}, m_test_param_delay{};
     quint8 Channel=0;
@@ -63,7 +64,7 @@ public:
     measurement_param::meter_status m_measure_status;
 
     /*Python API*/
-    PyObject *pModule, *klass, *Instance, *pyResult, *pyValue;
+    //PyObject *pModule, *klass, *Instance, *pyResult, *pyValue;
 
 };
 
