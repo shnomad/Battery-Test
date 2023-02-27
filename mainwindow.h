@@ -8,6 +8,7 @@
 #include "measurement_param.h"
 #include "commondefinition.h"
 #include "control.h"
+#include <QStringList>
 
 QT_BEGIN_NAMESPACE
 
@@ -198,6 +199,9 @@ private:
     bool meter_type_index_selected_measure_count = false, meter_type_index_selected_start_delay = false, meter_type_index_selected_detoff_delay = false, meter_type_index_selected_interval=false;
 
     QString server_ip;
+
+    /*simplized the code*/
+    QStringList meter_types = {"BGMS BASIC", "BGMS BLE", "BGMS VOICE", "BGMS VOICE_BLE", "KETONE BASIC", "KETONE BLE"};
 };
 
 #endif // MAINWINDOW_H

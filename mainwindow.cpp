@@ -63,9 +63,9 @@ void MainWindow::ui_init_measurement()
     ui->test_stop_ch1->setIcon(QIcon(stop_icon));
     ui->test_pause_ch1->setIcon(QIcon(pause_icon));
 
-    ui->test_start_ch1->setIconSize(QSize(45,45));
-    ui->test_stop_ch1->setIconSize(QSize(45,45));
-    ui->test_pause_ch1->setIconSize(QSize(45,45));
+    ui->test_start_ch1->setIconSize(QSize(95,95));
+    ui->test_stop_ch1->setIconSize(QSize(95,95));
+    ui->test_pause_ch1->setIconSize(QSize(95,95));
 
     ui->test_stop_ch1->setEnabled(false);
     ui->test_pause_ch1->setEnabled(false);
@@ -73,12 +73,8 @@ void MainWindow::ui_init_measurement()
     ui->device_close_ch1->setEnabled(false);
 
     //Meter type select
-    ui->meter_type_ch1->addItem("GLUCOSE BASIC");
-    ui->meter_type_ch1->addItem("GLUCOSE BLE");
-    ui->meter_type_ch1->addItem("GLUCOSE VOICE");
-    ui->meter_type_ch1->addItem("GLUCOSE VOICE BLE");
-    ui->meter_type_ch1->addItem("KETONE BASIC");
-    ui->meter_type_ch1->addItem("KETONE BLE");           
+
+    ui->meter_type_ch1->addItems(meter_types);
     ui->meter_type_ch1->setCurrentIndex(0);
 
     /*Measurement Condition*/
@@ -144,9 +140,9 @@ void MainWindow::ui_init_measurement()
     ui->test_stop_ch2->setIcon(QIcon(stop_icon));
     ui->test_pause_ch2->setIcon(QIcon(pause_icon));
 
-    ui->test_start_ch2->setIconSize(QSize(45,45));
-    ui->test_stop_ch2->setIconSize(QSize(45,45));
-    ui->test_pause_ch2->setIconSize(QSize(45,45));
+    ui->test_start_ch2->setIconSize(QSize(95,95));
+    ui->test_stop_ch2->setIconSize(QSize(95,95));
+    ui->test_pause_ch2->setIconSize(QSize(95,95));
 
     ui->test_stop_ch2->setEnabled(false);
     ui->test_pause_ch2->setEnabled(false);
@@ -154,12 +150,8 @@ void MainWindow::ui_init_measurement()
     ui->device_close_ch2->setEnabled(false);
 
     //Meter type select
-    ui->meter_type_ch2->addItem("GLUCOSE BASIC");
-    ui->meter_type_ch2->addItem("GLUCOSE BLE");
-    ui->meter_type_ch2->addItem("GLUCOSE VOICE");
-    ui->meter_type_ch2->addItem("GLUCOSE VOICE BLE");
-    ui->meter_type_ch2->addItem("KETONE BASIC");
-    ui->meter_type_ch2->addItem("KETONE BLE");
+
+    ui->meter_type_ch2->addItems(meter_types);
     ui->meter_type_ch2->setCurrentIndex(0);
 
     /*Measurement Condition*/
@@ -222,9 +214,9 @@ void MainWindow::ui_init_measurement()
     ui->test_stop_ch3->setIcon(QIcon(stop_icon));
     ui->test_pause_ch3->setIcon(QIcon(pause_icon));
 
-    ui->test_start_ch3->setIconSize(QSize(45,45));
-    ui->test_stop_ch3->setIconSize(QSize(45,45));
-    ui->test_pause_ch3->setIconSize(QSize(45,45));
+    ui->test_start_ch3->setIconSize(QSize(95,95));
+    ui->test_stop_ch3->setIconSize(QSize(95,95));
+    ui->test_pause_ch3->setIconSize(QSize(95,95));
 
     ui->test_stop_ch3->setEnabled(false);
     ui->test_pause_ch3->setEnabled(false);
@@ -232,12 +224,7 @@ void MainWindow::ui_init_measurement()
     ui->device_close_ch3->setEnabled(false);
 
     //Meter type select
-    ui->meter_type_ch3->addItem("GLUCOSE BASIC");
-    ui->meter_type_ch3->addItem("GLUCOSE BLE");
-    ui->meter_type_ch3->addItem("GLUCOSE VOICE");
-    ui->meter_type_ch3->addItem("GLUCOSE VOICE BLE");
-    ui->meter_type_ch3->addItem("KETONE BASIC");
-    ui->meter_type_ch3->addItem("KETONE BLE");
+    ui->meter_type_ch3->addItems(meter_types);
     ui->meter_type_ch3->setCurrentIndex(0);
 
     /*Measurement Condition*/
@@ -301,9 +288,9 @@ void MainWindow::ui_init_measurement()
     ui->test_stop_ch4->setIcon(QIcon(stop_icon));
     ui->test_pause_ch4->setIcon(QIcon(pause_icon));
 
-    ui->test_start_ch4->setIconSize(QSize(45,45));
-    ui->test_stop_ch4->setIconSize(QSize(45,45));
-    ui->test_pause_ch4->setIconSize(QSize(45,45));
+    ui->test_start_ch4->setIconSize(QSize(95,95));
+    ui->test_stop_ch4->setIconSize(QSize(95,95));
+    ui->test_pause_ch4->setIconSize(QSize(95,95));
 
     ui->test_stop_ch4->setEnabled(false);
     ui->test_pause_ch4->setEnabled(false);
@@ -311,12 +298,7 @@ void MainWindow::ui_init_measurement()
     ui->device_close_ch4->setEnabled(false);
 
     //Meter type select
-    ui->meter_type_ch4->addItem("GLUCOSE BASIC");
-    ui->meter_type_ch4->addItem("GLUCOSE BLE");
-    ui->meter_type_ch4->addItem("GLUCOSE VOICE");
-    ui->meter_type_ch4->addItem("GLUCOSE VOICE BLE");
-    ui->meter_type_ch4->addItem("KETONE BASIC");
-    ui->meter_type_ch4->addItem("KETONE BLE");
+    ui->meter_type_ch4->addItems(meter_types);
     ui->meter_type_ch4->setCurrentIndex(0);
 
     /*Measurement Condition*/
@@ -379,9 +361,9 @@ void MainWindow::ui_init_measurement()
     ui->test_stop_ch5->setIcon(QIcon(stop_icon));
     ui->test_pause_ch5->setIcon(QIcon(pause_icon));
 
-    ui->test_start_ch5->setIconSize(QSize(45,45));
-    ui->test_stop_ch5->setIconSize(QSize(45,45));
-    ui->test_pause_ch5->setIconSize(QSize(45,45));
+    ui->test_start_ch5->setIconSize(QSize(95,95));
+    ui->test_stop_ch5->setIconSize(QSize(95,95));
+    ui->test_pause_ch5->setIconSize(QSize(95,95));
 
     ui->test_stop_ch5->setEnabled(false);
     ui->test_pause_ch5->setEnabled(false);
@@ -389,12 +371,7 @@ void MainWindow::ui_init_measurement()
     ui->device_close_ch5->setEnabled(false);
 
     //Meter type select
-    ui->meter_type_ch5->addItem("GLUCOSE BASIC");
-    ui->meter_type_ch5->addItem("GLUCOSE BLE");
-    ui->meter_type_ch5->addItem("GLUCOSE VOICE");
-    ui->meter_type_ch5->addItem("GLUCOSE VOICE BLE");
-    ui->meter_type_ch5->addItem("KETONE BASIC");
-    ui->meter_type_ch5->addItem("KETONE BLE");
+    ui->meter_type_ch5->addItems(meter_types);
     ui->meter_type_ch5->setCurrentIndex(0);
 
     /*Measurement Condition*/
@@ -544,7 +521,7 @@ void MainWindow::ui_set_measurement_stop_ch1()
     ui->sec_interval_ch1->setEnabled(true);
     ui->audo_download_ch1->setEnabled(true);
     ui->all_channel_select->setEnabled(true);
-    ui->dmm_capture->setEnabled(true);
+//   ui->dmm_capture->setEnabled(true);
 
     ui->device_open_ch1->setEnabled(true);
     ui->micro_usb_ch1->setEnabled(true);
@@ -949,6 +926,19 @@ void MainWindow::on_test_start_ch1_clicked()
         on_test_start_ch3_clicked();
         on_test_start_ch4_clicked();
         on_test_start_ch5_clicked();
+
+        ui->test_stop_ch2->setEnabled(false);
+        ui->test_pause_ch2->setEnabled(false);
+
+        ui->test_stop_ch3->setEnabled(false);
+        ui->test_pause_ch3->setEnabled(false);
+
+        ui->test_stop_ch4->setEnabled(false);
+        ui->test_pause_ch4->setEnabled(false);
+
+        ui->test_stop_ch5->setEnabled(false);
+        ui->test_pause_ch5->setEnabled(false);
+
     }
 }
 
@@ -1441,8 +1431,7 @@ void MainWindow::currentMeterIndexChanged(int index)
             Log()<<"GLUCOSE selected";
 
                 m_test_param_tmp.meter_memory_capacity = 1000;
-//                m_test_param_tmp.target_measure_count =1000;
-                m_test_param_tmp.target_measure_count =5;
+                m_test_param_tmp.target_measure_count =1000;
                 m_test_param_tmp.work_on_time = 3000;
                 m_test_param_tmp.third_on_time =0; // 6000;
                 m_test_param_tmp.detect_off_time = 8000; //14000;
@@ -1778,7 +1767,7 @@ void MainWindow::UpdateTime()
 void MainWindow::dmm_working_status(QString dmm_status)
 {
     //ui->dmm_status->setText("[ " + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap") +" ] " + dmm_status);
-      ui->dmm_status->append("[ " + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap") +" ] " + dmm_status);
+//    ui->dmm_status->append("[ " + QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss ap") +" ] " + dmm_status);
 }
 
 void MainWindow::on_reboot_clicked()
