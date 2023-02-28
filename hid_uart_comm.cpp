@@ -8,9 +8,7 @@
 #include "commondefinition.h"
 
 hid_uart_comm::hid_uart_comm(quint8 channel, QObject *parent) : QObject(parent)
-{
-    Log();
-
+{ 
     comm_port_check_start = new QTimer(this);
     comm_port_check_start->setSingleShot(true);
 
@@ -133,5 +131,6 @@ void hid_uart_comm::ReadyRead()
 
 hid_uart_comm::~hid_uart_comm()
 {
-
+    resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_PORT_CLOSE_SUCCESS;
+    emit sig_bgms_comm_response(resp_bgms_comm);
 }

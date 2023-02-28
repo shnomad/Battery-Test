@@ -1830,6 +1830,8 @@ void MainWindow::on_device_open_ch1_clicked()
     {
 
     }
+
+    ui->meter_info_ch01->clear();
 }
 
 void MainWindow::on_device_open_ch2_clicked()
@@ -1864,7 +1866,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_device_close_ch1_clicked()
 {
+    if(ui->phone_jack_ch1->isChecked())
+    {
+         comm_Thread[0]->exit();
+    }
+    else
+    {
 
+    }
 }
 
 void MainWindow::on_device_close_ch2_clicked()
@@ -1885,11 +1894,38 @@ void MainWindow::ui_bgms_comm_ch_1_response(sys_cmd_resp *resp_comm)
     switch (resp_comm->m_comm_resp)
     {
         case  sys_cmd_resp::RESP_COMM_PORT_OPEN_SUCCESS:
-            break;
-        case  sys_cmd_resp::RESP_COMM_PORT_CLOSE_SUCCESS:
-            break;
         case  sys_cmd_resp::RESP_COMM_BGMS_CHECK_SUCCESS:
+
+            ui_set_measurement_start_ch1();
+            ui->test_pause_ch1->setEnabled(false);
+            ui->test_stop_ch1->setEnabled(false);
+
+            ui->micro_usb_ch1->setEnabled(false);
+            ui->phone_jack_ch1->setEnabled(false);
+            ui->device_open_ch1->setEnabled(false);
+
+            ui->time_sync_ch1->setEnabled(true);
+            ui->mem_delete_ch1->setEnabled(true);
+            ui->download_ch1->setEnabled(true);
+            ui->device_close_ch1->setEnabled(true);
+
             break;
+
+        case  sys_cmd_resp::RESP_COMM_PORT_CLOSE_SUCCESS:
+
+            ui_set_measurement_stop_ch1();
+
+            ui->micro_usb_ch1->setEnabled(true);
+            ui->phone_jack_ch1->setEnabled(true);
+            ui->device_open_ch1->setEnabled(true);
+
+            ui->time_sync_ch1->setEnabled(false);
+            ui->mem_delete_ch1->setEnabled(false);
+            ui->download_ch1->setEnabled(false);
+            ui->device_close_ch1->setEnabled(false);
+
+            break;
+
         case  sys_cmd_resp::RESP_COMM_READ_SERIAL_SUCCESS:
             break;
         case  sys_cmd_resp::RESP_COMM_SET_TIME_SUCCESS:
