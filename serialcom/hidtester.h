@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QTimer>
-#include "hidport.h"
+//#include "hidport.h"
 #include "serialprotocolabstract.h"
 #include "commondefinition.h"
 

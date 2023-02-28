@@ -202,7 +202,7 @@ private:
 
     /*simplized the code*/
     const QStringList meter_types = {"BGMS BASIC", "BGMS BLE", "BGMS VOICE", "BGMS VOICE_BLE", "KETONE BASIC", "KETONE BLE"};
-    const QString hid_path[3] ={"/dev/uart-hid-1", "/dev/uart-hid-2", "/dev/uart-hid-3"};
+    const QStringList uart_hid_path ={"/dev/uart-hid-1", "/dev/uart-hid-2", "/dev/uart-hid-3"};
 };
 
 #endif // MAINWINDOW_H

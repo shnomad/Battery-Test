@@ -8,7 +8,7 @@
 #include "stmhidport.h"
 #include "stmhidtester.h"
 #include "serialdefinition.h"
-#include "hidapi.h"
+//#include "hidapi.h"
 
 enum PortType {
     PORT_SERIAL,    // Serial (mostly FTDI)

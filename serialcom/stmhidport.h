@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QTimer>
-#include "hidapi.h"
+//#include "hidapi.h"
 #define MAX_READ_TRY   65536
 
 class STMHIDPort : public QObject

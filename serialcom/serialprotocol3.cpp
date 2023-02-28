@@ -13,6 +13,7 @@ SerialProtocol3::SerialProtocol3(SerialComm *serialComm, QObject *parent) : Seri
 {
     Log();
     timeoutTimerID = 0;
+
     //m_settings = Settings::Instance()->getSettings();
     downloadInfo.setProcotol(Sp::CommProtocol3);
     connect(&downloadInfo, SIGNAL(downloadProgress(float)), this, SIGNAL(downloadProgress(float)));

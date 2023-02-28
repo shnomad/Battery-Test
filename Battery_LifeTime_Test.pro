@@ -32,13 +32,16 @@ SOURCES += \
         relay_seed_ddl.cpp \
         settings.cpp \
         loggingcategories.cpp
-#        tcpsocketrw.cpp
-#        serialcom/serialporttester.cpp \
+#       tcpsocketrw.cpp \
+#       serialcom/hidtester.cpp \
 #        serialcom/serialcomm.cpp \
-#        serialcom/serialprotocol3.cpp \
+#       serialcom/serialporttester.cpp \
+#       serialcom/serialprotocol1.cpp \
+#       serialcom/serialprotocol2.cpp \
+#       serialcom/serialprotocol3.cpp \
 #        serialcom/serialprotocolabstract.cpp \
-#        serialcom/stmhidport.cpp \
-#        serialcom/stmhidtester.cpp
+#        serialcom/stmhidport.cpp
+#       serialcom/stmhidtester.cpp
 
 HEADERS += \
         control.h \
@@ -54,17 +57,21 @@ HEADERS += \
         builddatetime.h \
         loggingcategories.h \
         measurement_param.h
-#        python_wrapper.h
-#        tcpsocketrw.h
-#        serialcom/glucosedownloadprogress.h \
-#        serialcom/serialporttester.h \
+#       python_wrapper.h
+#       tcpsocketrw.h
+#       serialcom/glucosedownloadprogress.h \
+#       serialcom/hidtester.h \
 #        serialcom/serialcomm.h \
 #        serialcom/serialdefinition.h \
+#       serialcom/serialporttester.h \
 #        serialcom/serialprotocol.h \
-#        serialcom/serialprotocol3.h \
+#       serialcom/serialprotocol1.h \
+#       serialcom/serialprotocol2.h \
+#       serialcom/serialprotocol3.h \
 #        serialcom/serialprotocolabstract.h \
-#        serialcom/stmhidport.h \
-#        serialcom/stmhidtester.h
+#       serialcom/glucosedownloadprogress.h \
+#        serialcom/stmhidport.h
+#       serialcom/stmhidtester.h
 
 #buildtimeTarget.target = builddatetime.h
 #buildtimeTarget.depends = FORCE

@@ -24,9 +24,9 @@ public:
     enum ProtocolState
     {
         Idle,
-        RequestWaiting,         // 커맨드 리퀘스트후 응답 대기상태
-        GluecoseDownloading,    // 글루코스 확장 다운로드 중
-        RequestComplete,        // 커맨드 리퀘스트에 대한 응답 패킷 완료 상태
+        RequestWaiting,
+        GluecoseDownloading,
+        RequestComplete,
         AnError
     };
 
@@ -147,6 +147,3 @@ public:
 };
 
 #endif // SERIALPROTOCOL
-
-
-
