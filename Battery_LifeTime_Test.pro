@@ -31,7 +31,8 @@ SOURCES += \
         measurement.cpp \
         relay_seed_ddl.cpp \
         settings.cpp \
-        loggingcategories.cpp
+        loggingcategories.cpp \
+        sys_cmd_resp.cpp
 #       tcpsocketrw.cpp \
 #       serialcom/hidtester.cpp \
 #        serialcom/serialcomm.cpp \
@@ -44,6 +45,7 @@ SOURCES += \
 #       serialcom/stmhidtester.cpp
 
 HEADERS += \
+        bgms_set_param_info.h \
         control.h \
         gpiocontrol.h \
         hid_uart_comm.h \
@@ -56,7 +58,8 @@ HEADERS += \
         setting_flagname_definition.h \
         builddatetime.h \
         loggingcategories.h \
-        measurement_param.h
+        measurement_param.h \
+        sys_cmd_resp.h
 #       python_wrapper.h
 #       tcpsocketrw.h
 #       serialcom/glucosedownloadprogress.h \

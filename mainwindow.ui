@@ -950,7 +950,7 @@ QSpinBox::down-arrow
         </item>
        </layout>
       </widget>
-      <widget class="QTextEdit" name="meter_info_ch1_2">
+      <widget class="QTextEdit" name="meter_info_ch01">
        <property name="geometry">
         <rect>
          <x>21</x>
@@ -1294,7 +1294,7 @@ QSpinBox::down-arrow
         </item>
        </layout>
       </widget>
-      <widget class="QTextEdit" name="meter_info_ch1_3">
+      <widget class="QTextEdit" name="meter_info_ch02">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -3156,7 +3156,7 @@ QSpinBox::down-arrow
         </item>
        </layout>
       </widget>
-      <widget class="QTextEdit" name="meter_info_ch1_4">
+      <widget class="QTextEdit" name="meter_info_ch03">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -4218,7 +4218,7 @@ QSpinBox::down-arrow
         </item>
        </layout>
       </widget>
-      <widget class="QTextEdit" name="meter_info_ch1_5">
+      <widget class="QTextEdit" name="meter_info_ch04">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -5285,7 +5285,7 @@ QSpinBox::down-arrow
         </item>
        </layout>
       </widget>
-      <widget class="QTextEdit" name="meter_info_ch1_6">
+      <widget class="QTextEdit" name="meter_info_ch05">
        <property name="geometry">
         <rect>
          <x>20</x>

@@ -7,48 +7,71 @@
 #include <linux/hidraw.h>
 #include "commondefinition.h"
 
-hid_uart_comm::hid_uart_comm(QObject *parent) : QObject(parent)
+hid_uart_comm::hid_uart_comm(quint8 channel, QObject *parent) : QObject(parent)
 {
-    QString hidpath = "/dev/uart-hid-1";
+    Log();
+
+    comm_port_check_start = new QTimer(this);
+    comm_port_check_start->setSingleShot(true);
+
+    connect(comm_port_check_start, SIGNAL(timeout()), this, SLOT(check_connection()));
+
+    hidpath = uart_hid_path[channel];
+
+    comm_port_check_start->start(500);
+}
+
+void hid_uart_comm::check_connection()
+{
+    Log();
+
+    resp_bgms_comm = new sys_cmd_resp;
 
     fd = open(hidpath.toLocal8Bit(), O_RDWR);
 
     if(fd <0)
     {
-        exit(0);
+        resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_PORT_OPEN_FAIL;
+        emit sig_bgms_comm_response(resp_bgms_comm);
     }
-
-    uart_init();
-
-    comm_start = new QTimer(this);
-    comm_start->setSingleShot(true);
-
-    connect(comm_start, SIGNAL(timeout()), this, SLOT(Send_Command()));
-
-    m_notify_hid = new QSocketNotifier(fd, QSocketNotifier::Read, this);
-    m_notify_error = new QSocketNotifier(fd, QSocketNotifier::Exception, this);
-
-    connect(m_notify_hid, SIGNAL(activated(int)), this, SLOT(ReadyRead()));
-    connect(m_notify_error, SIGNAL(activated(int)), this, SLOT(Error()));
-
-    m_notify_hid->setEnabled(true);
-    m_notify_error->setEnabled(true);
-
-
-    resp_timer = new QTimer(this);
-    resp_timer->setSingleShot(true);
-
-    connect(resp_timer,  &QTimer::timeout, [=]()
+    else
     {
-        Log()<<QString::fromUtf8(m_tranferHost.toHex());
-    });
+        resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_PORT_OPEN_SUCCESS;
+        emit sig_bgms_comm_response(resp_bgms_comm);
 
-    comm_start->start(200);
+        port_init();
+
+        bgms_check_start = new QTimer(this);
+        bgms_check_start->setSingleShot(true);
+
+        connect(bgms_check_start, SIGNAL(timeout()), this, SLOT(check_bgms()));
+
+        m_notify_hid = new QSocketNotifier(fd, QSocketNotifier::Read, this);
+        m_notify_error = new QSocketNotifier(fd, QSocketNotifier::Exception, this);
+
+        connect(m_notify_hid, SIGNAL(activated(int)), this, SLOT(ReadyRead()));
+//      connect(m_notify_error, SIGNAL(activated(int)), this, SLOT(Error()));
+
+        m_notify_hid->setEnabled(true);
+        m_notify_error->setEnabled(true);
+
+        resp_timer = new QTimer(this);
+        resp_timer->setSingleShot(true);
+
+        connect(resp_timer,  &QTimer::timeout, [=]()
+        {
+            Log()<<QString::fromUtf8(m_tranferHost.toHex());
+
+            resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_BGMS_CHECK_SUCCESS;
+            emit sig_bgms_comm_response(resp_bgms_comm);
+        });
+
+        bgms_check_start->start();
+    }
 }
 
-void hid_uart_comm::uart_init()
+void hid_uart_comm::port_init()
 {
-
     int result = 0;
 
     /*Set PL23B3 Uart Configuration*/
@@ -83,7 +106,7 @@ void hid_uart_comm::uart_init()
     memset(cmd_buf,0x00,sizeof(cmd_buf));
 }
 
-void hid_uart_comm::Send_Command()
+void hid_uart_comm::check_bgms()
 {
     int result = 0;
 
@@ -99,7 +122,6 @@ void hid_uart_comm::Send_Command()
 
 void hid_uart_comm::ReadyRead()
 {
-
     read(fd, resp_buf, 64);
 
     m_tranferHost.append(resp_buf[1]).toHex();

@@ -9,6 +9,8 @@
 #include "commondefinition.h"
 #include "control.h"
 #include <QStringList>
+#include "sys_cmd_resp.h"
+#include "hid_uart_comm.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -39,7 +41,6 @@ public:
     enum meter_channel {CH_1=0x1, CH_2=0x2};
 
 private slots:
-
     void UpdateTime();
     void ui_action_status_ch1(QString);
     void ui_test_count_ch1(int);
@@ -60,6 +61,10 @@ private slots:
     void ui_action_status_ch5(QString);
     void ui_test_count_ch5(int);
     void ui_interval_time_update_ch5(int);
+
+    void ui_bgms_comm_ch_1_response(sys_cmd_resp *);
+    void ui_bgms_comm_ch_2_response(sys_cmd_resp *);
+    void ui_bgms_comm_ch_3_response(sys_cmd_resp *);
 
     void dmm_working_status(QString);
 
@@ -118,11 +123,17 @@ private Q_SLOTS:
     void on_sec_interval_ch5_valueChanged(const QString &arg1);
 
     void on_download_ch2_clicked();
-
     void on_reboot_clicked();
     void on_quit_clicked();
-
     void on_dmm_capture_stateChanged(int arg1);
+
+    void on_device_open_ch1_clicked();
+    void on_device_open_ch2_clicked();
+    void on_device_open_ch3_clicked();
+
+    void on_device_close_ch1_clicked();
+    void on_device_close_ch2_clicked();
+    void on_device_close_ch3_clicked();
 
 signals:
     void measure_setup_ch1(measurement_param);
@@ -202,7 +213,10 @@ private:
 
     /*simplized the code*/
     const QStringList meter_types = {"BGMS BASIC", "BGMS BLE", "BGMS VOICE", "BGMS VOICE_BLE", "KETONE BASIC", "KETONE BLE"};
-    const QStringList uart_hid_path ={"/dev/uart-hid-1", "/dev/uart-hid-2", "/dev/uart-hid-3"};
+    hid_uart_comm *m_hid_uart_comm[3];
+    QThread *comm_Thread[3];
+
+    QMap<quint8, QString> comm_response_msg;
 };
 
 #endif // MAINWINDOW_H

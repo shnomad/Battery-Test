@@ -39,6 +39,26 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
       connect(ui->meter_type_ch4, SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
       connect(ui->meter_type_ch5, SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
 
+      /*BGMS Communication response message*/
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_PORT_OPEN_SUCCESS), "UART/USB Port Open Success");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_PORT_CLOSE_SUCCESS), "UART/USB Port Close Success");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_BGMS_CHECK_SUCCESS), "BGMS Check Success");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_READ_SERIAL_SUCCESS),"BGMS Serial Number :");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_SET_TIME_SUCCESS), "BGMS Time synchronized");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_MEM_DELETE_SUCCESS), "BGMS Stored measured value deleted");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_GET_STORED_VALUE_COUNT_SUCCESS), "Get BGMS Stored measured value count:");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_DOWNLOAD_SUCCESS), "BGMS Stored measured value download complete");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_PORT_OPEN_FAIL), "UART/USB Port Open Fail");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_PORT_CLOSE_FAIL), "UART/USB Port Close Fail");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_BGMS_CHECK_FAIL), "BGMS Check Failed");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_READ_SERIAL_FAIL), "Read BGMS Serial Number Failed");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_SET_TIME_FAIL), "BGMS Time synchronized Failed");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_GET_STORED_VALUE_COUNT_FAIL), "Get BGMS Stored measured value count Failed");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_DOWNLOAD_FAIL), "BGMS Stored measured value download failed");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_MEM_DELETE_FAIL), "BGMS Stored measured value delet failed");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_BGMS_RESP_FAIL), "BGMS Response failed");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_UNKNOWN), "BGMS Response unknown error");
+
       system_init_done = true;
 }
 
@@ -445,7 +465,6 @@ void MainWindow::ui_create_measurement()
     connect(m_control->m_ch[1], SIGNAL(update_test_count(int)), this, SLOT(ui_test_count_ch2(int)));
     connect(m_control->m_ch[1], SIGNAL(update_action(QString)), this, SLOT(ui_action_status_ch2(QString)));
     connect(m_control->m_ch[1], SIGNAL(update_interval_time(int)), this, SLOT(ui_interval_time_update_ch2(int)));
-
 
     /*Channel 3*/
     connect(this, SIGNAL(measure_setup_ch3(measurement_param)), m_control->m_ch[2], SLOT(setup(measurement_param)));
@@ -1794,8 +1813,122 @@ void MainWindow::on_dmm_capture_stateChanged(int arg1)
     }
 }
 
+void MainWindow::on_device_open_ch1_clicked()
+{
+    if(ui->phone_jack_ch1->isChecked())
+    {
+        m_hid_uart_comm[0] = new hid_uart_comm(0x0);
+        comm_Thread[0] = new QThread(this);
+        m_hid_uart_comm[0]->moveToThread(comm_Thread[0]);
+
+        connect(comm_Thread[0], &QThread::finished, m_hid_uart_comm[0], &QObject::deleteLater);
+        connect(m_hid_uart_comm[0], SIGNAL(sig_bgms_comm_response(sys_cmd_resp *)), this, SLOT(ui_bgms_comm_ch_1_response(sys_cmd_resp *)));
+
+        comm_Thread[0]->start();
+    }
+    else
+    {
+
+    }
+}
+
+void MainWindow::on_device_open_ch2_clicked()
+{
+    if(ui->micro_usb_ch1->isChecked())
+    {
+
+    }
+    else
+    {
+
+    }
+}
+
+void MainWindow::on_device_open_ch3_clicked()
+{
+    if(ui->micro_usb_ch1->isChecked())
+    {
+
+    }
+    else
+    {
+
+    }
+}
+
 MainWindow::~MainWindow()
 {
       delete m_control;
       delete ui;
+}
+
+void MainWindow::on_device_close_ch1_clicked()
+{
+
+}
+
+void MainWindow::on_device_close_ch2_clicked()
+{
+
+}
+
+void MainWindow::on_device_close_ch3_clicked()
+{
+
+}
+
+void MainWindow::ui_bgms_comm_ch_1_response(sys_cmd_resp *resp_comm)
+{
+
+    ui->meter_info_ch01->append(comm_response_msg[static_cast<quint8>(resp_comm->m_comm_resp)]);
+
+    switch (resp_comm->m_comm_resp)
+    {
+        case  sys_cmd_resp::RESP_COMM_PORT_OPEN_SUCCESS:
+            break;
+        case  sys_cmd_resp::RESP_COMM_PORT_CLOSE_SUCCESS:
+            break;
+        case  sys_cmd_resp::RESP_COMM_BGMS_CHECK_SUCCESS:
+            break;
+        case  sys_cmd_resp::RESP_COMM_READ_SERIAL_SUCCESS:
+            break;
+        case  sys_cmd_resp::RESP_COMM_SET_TIME_SUCCESS:
+            break;
+        case  sys_cmd_resp::RESP_COMM_MEM_DELETE_SUCCESS:
+            break;
+        case  sys_cmd_resp::RESP_COMM_GET_STORED_VALUE_COUNT_SUCCESS:
+            break;
+        case  sys_cmd_resp::RESP_COMM_DOWNLOAD_SUCCESS:
+            break;
+        case  sys_cmd_resp::RESP_COMM_PORT_OPEN_FAIL:
+            break;
+        case  sys_cmd_resp::RESP_COMM_PORT_CLOSE_FAIL:
+            break;
+        case  sys_cmd_resp::RESP_COMM_BGMS_CHECK_FAIL:
+            break;
+        case  sys_cmd_resp::RESP_COMM_READ_SERIAL_FAIL:
+            break;
+        case  sys_cmd_resp::RESP_COMM_SET_TIME_FAIL:
+            break;
+        case  sys_cmd_resp::RESP_COMM_GET_STORED_VALUE_COUNT_FAIL:
+            break;
+        case  sys_cmd_resp::RESP_COMM_DOWNLOAD_FAIL:
+            break;
+        case  sys_cmd_resp::RESP_COMM_BGMS_RESP_FAIL:
+            break;
+        case  sys_cmd_resp::RESP_COMM_MEM_DELETE_FAIL:
+            break;
+        case  sys_cmd_resp::RESP_COMM_UNKNOWN:
+            break;
+    }
+}
+
+void MainWindow::ui_bgms_comm_ch_2_response(sys_cmd_resp *resp_comm)
+{
+
+}
+
+void MainWindow::ui_bgms_comm_ch_3_response(sys_cmd_resp *resp_comm)
+{
+
 }
