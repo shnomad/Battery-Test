@@ -4,40 +4,32 @@
 #include <QObject>
 #include <qnamespace.h>
 #include "serialprotocol.h"
-#include "glucosedownloadprogress.h"
+//#include "glucosedownloadprogress.h"
 #include <QTimer>
 #include <QDateTime>
-#include <QtCore>
+//#include <QtCore>
 
-
-class SerialComm;
+//class SerialComm;
 class SerialProtocolAbstract : public QObject
 
 {
     Q_OBJECT
 
-    GlucoseDownloadProgress downloadInfo;
-
-protected:
-    Sp::ProtocolCommand lastCommand;
-    Sp::ProtocolCommand pLastCommand;
-    SerialComm *comm;
-    Sp::ProtocolState currentState;
-    QByteArray readBuffer;
-
-public:
-    explicit SerialProtocolAbstract(SerialComm *serailComm = 0, QObject *parent = 0);
+//  GlucoseDownloadProgress downloadInfo;
+//  explicit SerialProtocolAbstract(SerialComm *serailComm = 0, QObject *parent = 0);
+    explicit SerialProtocolAbstract(QObject *parent = nullptr);
     ~SerialProtocolAbstract();
 
     Sp::ProtocolState state();
-    bool isIdle();
+
     Sp::ProtocolCommand getLastcommand()
     {
         return lastCommand;
     }
+
     Sp::MeterModelType modeltype;
 
-    virtual void setCommObject(SerialComm *serialComm) = 0;
+//  virtual void setCommObject(SerialComm *serialComm) = 0;
     virtual Sp::ProtocolState startDownload() = 0;
     virtual Sp::ProtocolState syncTime() = 0;
     virtual Sp::ProtocolState readTime() = 0;
@@ -77,26 +69,24 @@ public:
         return QByteArray((char *)&value, 1);
     }
 
-    QString m_serialnumber;
-    QJsonArray m_dataArray;
+    bool isIdle();
 
-private:
-    QByteArray beginCreatePacket();
-    void endCreatePacket(QByteArray *array);
-    QByteArray makeLockData();
-    QByteArray makeUnlockData();
+    QString m_serialnumber;
+//  QJsonArray m_dataArray;
 
 signals:
     void timeoutError(Sp::ProtocolCommand command);
-    void errorOccurred(Sp::ProtocolCommand command, Sp::ProtocolCommand preCommand = Sp::ProtocolCommandNone);  // 미터에서 보내온 오류
-    void errorCrc();                                    // 수신데이터 CRC 오류
-    void errorUnresolvedCommand(Sp::ProtocolCommand command);     // 다운로드 과정에서 수행하지 않는 커맨드 패킷 수신
+    void errorOccurred(Sp::ProtocolCommand command, Sp::ProtocolCommand preCommand = Sp::ProtocolCommandNone);
+    void errorCrc();
+    void errorUnresolvedCommand(Sp::ProtocolCommand command);
     void packetReceived();
+
     // UI
     void downloadProgress(float progress);                                  // 0~1 : 1 = 100%
     void downloadComplete(QJsonArray* datalist);
+
     // Serial
-    void needReopenSerialComm();                                            // 시리얼 포트 오류로 인해 다시 포트를 열어 복구가 필요한 경우
+    void needReopenSerialComm();
     void completeTimeSync(QDateTime* meter_time, QDateTime* current_time);
     void completeReadTime(QDateTime* meter_time);
     void failTimeSync();
@@ -107,6 +97,19 @@ signals:
     void finishReadingQcData();
 
 public slots:
+
+private:
+    QByteArray beginCreatePacket();
+    void endCreatePacket(QByteArray *array);
+    QByteArray makeLockData();
+    QByteArray makeUnlockData();
+
+protected:
+    Sp::ProtocolCommand lastCommand;
+    Sp::ProtocolCommand pLastCommand;
+//  SerialComm *comm;
+    Sp::ProtocolState currentState;
+    QByteArray readBuffer;
 
 };
 

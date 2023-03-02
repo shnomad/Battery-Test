@@ -1,10 +1,8 @@
 #include "serialprotocolabstract.h"
-#include "serialcomm.h"
+//#include "serialcomm.h"
 
-SerialProtocolAbstract::SerialProtocolAbstract(SerialComm *serialComm, QObject *parent) : QObject(parent),
-    comm(serialComm),
-    currentState(Sp::Idle),
-    lastCommand(Sp::ProtocolCommandNone)
+//SerialProtocolAbstract::SerialProtocolAbstract(SerialComm *serialComm, QObject *parent) : QObject(parent), comm(serialComm), currentState(Sp::Idle),lastCommand(Sp::ProtocolCommandNone)
+SerialProtocolAbstract::SerialProtocolAbstract(QObject *parent): QObject(parent)
 {
 
 }
