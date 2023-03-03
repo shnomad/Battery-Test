@@ -166,6 +166,7 @@ signals:
     void update_interval_time(int);
     void update_dmm_status(QString);
 
+    void sig_bgms_comm_cmd(sys_cmd_resp *);
 
 Q_SIGNALS:
     void currentIndexChanged(int index);
@@ -177,6 +178,7 @@ private:
     void ui_init_measurement();
     void ui_create_measurement();
     void ui_system_info_setup();
+
     void ui_set_measurement_start_ch1();
     void ui_set_measurement_stop_ch1();
     void ui_set_measurement_pause_ch1();
@@ -217,6 +219,9 @@ private:
     QThread *comm_Thread[3];
 
     QMap<quint8, QString> comm_response_msg;
+
+    sys_cmd_resp *comm_cmd;
+
 };
 
 #endif // MAINWINDOW_H

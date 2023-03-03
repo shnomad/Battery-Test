@@ -16,6 +16,8 @@ hid_uart_comm::hid_uart_comm(quint8 channel, QObject *parent) : QObject(parent)
 
     hidpath = uart_hid_path[channel];
 
+    comm_protocol = nullptr;
+
     comm_port_check_start->start(500);
 }
 
@@ -42,7 +44,7 @@ void hid_uart_comm::check_connection()
         bgms_check_start = new QTimer(this);
         bgms_check_start->setSingleShot(true);
 
-        connect(bgms_check_start, SIGNAL(timeout()), this, SLOT(check_bgms()));
+        connect(bgms_check_start, SIGNAL(timeout()), this, SLOT(check_bgms_protocol_type()));
 
         m_notify_hid = new QSocketNotifier(fd, QSocketNotifier::Read, this);
         m_notify_error = new QSocketNotifier(fd, QSocketNotifier::Exception, this);
@@ -60,11 +62,62 @@ void hid_uart_comm::check_connection()
         {
             Log()<<QString::fromUtf8(m_tranferHost.toHex());
 
-            resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_BGMS_CHECK_SUCCESS;
-            emit sig_bgms_comm_response(resp_bgms_comm);
-        });
+             if(resp_bgms_comm->m_comm_status == sys_cmd_resp::CMD_COMM_BGMS_CHECK)
+               {
+                    if(m_tranferHost.count() >= 3)
+                    {
+                        if(m_tranferHost.at(1) == 0x10 && m_tranferHost.at(2) == 0x20)
+                        {
+                           resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_BGMS_CHECK_SUCCESS;
+                           resp_bgms_comm->m_protocol_type = sys_cmd_resp::VERSION_01;
+                        }
+                         else if(m_tranferHost.at(1) == 0x1e && m_tranferHost.at(2) == 0x2e)
+                        {
+                            resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_BGMS_CHECK_SUCCESS;
+                            resp_bgms_comm->m_protocol_type = sys_cmd_resp::VERSION_03;
 
-        bgms_check_start->start();
+                            comm_protocol = new SerialProtocol3;
+
+                        }
+                        else if(m_tranferHost.at(1) == 0x1f && m_tranferHost.at(2) == 0x2f)
+                        {
+                            resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_BGMS_CHECK_SUCCESS;
+                            resp_bgms_comm->m_protocol_type = sys_cmd_resp::VERSION_02;
+                        }
+                        else
+                        {
+                            resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_BGMS_CHECK_FAIL;
+                            resp_bgms_comm->m_protocol_type = sys_cmd_resp::VERSION_UNKNOWN;
+                        }
+                    }
+                    else
+                    {
+                        resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_BGMS_CHECK_FAIL;
+                        resp_bgms_comm->m_protocol_type = sys_cmd_resp::VERSION_UNKNOWN;
+                    }
+            }
+            else if(resp_bgms_comm->m_comm_status == sys_cmd_resp::CMD_COMM_GET_TIME)
+            {
+                  comm_protocol->parseReceivedData(m_tranferHost);
+
+                  resp_bgms_comm->current_bgms_time = Settings::Instance()->getMeterTime();
+
+                  resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_GET_TIME_SUCCESS;
+            }
+            else if(resp_bgms_comm->m_comm_status == sys_cmd_resp::CMD_COMM_READ_SERIAL)
+            {
+                  comm_protocol->parseReceivedData(m_tranferHost);
+
+                  resp_bgms_comm->serial_number = Settings::Instance()->getSerialNumber();
+
+                  resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_READ_SERIAL_SUCCESS;
+            }
+
+            m_tranferHost.clear();
+
+            emit sig_bgms_comm_response(resp_bgms_comm);
+
+        });
     }
 }
 
@@ -73,7 +126,6 @@ void hid_uart_comm::port_init()
     int result = 0;
 
     /*Set PL23B3 Uart Configuration*/
-
     cmd_buf[0] = 0x81;
     cmd_buf[1] = 0x0a;
 
@@ -104,7 +156,7 @@ void hid_uart_comm::port_init()
     memset(cmd_buf,0x00,sizeof(cmd_buf));
 }
 
-void hid_uart_comm::check_bgms()
+void hid_uart_comm::check_bgms_protocol_type()
 {
     int result = 0;
 
@@ -113,9 +165,7 @@ void hid_uart_comm::check_bgms()
 
     result = write(fd, cmd_buf, 0x2);
 
-    resp_timer->start(response_time_msec);
-
-    Log();
+    resp_timer->start(response_time_msec);  
 }
 
 void hid_uart_comm::ReadyRead()
@@ -126,7 +176,95 @@ void hid_uart_comm::ReadyRead()
 
     resp_timer->start(response_time_msec);
 
-    Log()<<QString::number(resp_buf[1], 16);
+//  Log()<<QString::number(resp_buf[1], 16);
+}
+
+/*
+void hid_uart_comm::Error()
+{
+
+}
+*/
+
+void hid_uart_comm::cmd_from_host(sys_cmd_resp *cmd)
+{
+
+    Log()<<QVariant::fromValue(cmd->m_comm_cmd).toString();
+
+    switch (cmd->m_comm_cmd)
+    {
+        case sys_cmd_resp::CMD_COMM_OPEN:
+        break;
+
+        case sys_cmd_resp::CMD_COMM_CLOSE:
+        break;
+
+        case sys_cmd_resp::CMD_COMM_BGMS_CHECK:
+
+            resp_bgms_comm->m_comm_status = sys_cmd_resp::CMD_COMM_BGMS_CHECK;
+            check_bgms_protocol_type();
+
+        break;
+
+        case sys_cmd_resp::CMD_COMM_GET_TIME:
+            {
+                int result = 0;
+
+                resp_bgms_comm->m_comm_status = sys_cmd_resp::CMD_COMM_GET_TIME;
+
+                QList<Sp::ProtocolCommand> list;
+
+                list.append(Sp::ReadTimeInformation);
+                cmd_buf_tmp = comm_protocol->doCommands(list);
+
+                cmd_buf[0] =  cmd_buf_tmp.size();
+
+                for(quint8 cmd_size=0; cmd_size<cmd_buf_tmp.size()+1; cmd_size++)
+                    cmd_buf[cmd_size+1] = cmd_buf_tmp[cmd_size];
+
+                result = write(fd, cmd_buf, cmd_buf[0]+1);
+
+                resp_timer->start(response_time_msec);
+            }
+        break;
+
+        case sys_cmd_resp::CMD_COMM_READ_SERIAL:
+            {
+                int result = 0;
+
+                resp_bgms_comm->m_comm_status = sys_cmd_resp::CMD_COMM_READ_SERIAL;
+
+                QList<Sp::ProtocolCommand> list;
+
+                list.append(Sp::ReadSerialNumber);
+                cmd_buf_tmp = comm_protocol->doCommands(list);
+
+                cmd_buf[0] =  cmd_buf_tmp.size();
+
+                for(quint8 cmd_size=0; cmd_size<cmd_buf_tmp.size()+1; cmd_size++)
+                    cmd_buf[cmd_size+1] = cmd_buf_tmp[cmd_size];
+
+                result = write(fd, cmd_buf, cmd_buf[0]+1);
+
+                resp_timer->start(response_time_msec);
+            }
+        break;
+
+        case sys_cmd_resp::CMD_COMM_SET_TIME:
+        break;
+
+        case sys_cmd_resp::CMD_COMM_GET_STORED_VALUE_COUNT:
+        break;
+
+        case sys_cmd_resp::CMD_COMM_DOWNLOAD:
+        break;
+
+        case sys_cmd_resp::CMD_COMM_MEM_DELETE:
+        break;
+
+        case sys_cmd_resp::CMD_COMM_UNKNOWN:
+        break;
+    }
 }
 
 hid_uart_comm::~hid_uart_comm()

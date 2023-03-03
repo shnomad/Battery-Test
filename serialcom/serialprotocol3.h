@@ -2,7 +2,9 @@
 #define SERIALPROTOCOL3_H
 
 #include "serialprotocolabstract.h"
-#include "serialcomm.h"
+//#include "serialcomm.h"
+#include "glucosedownloadprogress.h"
+#include "settings.h"
 #include <QTimer>
 #include <QMutex>
 
@@ -19,10 +21,12 @@ class SerialProtocol3 : public SerialProtocolAbstract
     QByteArray lastRcvPacket;
 
 public:
-    explicit SerialProtocol3(SerialComm *serialComm = 0, QObject *parent = 0);
+//   explicit SerialProtocol3(SerialComm *serialComm = 0, QObject *parent = 0);
+     explicit SerialProtocol3(QObject *parent = nullptr);
     ~SerialProtocol3();
 
-    void setCommObject(SerialComm *serialComm);
+//    void setCommObject(SerialComm *serialComm);
+    void setCommObject();
     Sp::ProtocolState startDownload();
     Sp::ProtocolState syncTime();
     Sp::ProtocolState readTime();
@@ -31,9 +35,11 @@ public:
     void cancelDownload();
     void readBleData();
     void readQcData();
-    void doCommands(QList<Sp::ProtocolCommand> commands);
+    //void doCommands(QList<Sp::ProtocolCommand> commands);
+    QByteArray doCommands(QList<Sp::ProtocolCommand> commands);
 
-    qint64 requestCommand(const Sp::ProtocolCommand &command, QByteArray *arg1 = 0, QByteArray *arg2 = 0, QByteArray *arg3 = 0);
+//  qint64 requestCommand(const Sp::ProtocolCommand &command, QByteArray *arg1 = 0, QByteArray *arg2 = 0, QByteArray *arg3 = 0);
+    QByteArray requestCommand(const Sp::ProtocolCommand &command, QByteArray *arg1 = 0, QByteArray *arg2 = 0, QByteArray *arg3 = 0);
 
     void parseReceivedData(QByteArray rcvPacket);
 
@@ -41,8 +47,7 @@ public:
 
 private slots:
     void readyRead();
-//    void error(QSerialPort::SerialPortError);
-
+//  void error(QSerialPort::SerialPortError);
 
 protected:
     void connectSignals();

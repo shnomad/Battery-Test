@@ -39,7 +39,7 @@ SOURCES += \
 #       serialcom/serialporttester.cpp \
 #       serialcom/serialprotocol1.cpp \
 #       serialcom/serialprotocol2.cpp \
-#       serialcom/serialprotocol3.cpp \
+        serialcom/serialprotocol3.cpp \
         serialcom/serialprotocolabstract.cpp
 #       serialcom/stmhidport.cpp
 #       serialcom/stmhidtester.cpp
@@ -62,7 +62,7 @@ HEADERS += \
         sys_cmd_resp.h \
 #       python_wrapper.h
 #       tcpsocketrw.h
-#       serialcom/glucosedownloadprogress.h \
+        serialcom/glucosedownloadprogress.h \
 #       serialcom/hidtester.h \
 #       serialcom/serialcomm.h \
 #       serialcom/serialdefinition.h \
@@ -70,7 +70,7 @@ HEADERS += \
         serialcom/serialprotocol.h \
 #       serialcom/serialprotocol1.h \
 #       serialcom/serialprotocol2.h \
-#       serialcom/serialprotocol3.h \
+        serialcom/serialprotocol3.h \
         serialcom/serialprotocolabstract.h
 #       serialcom/glucosedownloadprogress.h \
 #        serialcom/stmhidport.h

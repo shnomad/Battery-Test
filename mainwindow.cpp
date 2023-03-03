@@ -33,6 +33,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
       ui_system_info_setup();
 
+      comm_cmd = new sys_cmd_resp;
+
       connect(ui->meter_type_ch1, SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
       connect(ui->meter_type_ch2, SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
       connect(ui->meter_type_ch3, SIGNAL(currentIndexChanged(int)), this, SLOT(currentMeterIndexChanged(int)));
@@ -43,7 +45,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
       comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_PORT_OPEN_SUCCESS), "UART/USB Port Open Success");
       comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_PORT_CLOSE_SUCCESS), "UART/USB Port Close Success");
       comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_BGMS_CHECK_SUCCESS), "BGMS Check Success");
-      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_READ_SERIAL_SUCCESS),"BGMS Serial Number :");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_READ_SERIAL_SUCCESS),"BGMS Serial Number : ");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_GET_TIME_SUCCESS), "BGMS Current Time : ");
       comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_SET_TIME_SUCCESS), "BGMS Time synchronized");
       comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_MEM_DELETE_SUCCESS), "BGMS Stored measured value deleted");
       comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_GET_STORED_VALUE_COUNT_SUCCESS), "Get BGMS Stored measured value count:");
@@ -58,6 +61,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
       comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_MEM_DELETE_FAIL), "BGMS Stored measured value delet failed");
       comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_BGMS_RESP_FAIL), "BGMS Response failed");
       comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_UNKNOWN), "BGMS Response unknown error");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::VERSION_01), "protocol version 1 used BGMS connected");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::VERSION_02), "protocol version 2 used BGMS connected");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::VERSION_03), "protocol version 3 used BGMS connected");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::VERSION_UNKNOWN), "unknown protocol version used BGMS connected");
 
       system_init_done = true;
 }
@@ -1866,14 +1873,19 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_device_close_ch1_clicked()
 {
-    if(ui->phone_jack_ch1->isChecked())
-    {
-         comm_Thread[0]->exit();
-    }
-    else
-    {
+    disconnect(this, SIGNAL(sig_bgms_comm_cmd(sys_cmd_resp *)), m_hid_uart_comm[0], SLOT(cmd_from_host(sys_cmd_resp *)));
+    comm_Thread[0]->exit();
 
-    }
+    ui_set_measurement_stop_ch1();
+
+    ui->micro_usb_ch1->setEnabled(true);
+    ui->phone_jack_ch1->setEnabled(true);
+    ui->device_open_ch1->setEnabled(true);
+
+    ui->time_sync_ch1->setEnabled(false);
+    ui->mem_delete_ch1->setEnabled(false);
+    ui->download_ch1->setEnabled(false);
+    ui->device_close_ch1->setEnabled(false);
 }
 
 void MainWindow::on_device_close_ch2_clicked()
@@ -1894,7 +1906,6 @@ void MainWindow::ui_bgms_comm_ch_1_response(sys_cmd_resp *resp_comm)
     switch (resp_comm->m_comm_resp)
     {
         case  sys_cmd_resp::RESP_COMM_PORT_OPEN_SUCCESS:
-        case  sys_cmd_resp::RESP_COMM_BGMS_CHECK_SUCCESS:
 
             ui_set_measurement_start_ch1();
             ui->test_pause_ch1->setEnabled(false);
@@ -1909,51 +1920,79 @@ void MainWindow::ui_bgms_comm_ch_1_response(sys_cmd_resp *resp_comm)
             ui->download_ch1->setEnabled(true);
             ui->device_close_ch1->setEnabled(true);
 
-            break;
+            connect(this, SIGNAL(sig_bgms_comm_cmd(sys_cmd_resp *)), m_hid_uart_comm[0], SLOT(cmd_from_host(sys_cmd_resp *)));
+
+            comm_cmd->m_comm_cmd = sys_cmd_resp::CMD_COMM_BGMS_CHECK;
+            emit sig_bgms_comm_cmd(comm_cmd);
+
+        break;
 
         case  sys_cmd_resp::RESP_COMM_PORT_CLOSE_SUCCESS:
+        case  sys_cmd_resp::RESP_COMM_PORT_CLOSE_FAIL:
+        case  sys_cmd_resp::RESP_COMM_PORT_OPEN_FAIL:
+        break;
 
-            ui_set_measurement_stop_ch1();
+        case  sys_cmd_resp::RESP_COMM_BGMS_CHECK_FAIL:
 
-            ui->micro_usb_ch1->setEnabled(true);
-            ui->phone_jack_ch1->setEnabled(true);
-            ui->device_open_ch1->setEnabled(true);
+        break;
 
-            ui->time_sync_ch1->setEnabled(false);
-            ui->mem_delete_ch1->setEnabled(false);
-            ui->download_ch1->setEnabled(false);
-            ui->device_close_ch1->setEnabled(false);
+        case  sys_cmd_resp::RESP_COMM_BGMS_CHECK_SUCCESS:
+
+            ui->meter_info_ch01->append(comm_response_msg[static_cast<quint8>(resp_comm->m_protocol_type)]);
+
+            comm_cmd->m_comm_cmd = sys_cmd_resp::CMD_COMM_GET_TIME;
+            emit sig_bgms_comm_cmd(comm_cmd);
 
             break;
+
+        case  sys_cmd_resp::RESP_COMM_GET_TIME_SUCCESS:
+
+            ui->meter_info_ch01->insertPlainText(resp_comm->current_bgms_time);
+
+            comm_cmd->m_comm_cmd = sys_cmd_resp::CMD_COMM_READ_SERIAL;
+            emit sig_bgms_comm_cmd(comm_cmd);
+
+        break;
 
         case  sys_cmd_resp::RESP_COMM_READ_SERIAL_SUCCESS:
+
+             ui->meter_info_ch01->insertPlainText(resp_comm->serial_number);
+
             break;
+
         case  sys_cmd_resp::RESP_COMM_SET_TIME_SUCCESS:
             break;
+
         case  sys_cmd_resp::RESP_COMM_MEM_DELETE_SUCCESS:
             break;
+
         case  sys_cmd_resp::RESP_COMM_GET_STORED_VALUE_COUNT_SUCCESS:
             break;
+
         case  sys_cmd_resp::RESP_COMM_DOWNLOAD_SUCCESS:
             break;
-        case  sys_cmd_resp::RESP_COMM_PORT_OPEN_FAIL:
-            break;
-        case  sys_cmd_resp::RESP_COMM_PORT_CLOSE_FAIL:
-            break;
-        case  sys_cmd_resp::RESP_COMM_BGMS_CHECK_FAIL:
-            break;
+
         case  sys_cmd_resp::RESP_COMM_READ_SERIAL_FAIL:
             break;
+
+        case  sys_cmd_resp::RESP_COMM_GET_TIME_FAIL:
+            break;
+
         case  sys_cmd_resp::RESP_COMM_SET_TIME_FAIL:
             break;
+
         case  sys_cmd_resp::RESP_COMM_GET_STORED_VALUE_COUNT_FAIL:
             break;
+
         case  sys_cmd_resp::RESP_COMM_DOWNLOAD_FAIL:
             break;
+
         case  sys_cmd_resp::RESP_COMM_BGMS_RESP_FAIL:
             break;
+
         case  sys_cmd_resp::RESP_COMM_MEM_DELETE_FAIL:
             break;
+
         case  sys_cmd_resp::RESP_COMM_UNKNOWN:
             break;
     }

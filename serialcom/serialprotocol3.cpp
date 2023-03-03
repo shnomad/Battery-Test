@@ -1,7 +1,10 @@
 ﻿#include "serialprotocol3.h"
 #include <QTimer>
-#include "settings.h"
+#include <QJsonObject>
+//#include "settings.h"
 #include "setting_flagname_definition.h"
+#include "commondefinition.h"
+#include <math.h>
 
 #define timerStop() \
     {if(timeoutTimerID) { killTimer(timeoutTimerID); timeoutTimerID = 0; }}
@@ -9,16 +12,17 @@
     { if(timeoutTimerID) { killTimer(timeoutTimerID); timeoutTimerID = 0; }\
     timeoutTimerID = startTimer(kProtocol3TimeoutDuration);}
 
-SerialProtocol3::SerialProtocol3(SerialComm *serialComm, QObject *parent) : SerialProtocolAbstract(serialComm, parent), mOnlyReadSN(false)
+//SerialProtocol3::SerialProtocol3(SerialComm *serialComm, QObject *parent) : SerialProtocolAbstract(serialComm, parent), mOnlyReadSN(false)
+SerialProtocol3::SerialProtocol3(QObject *parent) : SerialProtocolAbstract(parent)
 {
     Log();
     timeoutTimerID = 0;
 
-    //m_settings = Settings::Instance()->getSettings();
-    downloadInfo.setProcotol(Sp::CommProtocol3);
-    connect(&downloadInfo, SIGNAL(downloadProgress(float)), this, SIGNAL(downloadProgress(float)));
-    connectSignals();
-    modeltype = Sp::DefaultMeter;
+     m_settings = Settings::Instance()->getSettings();
+     downloadInfo.setProcotol(Sp::CommProtocol3);
+//  connect(&downloadInfo, SIGNAL(downloadProgress(float)), this, SIGNAL(downloadProgress(float)));
+//  connectSignals();
+//    modeltype = Sp::DefaultMeter;
     mOnlyReadSN = true;
 }
 
@@ -28,8 +32,10 @@ SerialProtocol3::~SerialProtocol3()
     timerStop();
 }
 
-void SerialProtocol3::setCommObject(SerialComm *serialComm)
+//void SerialProtocol3::setCommObject(SerialComm *serialComm)
+void SerialProtocol3::setCommObject()
 {
+#if 0
     if(comm)
     {
         disconnectSignals();
@@ -37,23 +43,30 @@ void SerialProtocol3::setCommObject(SerialComm *serialComm)
 
     comm = serialComm;
     connectSignals();
+#endif
+
 }
 
-void SerialProtocol3::connectSignals() {
+void SerialProtocol3::connectSignals()
+{
+#if 0
     if(comm)
     {
         connect(comm, SIGNAL(readyRead()), this, SLOT(readyRead()));
 //      connect(comm, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(error(QSerialPort::SerialPortError)));
     }
+#endif
 }
 
 void SerialProtocol3::disconnectSignals()
 {
+#if 0
     if(comm)
     {
         disconnect(comm, SIGNAL(readyRead()), this, SLOT(readyRead()));
 //      disconnect(comm, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(error(QSerialPort::SerialPortError)));
     }
+#endif
 }
 
 Sp::ProtocolState SerialProtocol3::startDownload()
@@ -133,7 +146,7 @@ void SerialProtocol3::readQcData()
     int modelType = m_settings.value(SFD_meter_type).toInt();
     if(modelType == 2 || modelType == 3) //SMART, N IoT
     {
-        modeltype = Sp::ColorMeter;
+//      modeltype = Sp::ColorMeter;
         m_data_address = 0x1800;
     }
     else
@@ -158,15 +171,16 @@ void SerialProtocol3::requestNextQcData()
 
     lastCommand = Sp::ReadQcData;
     timerStart();
-    qint64 value = comm->writeData(requestData);
-    Log() << value;
+//  qint64 value = comm->writeData(requestData);
+//   Log() << value;
 }
 
 const QByteArray &SerialProtocol3::lastReceivePacket() {
     return lastRcvPacket;
 }
 
-qint64 SerialProtocol3::requestCommand(const Sp::ProtocolCommand &command, QByteArray *arg1, QByteArray *arg2, QByteArray *arg3)
+//qint64 SerialProtocol3::requestCommand(const Sp::ProtocolCommand &command, QByteArray *arg1, QByteArray *arg2, QByteArray *arg3)
+QByteArray SerialProtocol3::requestCommand(const Sp::ProtocolCommand &command, QByteArray *arg1, QByteArray *arg2, QByteArray *arg3)
 {
     Log();
     timerStop();
@@ -185,7 +199,8 @@ qint64 SerialProtocol3::requestCommand(const Sp::ProtocolCommand &command, QByte
     isBleCmd = false;
     isDBLE = false;
     currentState = Sp::RequestWaiting;
-    QByteArray requestData = beginCreatePacket();
+    QByteArray requestData = beginCreatePacket();        
+
     switch(command)
     {
         case Sp::GluecoseResultDataTx:
@@ -1403,14 +1418,16 @@ qint64 SerialProtocol3::requestCommand(const Sp::ProtocolCommand &command, QByte
     Log() << "lastcommand = " <<  command << "request" << requestData.toHex();
     lastCommand = command;
     m_current_cmd_index++;
-    timerStart();
+//  timerStart();
 
 #ifdef Q_OS_MACX
     if(command == Sp::ReadTimeInformation) {
         QThread::msleep(1000);
     }
 #endif
-    return comm->writeData(requestData);
+    //return comm->writeData(requestData);    
+    //return false;
+    return requestData;
 }
 
 QByteArray SerialProtocol3::beginCreatePacket() {
@@ -1931,7 +1948,9 @@ const QByteArray SerialProtocol3::getReceivePacket() {
     bufferMutex.lock();
     int size = dataSize(readBuffer);
     int length =  size+headerSize()+1;
-    if(readBuffer.count() >= length) {   // stx 부터 크기까지의 고정 바이트수 == headerSize()+1
+
+    if(readBuffer.count() >= length)
+    {   // stx 부터 크기까지의 고정 바이트수 == headerSize()+1
         QByteArray rcvPacket;
         rcvPacket.append(readBuffer.left(length));
         readBuffer.remove(0, length);
@@ -1941,8 +1960,11 @@ const QByteArray SerialProtocol3::getReceivePacket() {
     bufferMutex.unlock();
     return QByteArray();
 }
-Sp::ProtocolCommand SerialProtocol3::getCommand(QByteArray rcvPacket) {
+
+Sp::ProtocolCommand SerialProtocol3::getCommand(QByteArray rcvPacket)
+{
     QString cmd = QString(rcvPacket.mid(6, 4));
+
     if(cmd == "NCOT")
         return Sp::CurrentIndexOfGluecose;
     if(cmd == "GLUC")
@@ -2023,29 +2045,38 @@ Sp::ProtocolCommand SerialProtocol3::getCommand(QByteArray rcvPacket) {
         return Sp::ReadOtgMode;
     return Sp::ProtocolCommandNone;
 }
-ushort SerialProtocol3::getIndexOfGluecose(QByteArray rcvPacket) {
+ushort SerialProtocol3::getIndexOfGluecose(QByteArray rcvPacket)
+{
     ushort index = *(ushort *)rcvPacket.mid(10, 2).data();
     index = byteswap(index);
     return index;
 }
-ushort SerialProtocol3::getGluecoseCount(QByteArray rcvPacket) {
+
+ushort SerialProtocol3::getGluecoseCount(QByteArray rcvPacket)
+{
     ushort cnt = rcvPacket.count()-13;
-    if(cnt%9) {
+
+    if(cnt%9)
+    {
         Q_ASSERT(0);
     }
+
     return ushort(cnt/9);
 }
 
-void SerialProtocol3::produceError(Sp::ProtocolCommand receivedCommand, QByteArray rcvPacket) {
+void SerialProtocol3::produceError(Sp::ProtocolCommand receivedCommand, QByteArray rcvPacket)
+{
     Log() << "Error Command received" << rcvPacket.mid(6, 4);
     timerStop();
     emit errorOccurred(receivedCommand, pLastCommand);
 
 }
+
 void SerialProtocol3::processPacket(QByteArray rcvPacket)
 {
     Log();
     timerStop();
+
     currentState = Sp::GluecoseDownloading;
 
     // crc check
@@ -2171,8 +2202,8 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
 
                   if(dataDownload)
                     {
-                        downloadInfo.setNumberOfGluecose(0);
-                        emit downloadProgress(downloadInfo.progress());                                               
+//                        downloadInfo.setNumberOfGluecose(0);
+//                        emit downloadProgress(downloadInfo.progress());
                         requestCommand(Sp::CurrentIndexOfGluecose);                                
                         return;
                     }
@@ -2218,13 +2249,14 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
 
                     emit packetReceived();
 
-                    downloadInfo.setDownloadedCount(getGluecoseCount(rcvPacket));
+ //                   downloadInfo.setDownloadedCount(getGluecoseCount(rcvPacket));
 
-                    if(downloadInfo.downloadableCount())
+//                    if(downloadInfo.downloadableCount())
+                  if(1)
                     {
                         currentState = Sp::GluecoseDownloading;
-                        QByteArray arg1 = argUShort(ushort(downloadInfo.index()));
-                        QByteArray arg2 = argByte(char(downloadInfo.downloadableCount()));
+//                        QByteArray arg1 = argUShort(ushort(downloadInfo.index()));
+//                        QByteArray arg2 = argByte(char(downloadInfo.downloadableCount()));
                         requestCommand(Sp::GluecoseResultDataTxExpanded, &arg1, &arg2);
 
                         return;
@@ -2232,12 +2264,12 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
                     else
                     {
                         QJsonObject sn;
-                        sn["sn"] = m_serialnumber;
-                        m_dataArray.push_front(sn);
-                        Log() << "DataDownload Complete total = " << downloadInfo.getNunberOfGluecose();
+//                        sn["sn"] = m_serialnumber;
+//                        m_dataArray.push_front(sn);
+//                        Log() << "DataDownload Complete total = " << downloadInfo.getNunberOfGluecose();
 
                         dataDownload =false;
-                        emit downloadComplete(&m_dataArray);
+//                        emit downloadComplete(&m_dataArray);
 
                         return;
                     }
@@ -2267,7 +2299,8 @@ void SerialProtocol3::processPacket(QByteArray rcvPacket)
 
 void SerialProtocol3::parseQcData(QByteArray rcvPacket)
 {
-    if(modeltype == Sp::ColorMeter)
+  //  if(modeltype == Sp::ColorMeter)
+    if(modeltype == Sp::ColorBGMS)
     {
         parseQcData_cs_color(rcvPacket);
     }
@@ -2996,7 +3029,8 @@ void SerialProtocol3::parseQcData_default(QByteArray rcvPacket)
 void SerialProtocol3::readyRead() {
     timerStop();
     bufferMutex.lock();
-    QByteArray readData = comm->readAll();
+//    QByteArray readData = comm->readAll();
+    QByteArray readData = nullptr;
     if(lastCommand != Sp::ProtocolCommandNone) {
         if(readData.count())
         {
@@ -3450,16 +3484,20 @@ void SerialProtocol3::error(QSerialPort::SerialPortError error) {
 void SerialProtocol3::parseReceivedData(QByteArray rcvPacket)
 {
     Sp::ProtocolCommand cmd = getCommand(rcvPacket);
+
     if(cmd == Sp::ReadSerialNumber)
     {
 #ifdef SERIALCOM_SMARTLOG
         m_serialnumber = QString(rcvPacket.mid(11,12));
-#endif        
-#ifdef SERIALCOM_QC
+#endif
+
+//#ifdef SERIALCOM_QC
         Log() << "rcvPacket = " << QString(rcvPacket);
+
         if(rcvPacket.count() >= 23)
         {
             m_serialnumber = QString(rcvPacket.mid(11,12));
+
             if(m_serialnumber.length() == 12)
             {
                 m_serialnumber.insert(8, " ");
@@ -3474,9 +3512,10 @@ void SerialProtocol3::parseReceivedData(QByteArray rcvPacket)
         Log() << m_settings.value(SFD_q_serialnumber).toString();
         Log() << m_settings.value(SFD_q_new_serialnumber).toString();
         Settings::Instance()->setSerialNumber(m_serialnumber, "");
-#endif
+//#endif
     }
-    else if(cmd == Sp::WriteTimeInformation) {
+    else if(cmd == Sp::WriteTimeInformation)
+    {
         QDateTime syncronizedDateTime = QDateTime(QDate(rcvPacket[10] + 2000, rcvPacket[11], rcvPacket[12]), QTime(rcvPacket[13], rcvPacket[14], rcvPacket[15]));
         qint64 syncronizedSeconds = syncronizedDateTime.toMSecsSinceEpoch();
         qint64 systemSyncSeconds = m_current_time.toMSecsSinceEpoch();
@@ -3486,7 +3525,9 @@ void SerialProtocol3::parseReceivedData(QByteArray rcvPacket)
         } else {
             emit failTimeSync();
         }
-    } else if(cmd == Sp::ReadTimeInformation) {
+    }
+    else if(cmd == Sp::ReadTimeInformation)
+    {
         int dataindex = 10;
         int year = rcvPacket[dataindex];
         int mon = rcvPacket[dataindex + 1];
@@ -3613,7 +3654,7 @@ void SerialProtocol3::parseReceivedData(QByteArray rcvPacket)
                 data["flag_hilo"] = "Lo"; // "lo" // SERIALCOM_QC
             }
 
-            m_dataArray.push_front(data);
+//            m_dataArray.push_front(data);
         }
     }
     else if(cmd == Sp::CurrentIndexOfGluecose)
@@ -3864,13 +3905,16 @@ void SerialProtocol3::timerEvent(QTimerEvent *event) {
     emit timeoutError(lastCommand);
 }
 
-void SerialProtocol3::doCommands(QList<Sp::ProtocolCommand> commands)
+//void SerialProtocol3::doCommands(QList<Sp::ProtocolCommand> commands)
+QByteArray SerialProtocol3::doCommands(QList<Sp::ProtocolCommand> commands)
 {
+    QByteArray cmd_buf;
+
     m_settings = Settings::Instance()->getSettings();
     m_current_cmd_index = 0;
     m_commands = commands;
 
-    requestCommand(commands[m_current_cmd_index]);
+    return requestCommand(commands[m_current_cmd_index]);
 }
 
 float SerialProtocol3::bytesToFloat(uchar b0, uchar b1, uchar b2, uchar b3)

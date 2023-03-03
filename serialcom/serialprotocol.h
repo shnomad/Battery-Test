@@ -32,8 +32,10 @@ public:
 
     enum MeterModelType
     {
-        DefaultMeter,
-        ColorMeter,
+        DefaultBGMS,
+        ColorBGMS,
+        BleBGMS,
+        VoiceBGMS
     };
 
     enum ProtocolCommand {
