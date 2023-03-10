@@ -48,9 +48,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
       comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_READ_SERIAL_SUCCESS),"BGMS Serial Number : ");
       comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_GET_TIME_SUCCESS), "BGMS Current Time : ");
       comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_SET_TIME_SUCCESS), "BGMS Time synchronized");
-      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_MEM_DELETE_SUCCESS), "BGMS Stored measured value deleted");
-      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_GET_STORED_VALUE_COUNT_SUCCESS), "Get BGMS Stored measured value count:");
-      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_DOWNLOAD_SUCCESS), "BGMS Stored measured value download complete");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_MEM_DELETE_SUCCESS), "BGMS Stored measured results deleted");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_GET_STORED_VALUE_COUNT_SUCCESS), "BGMS Stored measured results count :");
+      comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_DOWNLOAD_SUCCESS), "BGMS Stored measured results download complete");
       comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_PORT_OPEN_FAIL), "UART/USB Port Open Fail");
       comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_PORT_CLOSE_FAIL), "UART/USB Port Close Fail");
       comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::RESP_COMM_BGMS_CHECK_FAIL), "BGMS Check Failed");
@@ -1841,36 +1841,6 @@ void MainWindow::on_device_open_ch1_clicked()
     ui->meter_info_ch01->clear();
 }
 
-void MainWindow::on_device_open_ch2_clicked()
-{
-    if(ui->micro_usb_ch1->isChecked())
-    {
-
-    }
-    else
-    {
-
-    }
-}
-
-void MainWindow::on_device_open_ch3_clicked()
-{
-    if(ui->micro_usb_ch1->isChecked())
-    {
-
-    }
-    else
-    {
-
-    }
-}
-
-MainWindow::~MainWindow()
-{
-      delete m_control;
-      delete ui;
-}
-
 void MainWindow::on_device_close_ch1_clicked()
 {
     disconnect(this, SIGNAL(sig_bgms_comm_cmd(sys_cmd_resp *)), m_hid_uart_comm[0], SLOT(cmd_from_host(sys_cmd_resp *)));
@@ -1888,10 +1858,56 @@ void MainWindow::on_device_close_ch1_clicked()
     ui->device_close_ch1->setEnabled(false);
 }
 
+void MainWindow::on_time_sync_ch1_clicked()
+{
+    comm_cmd->m_comm_cmd = sys_cmd_resp::CMD_COMM_SET_TIME;
+
+    emit sig_bgms_comm_cmd(comm_cmd);
+}
+
+void MainWindow::on_mem_delete_ch1_clicked()
+{
+    comm_cmd->m_comm_cmd = sys_cmd_resp::CMD_COMM_MEM_DELETE;
+
+    emit sig_bgms_comm_cmd(comm_cmd);
+}
+
+void MainWindow::on_download_ch1_clicked()
+{
+     comm_cmd->m_comm_cmd = sys_cmd_resp::CMD_COMM_DOWNLOAD;
+
+     emit sig_bgms_comm_cmd(comm_cmd);
+}
+
+void MainWindow::on_device_open_ch2_clicked()
+{
+    if(ui->micro_usb_ch1->isChecked())
+    {
+
+    }
+    else
+    {
+
+    }
+}
+
 void MainWindow::on_device_close_ch2_clicked()
 {
 
 }
+
+void MainWindow::on_device_open_ch3_clicked()
+{
+    if(ui->micro_usb_ch1->isChecked())
+    {
+
+    }
+    else
+    {
+
+    }
+}
+
 
 void MainWindow::on_device_close_ch3_clicked()
 {
@@ -1958,15 +1974,25 @@ void MainWindow::ui_bgms_comm_ch_1_response(sys_cmd_resp *resp_comm)
 
              ui->meter_info_ch01->insertPlainText(resp_comm->serial_number);
 
+             comm_cmd->m_comm_cmd = sys_cmd_resp::CMD_COMM_GET_STORED_VALUE_COUNT;
+             emit sig_bgms_comm_cmd(comm_cmd);
+
             break;
 
         case  sys_cmd_resp::RESP_COMM_SET_TIME_SUCCESS:
             break;
 
         case  sys_cmd_resp::RESP_COMM_MEM_DELETE_SUCCESS:
+
+            comm_cmd->m_comm_cmd = sys_cmd_resp::CMD_COMM_GET_STORED_VALUE_COUNT;
+            emit sig_bgms_comm_cmd(comm_cmd);
+
             break;
 
         case  sys_cmd_resp::RESP_COMM_GET_STORED_VALUE_COUNT_SUCCESS:
+
+            ui->meter_info_ch01->insertPlainText(QString::number(resp_comm->measured_result));
+
             break;
 
         case  sys_cmd_resp::RESP_COMM_DOWNLOAD_SUCCESS:
@@ -2006,4 +2032,10 @@ void MainWindow::ui_bgms_comm_ch_2_response(sys_cmd_resp *resp_comm)
 void MainWindow::ui_bgms_comm_ch_3_response(sys_cmd_resp *resp_comm)
 {
 
+}
+
+MainWindow::~MainWindow()
+{
+      delete m_control;
+      delete ui;
 }

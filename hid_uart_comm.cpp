@@ -112,6 +112,23 @@ void hid_uart_comm::check_connection()
 
                   resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_READ_SERIAL_SUCCESS;
             }
+            else if(resp_bgms_comm->m_comm_status == sys_cmd_resp::CMD_COMM_GET_STORED_VALUE_COUNT)
+            {
+                 comm_protocol->parseReceivedData(m_tranferHost);
+
+                 resp_bgms_comm->measured_result = Settings::Instance()->getNumberofCurrentGlucoseData();
+
+                 resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_GET_STORED_VALUE_COUNT_SUCCESS;
+            }
+            else if(resp_bgms_comm->m_comm_status == sys_cmd_resp::CMD_COMM_MEM_DELETE)
+            {
+                resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_MEM_DELETE_SUCCESS;
+            }
+            else if(resp_bgms_comm->m_comm_status == sys_cmd_resp::CMD_COMM_DOWNLOAD)
+            {
+
+
+            }
 
             m_tranferHost.clear();
 
@@ -251,15 +268,91 @@ void hid_uart_comm::cmd_from_host(sys_cmd_resp *cmd)
         break;
 
         case sys_cmd_resp::CMD_COMM_SET_TIME:
-        break;
+            {
+                int result = 0;
 
-        case sys_cmd_resp::CMD_COMM_GET_STORED_VALUE_COUNT:
+                resp_bgms_comm->m_comm_status = sys_cmd_resp::CMD_COMM_SET_TIME;
+
+                QList<Sp::ProtocolCommand> list;
+
+                list.append(Sp::WriteTimeInformation);
+                cmd_buf_tmp = comm_protocol->doCommands(list);
+
+                cmd_buf[0] =  cmd_buf_tmp.size();
+
+                for(quint8 cmd_size=0; cmd_size<cmd_buf_tmp.size()+1; cmd_size++)
+                    cmd_buf[cmd_size+1] = cmd_buf_tmp[cmd_size];
+
+                result = write(fd, cmd_buf, cmd_buf[0]+1);
+
+                resp_timer->start(response_time_msec);
+            }
         break;
 
         case sys_cmd_resp::CMD_COMM_DOWNLOAD:
+            {
+                int result = 0;
+
+                resp_bgms_comm->m_comm_status = sys_cmd_resp::CMD_COMM_DOWNLOAD;
+
+                QList<Sp::ProtocolCommand> list;
+
+                list.append(Sp::GluecoseResultDataTxExpanded);
+                cmd_buf_tmp = comm_protocol->doCommands(list);
+
+                cmd_buf[0] =  cmd_buf_tmp.size();
+
+                for(quint8 cmd_size=0; cmd_size<cmd_buf_tmp.size()+1; cmd_size++)
+                    cmd_buf[cmd_size+1] = cmd_buf_tmp[cmd_size];
+
+                result = write(fd, cmd_buf, cmd_buf[0]+1);
+
+                resp_timer->start(response_time_msec);
+            }
+        break;
+
+        case sys_cmd_resp::CMD_COMM_GET_STORED_VALUE_COUNT:                
+            {
+                int result = 0;
+
+                resp_bgms_comm->m_comm_status = sys_cmd_resp::CMD_COMM_GET_STORED_VALUE_COUNT;
+
+                QList<Sp::ProtocolCommand> list;
+
+                list.append(Sp::CurrentIndexOfGluecose);
+                cmd_buf_tmp = comm_protocol->doCommands(list);
+
+                cmd_buf[0] =  cmd_buf_tmp.size();
+
+                for(quint8 cmd_size=0; cmd_size<cmd_buf_tmp.size()+1; cmd_size++)
+                    cmd_buf[cmd_size+1] = cmd_buf_tmp[cmd_size];
+
+                result = write(fd, cmd_buf, cmd_buf[0]+1);
+
+                resp_timer->start(response_time_msec);
+            }
         break;
 
         case sys_cmd_resp::CMD_COMM_MEM_DELETE:
+            {
+                int result = 0;
+
+                resp_bgms_comm->m_comm_status = sys_cmd_resp::CMD_COMM_MEM_DELETE;
+
+                QList<Sp::ProtocolCommand> list;
+
+                list.append(Sp::DeleteData);
+                cmd_buf_tmp = comm_protocol->doCommands(list);
+
+                cmd_buf[0] =  cmd_buf_tmp.size();
+
+                for(quint8 cmd_size=0; cmd_size<cmd_buf_tmp.size()+1; cmd_size++)
+                    cmd_buf[cmd_size+1] = cmd_buf_tmp[cmd_size];
+
+                result = write(fd, cmd_buf, cmd_buf[0]+1);
+
+                resp_timer->start(response_time_msec);
+            }
         break;
 
         case sys_cmd_resp::CMD_COMM_UNKNOWN:

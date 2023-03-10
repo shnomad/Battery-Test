@@ -135,6 +135,12 @@ private Q_SLOTS:
     void on_device_close_ch2_clicked();
     void on_device_close_ch3_clicked();
 
+    void on_time_sync_ch1_clicked();
+
+    void on_mem_delete_ch1_clicked();
+
+    void on_download_ch1_clicked();
+
 signals:
     void measure_setup_ch1(measurement_param);
     void measure_start_ch1();

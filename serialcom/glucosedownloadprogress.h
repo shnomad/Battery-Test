@@ -15,7 +15,7 @@ class GlucoseDownloadProgress : public QObject
 
 public:
     //GlucoseDownloadProgress(QObject *parent = 0,Sp::CommProtocolType protocol) : QObject(parent) {
-    GlucoseDownloadProgress(QObject *parent = 0) : QObject(parent) {
+     GlucoseDownloadProgress(QObject *parent = 0) : QObject(parent) {
         numberOfGluecose = 0;
         currentIndex = 0;
         selectedProtocol = Sp::CommProtocol1;
@@ -24,6 +24,7 @@ public:
     ~GlucoseDownloadProgress() {}
 
     void setNumberOfGluecose(int nog) { numberOfGluecose = nog; currentIndex = 0; emit downloadProgress(progress()); }
+
     unsigned int downloadableCount()
     {
         if(selectedProtocol == Sp::CommProtocol3)
@@ -76,20 +77,23 @@ public:
             return currentIndex;
         }
     }
+
     int getNunberOfGluecose() { return numberOfGluecose; }
 
 signals:
     void downloadProgress(float progress);                                  // 0~1 : 1 = 100%
 
 protected:
-    void timerEvent(QTimerEvent *event) {
+    void timerEvent(QTimerEvent *event)
+    {
         Q_UNUSED(event);
         emit downloadProgress(progress());
-        if(progress() >= 0.999) {
+
+        if(progress() >= 0.999)
+        {
             killTimer(progressTimerID); progressTimerID = 0;
         }
     }
 };
 
 #endif // GLUECOSEEXPANDINFO_H
-
