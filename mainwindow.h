@@ -11,6 +11,8 @@
 #include <QStringList>
 #include "sys_cmd_resp.h"
 #include "hid_uart_comm.h"
+#include "udev_monitor_usb.h"
+#include "cli_monitor.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -38,7 +40,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();    
 
-    enum meter_channel {CH_1=0x1, CH_2=0x2};
+    enum meter_channel {CH_1=0x1, CH_2=0x2, CH_3=0x3, CH_4=0x4};
+    enum comm_set {SET_CLOSE=0x0, SET_OPEN};
 
 private slots:
     void UpdateTime();
@@ -141,6 +144,8 @@ private Q_SLOTS:
 
     void on_download_ch1_clicked();
 
+    void on_audo_download_ch1_stateChanged(int arg1);
+
 signals:
     void measure_setup_ch1(measurement_param);
     void measure_start_ch1();
@@ -205,6 +210,8 @@ private:
     void ui_set_measurement_stop_ch5();
     void ui_set_measurement_pause_ch5();
 
+    void ui_set_comm_open_close(meter_channel, comm_set);
+
     string do_console_command_get_result (char* command);
 
     QTimer *timer_sec;
@@ -226,8 +233,12 @@ private:
 
     QMap<quint8, QString> comm_response_msg;
 
+    udev_monitor_usb *usb_mass_detect;
+    CLI_monitor *m_console_command;
     sys_cmd_resp *comm_cmd;
 
+    /*usb mass storage handling*/
+    QString dev_path;
 };
 
 #endif // MAINWINDOW_H

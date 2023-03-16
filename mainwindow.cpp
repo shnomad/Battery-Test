@@ -66,6 +66,50 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
       comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::VERSION_03), "protocol version 3 used BGMS connected");
       comm_response_msg.insert(static_cast<quint8>(sys_cmd_resp::VERSION_UNKNOWN), "unknown protocol version used BGMS connected");
 
+      /*console command interface */
+      m_console_command = new CLI_monitor;
+
+      /*Check USB Mass Stroage plug in*/
+      usb_mass_detect = new udev_monitor_usb;
+
+      QObject::connect(usb_mass_detect, &udev_monitor_usb::sig_resp_to_main, [=](sys_cmd_resp *resp)
+      {
+          switch(resp->m_comm_resp)
+          {
+
+              case sys_cmd_resp::RESP_USB_MASS_STORAGE_LIST:
+
+                Log()<<resp->mass_storage_device_info;
+
+                if(resp->mass_storage_device_info.count() == 0)
+                {
+                        ui->audo_download_ch1->setEnabled(false);
+                        ui->audo_download_ch2->setEnabled(false);
+                        ui->audo_download_ch3->setEnabled(false);
+                        ui->audo_download_ch4->setEnabled(false);
+                        ui->audo_download_ch5->setEnabled(false);
+                }
+                else
+                {
+
+                    /*update item list detected USB disk*/
+                    QMap<QString, QString>::ConstIterator usb_mass_stroage_connected_list = resp->mass_storage_device_info.constBegin();
+                    while (usb_mass_stroage_connected_list!=  resp->mass_storage_device_info.constEnd())
+                    {
+                        dev_path = usb_mass_stroage_connected_list.key() + "1";
+                        usb_mass_stroage_connected_list++;
+                    }
+
+                     ui->audo_download_ch1->setEnabled(true);
+                }
+
+                break;
+          }
+      });
+
+      usb_mass_detect->update();
+      usb_mass_detect->start();
+
       system_init_done = true;
 }
 
@@ -589,7 +633,7 @@ void MainWindow::ui_set_measurement_start_ch2()
     ui->sec_startdelay_ch2->setEnabled(false);
     ui->sec_detoffdelay_ch2->setEnabled(false);
     ui->sec_interval_ch2->setEnabled(false);
-    ui->audo_download_2->setEnabled(false);
+    ui->audo_download_ch2->setEnabled(false);
 
     //Comm Interface option
     ui->micro_usb_ch2->setEnabled(false);
@@ -614,7 +658,7 @@ void MainWindow::ui_set_measurement_stop_ch2()
     ui->sec_startdelay_ch2->setEnabled(true);
     ui->sec_detoffdelay_ch2->setEnabled(true);
     ui->sec_interval_ch2->setEnabled(true);
-    ui->audo_download_2->setEnabled(true);
+    ui->audo_download_ch2->setEnabled(false);
 
     ui->device_open_ch2->setEnabled(true);
     ui->micro_usb_ch2->setEnabled(true);
@@ -654,7 +698,7 @@ void MainWindow::ui_set_measurement_start_ch3()
     ui->sec_startdelay_ch3->setEnabled(false);
     ui->sec_detoffdelay_ch3->setEnabled(false);
     ui->sec_interval_ch3->setEnabled(false);
-    ui->audo_download_3->setEnabled(false);
+    ui->audo_download_ch3->setEnabled(false);
 
     //Comm Interface option
     ui->micro_usb_ch3->setEnabled(false);
@@ -682,7 +726,7 @@ void MainWindow::ui_set_measurement_stop_ch3()
     ui->sec_startdelay_ch3->setEnabled(true);
     ui->sec_detoffdelay_ch3->setEnabled(true);
     ui->sec_interval_ch3->setEnabled(true);
-    ui->audo_download_2->setEnabled(true);
+    ui->audo_download_ch3->setEnabled(false);
 
     ui->device_open_ch3->setEnabled(true);
     ui->micro_usb_ch3->setEnabled(true);
@@ -723,7 +767,7 @@ void MainWindow::ui_set_measurement_start_ch4()
     ui->sec_startdelay_ch4->setEnabled(false);
     ui->sec_detoffdelay_ch4->setEnabled(false);
     ui->sec_interval_ch4->setEnabled(false);
-    ui->audo_download_4->setEnabled(false);
+    ui->audo_download_ch4->setEnabled(false);
 
     //Comm Interface option
     ui->micro_usb_ch4->setEnabled(false);
@@ -751,7 +795,7 @@ void MainWindow::ui_set_measurement_stop_ch4()
     ui->sec_startdelay_ch4->setEnabled(true);
     ui->sec_detoffdelay_ch4->setEnabled(true);
     ui->sec_interval_ch4->setEnabled(true);
-    ui->audo_download_4->setEnabled(true);
+    ui->audo_download_ch4->setEnabled(false);
 
     ui->device_open_ch4->setEnabled(true);
     ui->micro_usb_ch4->setEnabled(true);
@@ -792,7 +836,7 @@ void MainWindow::ui_set_measurement_start_ch5()
     ui->sec_startdelay_ch5->setEnabled(false);
     ui->sec_detoffdelay_ch5->setEnabled(false);
     ui->sec_interval_ch5->setEnabled(false);
-    ui->audo_download_5->setEnabled(false);
+    ui->audo_download_ch5->setEnabled(false);
 
     //Comm Interface option
     ui->micro_usb_ch5->setEnabled(false);
@@ -820,7 +864,7 @@ void MainWindow::ui_set_measurement_stop_ch5()
     ui->sec_startdelay_ch5->setEnabled(true);
     ui->sec_detoffdelay_ch5->setEnabled(true);
     ui->sec_interval_ch5->setEnabled(true);
-    ui->audo_download_5->setEnabled(true);
+    ui->audo_download_ch5->setEnabled(false);
 
     ui->device_open_ch5->setEnabled(true);
     ui->micro_usb_ch5->setEnabled(true);
@@ -1796,14 +1840,16 @@ void MainWindow::dmm_working_status(QString dmm_status)
 
 void MainWindow::on_reboot_clicked()
 {
-    QProcess process;
-    process.startDetached("sudo reboot");
+//    QProcess process;
+//    process.startDetached("sudo reboot");
+      m_console_command->sendCommand("sudo reboot");
 }
 
 void MainWindow::on_quit_clicked()
 {
-     QProcess process;
-     process.startDetached("sudo poweroff");
+     //QProcess process;
+     //process.startDetached("sudo poweroff");
+     m_console_command->sendCommand("sudo poweroff");
 }
 
 void MainWindow::on_dmm_capture_stateChanged(int arg1)
@@ -1848,14 +1894,8 @@ void MainWindow::on_device_close_ch1_clicked()
 
     ui_set_measurement_stop_ch1();
 
-    ui->micro_usb_ch1->setEnabled(true);
-    ui->phone_jack_ch1->setEnabled(true);
-    ui->device_open_ch1->setEnabled(true);
+    ui_set_comm_open_close(meter_channel::CH_1, comm_set::SET_CLOSE);
 
-    ui->time_sync_ch1->setEnabled(false);
-    ui->mem_delete_ch1->setEnabled(false);
-    ui->download_ch1->setEnabled(false);
-    ui->device_close_ch1->setEnabled(false);
 }
 
 void MainWindow::on_time_sync_ch1_clicked()
@@ -1914,6 +1954,95 @@ void MainWindow::on_device_close_ch3_clicked()
 
 }
 
+void MainWindow::ui_set_comm_open_close(meter_channel channel, comm_set open_close)
+{
+    switch(channel)
+    {
+        case meter_channel::CH_1:
+
+            if(open_close == comm_set::SET_CLOSE)
+            {
+                ui->micro_usb_ch1->setEnabled(true);
+                ui->phone_jack_ch1->setEnabled(true);
+                ui->device_open_ch1->setEnabled(true);
+
+                ui->time_sync_ch1->setEnabled(false);
+                ui->mem_delete_ch1->setEnabled(false);
+                ui->download_ch1->setEnabled(false);
+                ui->device_close_ch1->setEnabled(false);
+            }
+            else
+            {
+                ui->micro_usb_ch1->setEnabled(false);
+                ui->phone_jack_ch1->setEnabled(false);
+                ui->device_open_ch1->setEnabled(true);
+
+                ui->time_sync_ch1->setEnabled(true);
+                ui->mem_delete_ch1->setEnabled(true);
+                ui->download_ch1->setEnabled(true);
+                ui->device_close_ch1->setEnabled(true);
+            }
+
+        break;
+
+        case meter_channel::CH_2:
+
+            if(open_close == comm_set::SET_CLOSE)
+            {
+                ui->micro_usb_ch2->setEnabled(true);
+                ui->phone_jack_ch2->setEnabled(true);
+                ui->device_open_ch2->setEnabled(true);
+
+                ui->time_sync_ch2->setEnabled(false);
+                ui->mem_delete_ch2->setEnabled(false);
+                ui->download_ch2->setEnabled(false);
+                ui->device_close_ch2->setEnabled(false);
+            }
+            else
+            {
+                ui->micro_usb_ch2->setEnabled(false);
+                ui->phone_jack_ch2->setEnabled(false);
+                ui->device_open_ch2->setEnabled(true);
+
+                ui->time_sync_ch2->setEnabled(true);
+                ui->mem_delete_ch2->setEnabled(true);
+                ui->download_ch2->setEnabled(true);
+                ui->device_close_ch2->setEnabled(true);
+            }
+
+        break;
+
+        case meter_channel::CH_3:
+
+            if(open_close == comm_set::SET_CLOSE)
+            {
+                ui->micro_usb_ch3->setEnabled(true);
+                ui->phone_jack_ch3->setEnabled(true);
+                ui->device_open_ch3->setEnabled(true);
+
+                ui->time_sync_ch3->setEnabled(false);
+                ui->mem_delete_ch3->setEnabled(false);
+                ui->download_ch3->setEnabled(false);
+                ui->device_close_ch3->setEnabled(false);
+            }
+            else
+            {
+                ui->micro_usb_ch3->setEnabled(false);
+                ui->phone_jack_ch3->setEnabled(false);
+                ui->device_open_ch3->setEnabled(true);
+
+                ui->time_sync_ch3->setEnabled(true);
+                ui->mem_delete_ch3->setEnabled(true);
+                ui->download_ch3->setEnabled(true);
+                ui->device_close_ch3->setEnabled(true);
+            }
+
+        break;
+
+    }
+}
+
+
 void MainWindow::ui_bgms_comm_ch_1_response(sys_cmd_resp *resp_comm)
 {
 
@@ -1927,14 +2056,7 @@ void MainWindow::ui_bgms_comm_ch_1_response(sys_cmd_resp *resp_comm)
             ui->test_pause_ch1->setEnabled(false);
             ui->test_stop_ch1->setEnabled(false);
 
-            ui->micro_usb_ch1->setEnabled(false);
-            ui->phone_jack_ch1->setEnabled(false);
-            ui->device_open_ch1->setEnabled(false);
-
-            ui->time_sync_ch1->setEnabled(true);
-            ui->mem_delete_ch1->setEnabled(true);
-            ui->download_ch1->setEnabled(true);
-            ui->device_close_ch1->setEnabled(true);
+            ui_set_comm_open_close(meter_channel::CH_1, comm_set::SET_OPEN);
 
             connect(this, SIGNAL(sig_bgms_comm_cmd(sys_cmd_resp *)), m_hid_uart_comm[0], SLOT(cmd_from_host(sys_cmd_resp *)));
 
@@ -1944,11 +2066,15 @@ void MainWindow::ui_bgms_comm_ch_1_response(sys_cmd_resp *resp_comm)
         break;
 
         case  sys_cmd_resp::RESP_COMM_PORT_CLOSE_SUCCESS:
+
+
         case  sys_cmd_resp::RESP_COMM_PORT_CLOSE_FAIL:
         case  sys_cmd_resp::RESP_COMM_PORT_OPEN_FAIL:
         break;
 
         case  sys_cmd_resp::RESP_COMM_BGMS_CHECK_FAIL:
+
+            on_device_close_ch1_clicked();
 
         break;
 
@@ -2032,6 +2158,36 @@ void MainWindow::ui_bgms_comm_ch_2_response(sys_cmd_resp *resp_comm)
 void MainWindow::ui_bgms_comm_ch_3_response(sys_cmd_resp *resp_comm)
 {
 
+}
+
+void MainWindow::on_audo_download_ch1_stateChanged(int arg1)
+{
+    Log()<<arg1;
+
+    if(arg1)
+    {
+        m_console_command->sendCommand("sudo mount "+dev_path+" /mnt/storage -o uid=pi,gid=pi");
+
+        ui->audo_download_ch2->setCheckState(Qt::Checked);
+        ui->audo_download_ch3->setCheckState(Qt::Checked);
+        ui->audo_download_ch4->setCheckState(Qt::Checked);
+        ui->audo_download_ch5->setCheckState(Qt::Checked);
+    }
+    else
+    {
+        m_console_command->sendCommand("sudo umount /mnt/storage");
+
+        ui->audo_download_ch2->setCheckState(Qt::Unchecked);
+        ui->audo_download_ch3->setCheckState(Qt::Unchecked);
+        ui->audo_download_ch4->setCheckState(Qt::Unchecked);
+        ui->audo_download_ch5->setCheckState(Qt::Unchecked);
+
+    }
+
+    ui->audo_download_ch2->setEnabled(false);
+    ui->audo_download_ch3->setEnabled(false);
+    ui->audo_download_ch4->setEnabled(false);
+    ui->audo_download_ch5->setEnabled(false);
 }
 
 MainWindow::~MainWindow()

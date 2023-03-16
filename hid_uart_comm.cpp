@@ -63,7 +63,7 @@ void hid_uart_comm::check_connection()
             Log()<<QString::fromUtf8(m_tranferHost.toHex());
 
              if(resp_bgms_comm->m_comm_status == sys_cmd_resp::CMD_COMM_BGMS_CHECK)
-               {
+              {
                     if(m_tranferHost.count() >= 3)
                     {
                         if(m_tranferHost.at(1) == 0x10 && m_tranferHost.at(2) == 0x20)

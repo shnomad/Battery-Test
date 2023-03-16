@@ -2091,7 +2091,7 @@ QSpinBox::down-arrow
        </layout>
       </widget>
      </widget>
-     <widget class="QCheckBox" name="audo_download_2">
+     <widget class="QCheckBox" name="audo_download_ch2">
       <property name="geometry">
        <rect>
         <x>691</x>
@@ -2403,7 +2403,7 @@ QSpinBox::down-arrow
        </property>
       </widget>
      </widget>
-     <widget class="QCheckBox" name="audo_download_3">
+     <widget class="QCheckBox" name="audo_download_ch3">
       <property name="geometry">
        <rect>
         <x>691</x>
@@ -3471,7 +3471,7 @@ QSpinBox::down-arrow
        </property>
       </widget>
      </widget>
-     <widget class="QCheckBox" name="audo_download_4">
+     <widget class="QCheckBox" name="audo_download_ch4">
       <property name="geometry">
        <rect>
         <x>691</x>
@@ -4535,7 +4535,7 @@ QSpinBox::down-arrow
        </property>
       </widget>
      </widget>
-     <widget class="QCheckBox" name="audo_download_5">
+     <widget class="QCheckBox" name="audo_download_ch5">
       <property name="geometry">
        <rect>
         <x>691</x>

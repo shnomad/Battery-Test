@@ -23,6 +23,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    cli_monitor.cpp \
         control.cpp \
         gpiocontrol.cpp \
         hid_uart_comm.cpp \
@@ -40,12 +41,14 @@ SOURCES += \
 #       serialcom/serialprotocol1.cpp \
 #       serialcom/serialprotocol2.cpp \
         serialcom/serialprotocol3.cpp \
-        serialcom/serialprotocolabstract.cpp
+        serialcom/serialprotocolabstract.cpp \
+    udev_monitor_usb.cpp
 #       serialcom/stmhidport.cpp
 #       serialcom/stmhidtester.cpp
 
 HEADERS += \
         bgms_set_param_info.h \
+    cli_monitor.h \
         control.h \
         gpiocontrol.h \
         hid_uart_comm.h \
@@ -71,7 +74,8 @@ HEADERS += \
 #       serialcom/serialprotocol1.h \
 #       serialcom/serialprotocol2.h \
         serialcom/serialprotocol3.h \
-        serialcom/serialprotocolabstract.h
+        serialcom/serialprotocolabstract.h \
+    udev_monitor_usb.h
 #       serialcom/glucosedownloadprogress.h \
 #        serialcom/stmhidport.h
 #       serialcom/stmhidtester.h
@@ -93,6 +97,7 @@ LIBS += -L/opt/qt5rpi3/sysroot/usr/lib -lhidapi-hidraw
 #        -L/opt/qt5rpi3/sysroot/usr/lib/python3.7/config-3.7m-arm-linux-gnueabihf -lpython3.7
 #        -L/opt/qt5rpi3/sysroot/usr/local/qt5pi/lib -lQt5Network \
 #        -L/opt/qt5rpi3/sysroot/usr/local/qt5pi/lib -lQt5SerialPort
+LIBS += -L/opt/Rpi4/sysroot/usr/lib/arm-linux-gnueabihf -ludev
 
 QMAKE_CFLAGS_ISYSTEM = -I
 
