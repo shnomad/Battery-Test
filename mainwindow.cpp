@@ -14,7 +14,6 @@
 #include <QDateTime>
 #include <QTime>
 #include <QApplication>
-#include <QProcess>
 #include <QtNetwork/QNetworkInterface>
 #include "loggingcategories.h"
 #include "tcpsocketrw.h"
@@ -88,6 +87,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
                         ui->audo_download_ch3->setEnabled(false);
                         ui->audo_download_ch4->setEnabled(false);
                         ui->audo_download_ch5->setEnabled(false);
+                        ui->download_ch1->setEnabled(false);
                 }
                 else
                 {
@@ -109,6 +109,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
       usb_mass_detect->update();
       usb_mass_detect->start();
+
+      /*Camera function */
+      m_camera = new camera;
+      connect(this, SIGNAL(sig_camera_cmd(sys_cmd_resp *)), m_camera, SLOT(operation(sys_cmd_resp *)));
+
+      /*Camera Preview Image Update*/
+      QObject::connect(m_camera, &camera::sig_preview_image_update, [this](QImage image)
+      {
+            ui->display_preview->setPixmap(QPixmap::fromImage(image));
+      });
 
       system_init_done = true;
 }
@@ -1914,9 +1924,9 @@ void MainWindow::on_mem_delete_ch1_clicked()
 
 void MainWindow::on_download_ch1_clicked()
 {
-     comm_cmd->m_comm_cmd = sys_cmd_resp::CMD_COMM_DOWNLOAD;
+    comm_cmd->m_comm_cmd = sys_cmd_resp::CMD_COMM_DOWNLOAD;
 
-     emit sig_bgms_comm_cmd(comm_cmd);
+    emit sig_bgms_comm_cmd(comm_cmd);
 }
 
 void MainWindow::on_device_open_ch2_clicked()
@@ -2108,13 +2118,6 @@ void MainWindow::ui_bgms_comm_ch_1_response(sys_cmd_resp *resp_comm)
         case  sys_cmd_resp::RESP_COMM_SET_TIME_SUCCESS:
             break;
 
-        case  sys_cmd_resp::RESP_COMM_MEM_DELETE_SUCCESS:
-
-            comm_cmd->m_comm_cmd = sys_cmd_resp::CMD_COMM_GET_STORED_VALUE_COUNT;
-            emit sig_bgms_comm_cmd(comm_cmd);
-
-            break;
-
         case  sys_cmd_resp::RESP_COMM_GET_STORED_VALUE_COUNT_SUCCESS:
 
             ui->meter_info_ch01->insertPlainText(QString::number(resp_comm->measured_result));
@@ -2122,7 +2125,17 @@ void MainWindow::ui_bgms_comm_ch_1_response(sys_cmd_resp *resp_comm)
             break;
 
         case  sys_cmd_resp::RESP_COMM_DOWNLOAD_SUCCESS:
+
+            Log();
+
             break;
+
+        case  sys_cmd_resp::RESP_COMM_MEM_DELETE_SUCCESS:
+
+            comm_cmd->m_comm_cmd = sys_cmd_resp::CMD_COMM_GET_STORED_VALUE_COUNT;
+            emit sig_bgms_comm_cmd(comm_cmd);
+
+        break;
 
         case  sys_cmd_resp::RESP_COMM_READ_SERIAL_FAIL:
             break;
@@ -2172,6 +2185,8 @@ void MainWindow::on_audo_download_ch1_stateChanged(int arg1)
         ui->audo_download_ch3->setCheckState(Qt::Checked);
         ui->audo_download_ch4->setCheckState(Qt::Checked);
         ui->audo_download_ch5->setCheckState(Qt::Checked);
+
+        ui->download_ch1->setEnabled(true);
     }
     else
     {
@@ -2182,12 +2197,26 @@ void MainWindow::on_audo_download_ch1_stateChanged(int arg1)
         ui->audo_download_ch4->setCheckState(Qt::Unchecked);
         ui->audo_download_ch5->setCheckState(Qt::Unchecked);
 
+        ui->download_ch1->setEnabled(false);
+
     }
 
     ui->audo_download_ch2->setEnabled(false);
     ui->audo_download_ch3->setEnabled(false);
     ui->audo_download_ch4->setEnabled(false);
     ui->audo_download_ch5->setEnabled(false);
+}
+
+void MainWindow::on_start_preview_clicked()
+{
+    comm_cmd->m_comm_cmd = sys_cmd_resp::CMD_CAMERA_START;
+    emit sig_camera_cmd(comm_cmd);
+}
+
+void MainWindow::on_stop_preview_clicked()
+{
+    comm_cmd->m_comm_cmd = sys_cmd_resp::CMD_CAMERA_STOP;
+    emit sig_camera_cmd(comm_cmd);
 }
 
 MainWindow::~MainWindow()

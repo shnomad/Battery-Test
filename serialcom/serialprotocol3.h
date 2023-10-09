@@ -12,6 +12,7 @@ class SerialComm;
 class QTimer;
 
 #define kProtocol3TimeoutDuration   (3000)
+//#define SERIALCOM_SMARTLOG
 
 class SerialProtocol3 : public SerialProtocolAbstract
 {
@@ -25,7 +26,7 @@ public:
      explicit SerialProtocol3(QObject *parent = nullptr);
     ~SerialProtocol3();
 
-//    void setCommObject(SerialComm *serialComm);
+//  void setCommObject(SerialComm *serialComm);
     void setCommObject();
     Sp::ProtocolState startDownload();
     Sp::ProtocolState syncTime();
@@ -41,9 +42,10 @@ public:
 //  qint64 requestCommand(const Sp::ProtocolCommand &command, QByteArray *arg1 = 0, QByteArray *arg2 = 0, QByteArray *arg3 = 0);
     QByteArray requestCommand(const Sp::ProtocolCommand &command, QByteArray *arg1 = 0, QByteArray *arg2 = 0, QByteArray *arg3 = 0);
 
-    void parseReceivedData(QByteArray rcvPacket);
-
-    const QByteArray &lastReceivePacket();
+//  void processPacket(QByteArray rcvPacket);
+    QByteArray processPacket(QByteArray rcvPacket);
+    bool parseReceivedData(QByteArray rcvPacket);
+    const QByteArray &lastReceivePacket();    
 
 private slots:
     void readyRead();
@@ -116,7 +118,7 @@ private:
     Sp::ProtocolCommand getCommand(QByteArray rcvPacket);
     ushort getIndexOfGluecose(QByteArray rcvPacket);
     ushort getGluecoseCount(QByteArray rcvPacket);
-    void processPacket(QByteArray rcvPacket);
+//  void processPacket(QByteArray rcvPacket);
     void produceError(Sp::ProtocolCommand receivedCommand, QByteArray rcvPacket);
     void parseQcData(QByteArray rcvPacket);
     void parseQcData_default(QByteArray rcvPacket);
@@ -134,7 +136,6 @@ private:
     bool isDBLE;
 
     float bytesToFloat(uchar b0, uchar b1, uchar b2, uchar b3);
-
 };
 
 

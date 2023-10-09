@@ -5,7 +5,7 @@
 #include <qnamespace.h>
 #include "serialprotocol.h"
 #include <QJsonArray>
-//#include "glucosedownloadprogress.h"
+#include "glucosedownloadprogress.h"
 #include <QTimer>
 #include <QDateTime>
 //#include <QtCore>
@@ -39,15 +39,16 @@ public:
     virtual Sp::ProtocolState readTime() = 0;
 
     virtual void cancelDownload() = 0;
-//    virtual qint64 requestCommand(const Sp::ProtocolCommand &command, QByteArray *arg1 = 0, QByteArray *arg2 = 0, QByteArray *arg3 = 0) = 0;
+//  virtual qint64 requestCommand(const Sp::ProtocolCommand &command, QByteArray *arg1 = 0, QByteArray *arg2 = 0, QByteArray *arg3 = 0) = 0;
     virtual QByteArray requestCommand(const Sp::ProtocolCommand &command, QByteArray *arg1 = 0, QByteArray *arg2 = 0, QByteArray *arg3 = 0) = 0;
-    virtual void parseReceivedData(QByteArray rcvPacket);
+    virtual bool parseReceivedData(QByteArray rcvPacket);
+//    virtual void processPacket(QByteArray rcvPacket);
+    virtual QByteArray processPacket(QByteArray rcvPacket);
     virtual const QByteArray &lastReceivePacket() = 0;
     virtual void readBleData() = 0;
     virtual void readQcData() = 0;
-//    virtual void doCommands(QList<Sp::ProtocolCommand> commands) = 0;
+//  virtual void doCommands(QList<Sp::ProtocolCommand> commands) = 0;
     virtual QByteArray doCommands(QList<Sp::ProtocolCommand> commands) = 0;
-
 
     static ushort calcCrc(const QByteArray &array);
     static bool isEqualCrc(const QByteArray &array, ushort crc);
@@ -78,8 +79,12 @@ public:
 
     bool isIdle();
 
-    QString m_serialnumber;
+    QString m_serialnumber, m_CurrentbgmsTimeDate;
+    quint16 m_bgms_stored_result=0;
+
     QJsonArray m_dataArray;
+
+    bool m_download_complete =false;
 
 signals:
     void timeoutError(Sp::ProtocolCommand command);

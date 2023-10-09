@@ -60,80 +60,114 @@ void hid_uart_comm::check_connection()
 
         connect(resp_timer,  &QTimer::timeout, [=]()
         {
-            Log()<<QString::fromUtf8(m_tranferHost.toHex());
+               Log()<<QString::fromUtf8(m_tranferHost.toHex());
 
-             if(resp_bgms_comm->m_comm_status == sys_cmd_resp::CMD_COMM_BGMS_CHECK)
+               if(resp_bgms_comm->m_comm_status == sys_cmd_resp::CMD_COMM_BGMS_CHECK)
+               {
+                      if(m_tranferHost.count() >= 3)
+                      {
+                          if(m_tranferHost.at(1) == 0x10 && m_tranferHost.at(2) == 0x20)
+                          {
+                             resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_BGMS_CHECK_SUCCESS;
+                             resp_bgms_comm->m_protocol_type = sys_cmd_resp::VERSION_01;
+                          }
+                           else if(m_tranferHost.at(1) == 0x1e && m_tranferHost.at(2) == 0x2e)
+                          {
+                              Log();
+                              resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_BGMS_CHECK_SUCCESS;
+                              resp_bgms_comm->m_protocol_type = sys_cmd_resp::VERSION_03;
+                              comm_protocol = new SerialProtocol3;
+
+                          }
+                          else if(m_tranferHost.at(1) == 0x1f && m_tranferHost.at(2) == 0x2f)
+                          {
+                              resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_BGMS_CHECK_SUCCESS;
+                              resp_bgms_comm->m_protocol_type = sys_cmd_resp::VERSION_02;
+                          }
+                          else
+                          {
+                              resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_BGMS_CHECK_FAIL;
+                              resp_bgms_comm->m_protocol_type = sys_cmd_resp::VERSION_UNKNOWN;
+                          }
+                      }
+                      else
+                      {
+                          resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_BGMS_CHECK_FAIL;
+                          resp_bgms_comm->m_protocol_type = sys_cmd_resp::VERSION_UNKNOWN;
+                      }
+              }
+              else
               {
-                    if(m_tranferHost.count() >= 3)
-                    {
-                        if(m_tranferHost.at(1) == 0x10 && m_tranferHost.at(2) == 0x20)
-                        {
-                           resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_BGMS_CHECK_SUCCESS;
-                           resp_bgms_comm->m_protocol_type = sys_cmd_resp::VERSION_01;
-                        }
-                         else if(m_tranferHost.at(1) == 0x1e && m_tranferHost.at(2) == 0x2e)
-                        {
-                            resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_BGMS_CHECK_SUCCESS;
-                            resp_bgms_comm->m_protocol_type = sys_cmd_resp::VERSION_03;
+                   //parsing the response packet and post processing
+                  if(resp_bgms_comm->m_comm_status == sys_cmd_resp::CMD_COMM_GET_TIME)
+                  {
+                        comm_protocol->processPacket(m_tranferHost);
+                        resp_bgms_comm->current_bgms_time = comm_protocol->m_CurrentbgmsTimeDate;
+                        resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_GET_TIME_SUCCESS;
+                  }
+                  else if(resp_bgms_comm->m_comm_status == sys_cmd_resp::CMD_COMM_READ_SERIAL)
+                  {
+                        comm_protocol->processPacket(m_tranferHost);
+                        resp_bgms_comm->serial_number = comm_protocol->m_serialnumber;
+                        resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_READ_SERIAL_SUCCESS;
+                  }
+                  else if(resp_bgms_comm->m_comm_status == sys_cmd_resp::CMD_COMM_GET_STORED_VALUE_COUNT)
+                  {
+                       comm_protocol->processPacket(m_tranferHost);
+                       resp_bgms_comm->measured_result = comm_protocol->m_bgms_stored_result;
+                       resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_GET_STORED_VALUE_COUNT_SUCCESS;
+                  }
+                  else if(resp_bgms_comm->m_comm_status == sys_cmd_resp::CMD_COMM_MEM_DELETE)
+                  {
+                        resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_MEM_DELETE_SUCCESS;
+                  }
+                  else if(resp_bgms_comm->m_comm_status == sys_cmd_resp::CMD_COMM_DOWNLOAD)                     //BGMS Data Download function
+                  {
+                      Log()<<QVariant::fromValue(resp_bgms_comm->m_bgms_data_download_cmd).toString();
 
-                            comm_protocol = new SerialProtocol3;
+                      if(resp_bgms_comm->m_bgms_data_download_cmd == sys_cmd_resp::DOWNLOAD_READ_SERIAL)
+                      {
+                            comm_protocol->processPacket(m_tranferHost);
 
-                        }
-                        else if(m_tranferHost.at(1) == 0x1f && m_tranferHost.at(2) == 0x2f)
-                        {
-                            resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_BGMS_CHECK_SUCCESS;
-                            resp_bgms_comm->m_protocol_type = sys_cmd_resp::VERSION_02;
-                        }
-                        else
-                        {
-                            resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_BGMS_CHECK_FAIL;
-                            resp_bgms_comm->m_protocol_type = sys_cmd_resp::VERSION_UNKNOWN;
-                        }
-                    }
-                    else
-                    {
-                        resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_BGMS_CHECK_FAIL;
-                        resp_bgms_comm->m_protocol_type = sys_cmd_resp::VERSION_UNKNOWN;
-                    }
-            }
-            else if(resp_bgms_comm->m_comm_status == sys_cmd_resp::CMD_COMM_GET_TIME)
-            {
-                  comm_protocol->parseReceivedData(m_tranferHost);
+                            /*first check the BGMS serial number, next check the downloadable count*/
+                            resp_bgms_comm->m_comm_status = sys_cmd_resp::CMD_COMM_DOWNLOAD;
+                            resp_bgms_comm->m_bgms_data_download_cmd = sys_cmd_resp::DOWNLOAD_READ_COUNT;
+                            cmd_buf_tmp = comm_protocol->requestCommand(Sp::CurrentIndexOfGluecose);
+                            Log();
+                      }
+                      else if(resp_bgms_comm->m_bgms_data_download_cmd == sys_cmd_resp::DOWNLOAD_READ_COUNT)
+                      {
+                            resp_bgms_comm->m_comm_status = sys_cmd_resp::CMD_COMM_DOWNLOAD;
+                            resp_bgms_comm->m_bgms_data_download_cmd = sys_cmd_resp::DOWLOAD_CONTINUE;
+                            cmd_buf_tmp = comm_protocol->processPacket(m_tranferHost);
+                            Log();
 
-                  resp_bgms_comm->current_bgms_time = Settings::Instance()->getMeterTime();
+                      }
+                      else if(resp_bgms_comm->m_bgms_data_download_cmd == sys_cmd_resp::DOWLOAD_CONTINUE)
+                      {
+                          if(!comm_protocol->m_download_complete)
+                          {
+                              resp_bgms_comm->m_comm_status = sys_cmd_resp::CMD_COMM_DOWNLOAD;
+                              resp_bgms_comm->m_bgms_data_download_cmd = sys_cmd_resp::DOWLOAD_CONTINUE;
+                              cmd_buf_tmp = comm_protocol->processPacket(m_tranferHost);
+                              Log();
+                          }
+                      }
+                      else if(resp_bgms_comm->m_bgms_data_download_cmd == sys_cmd_resp::DOWNLOAD_DONE)
+                      {
 
-                  resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_GET_TIME_SUCCESS;
-            }
-            else if(resp_bgms_comm->m_comm_status == sys_cmd_resp::CMD_COMM_READ_SERIAL)
-            {
-                  comm_protocol->parseReceivedData(m_tranferHost);
+                      }
 
-                  resp_bgms_comm->serial_number = Settings::Instance()->getSerialNumber();
+                       resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_DOWNLOAD_SUCCESS;
 
-                  resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_READ_SERIAL_SUCCESS;
-            }
-            else if(resp_bgms_comm->m_comm_status == sys_cmd_resp::CMD_COMM_GET_STORED_VALUE_COUNT)
-            {
-                 comm_protocol->parseReceivedData(m_tranferHost);
+                       m_tranferHost.clear();
+                       make_hid_cmd_packet(static_cast<quint8>(cmd_buf_tmp.size()));
+                  }
+              }
 
-                 resp_bgms_comm->measured_result = Settings::Instance()->getNumberofCurrentGlucoseData();
-
-                 resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_GET_STORED_VALUE_COUNT_SUCCESS;
-            }
-            else if(resp_bgms_comm->m_comm_status == sys_cmd_resp::CMD_COMM_MEM_DELETE)
-            {
-                resp_bgms_comm->m_comm_resp = sys_cmd_resp::RESP_COMM_MEM_DELETE_SUCCESS;
-            }
-            else if(resp_bgms_comm->m_comm_status == sys_cmd_resp::CMD_COMM_DOWNLOAD)
-            {
-
-
-            }
-
-            m_tranferHost.clear();
-
-            emit sig_bgms_comm_response(resp_bgms_comm);
-
+              sig_to_host:
+                  m_tranferHost.clear();
+                  emit sig_bgms_comm_response(resp_bgms_comm);
         });
     }
 }
@@ -203,6 +237,22 @@ void hid_uart_comm::Error()
 }
 */
 
+int hid_uart_comm::make_hid_cmd_packet(quint8 packet_size)
+{
+    int result = 0;
+
+    cmd_buf[0] =  packet_size;
+
+    for(quint8 cmd_size=0; cmd_size<cmd_buf_tmp.size()+1; cmd_size++)
+        cmd_buf[cmd_size+1] = cmd_buf_tmp[cmd_size];
+
+    result = write(fd, cmd_buf, cmd_buf[0]+1);
+
+    resp_timer->start(response_time_msec);
+
+    return result;
+}
+
 void hid_uart_comm::cmd_from_host(sys_cmd_resp *cmd)
 {
 
@@ -218,140 +268,58 @@ void hid_uart_comm::cmd_from_host(sys_cmd_resp *cmd)
 
         case sys_cmd_resp::CMD_COMM_BGMS_CHECK:
 
-            resp_bgms_comm->m_comm_status = sys_cmd_resp::CMD_COMM_BGMS_CHECK;
-            check_bgms_protocol_type();
+                resp_bgms_comm->m_comm_status = sys_cmd_resp::CMD_COMM_BGMS_CHECK;
+                check_bgms_protocol_type();
 
         break;
 
         case sys_cmd_resp::CMD_COMM_GET_TIME:
             {
-                int result = 0;
-
                 resp_bgms_comm->m_comm_status = sys_cmd_resp::CMD_COMM_GET_TIME;
-
-                QList<Sp::ProtocolCommand> list;
-
-                list.append(Sp::ReadTimeInformation);
-                cmd_buf_tmp = comm_protocol->doCommands(list);
-
-                cmd_buf[0] =  cmd_buf_tmp.size();
-
-                for(quint8 cmd_size=0; cmd_size<cmd_buf_tmp.size()+1; cmd_size++)
-                    cmd_buf[cmd_size+1] = cmd_buf_tmp[cmd_size];
-
-                result = write(fd, cmd_buf, cmd_buf[0]+1);
-
-                resp_timer->start(response_time_msec);
+                cmd_buf_tmp = comm_protocol->requestCommand(Sp::ReadTimeInformation);
+                make_hid_cmd_packet(static_cast<quint8>(cmd_buf_tmp.size()));
             }
+
         break;
 
         case sys_cmd_resp::CMD_COMM_READ_SERIAL:
-            {
-                int result = 0;
-
+            {                
                 resp_bgms_comm->m_comm_status = sys_cmd_resp::CMD_COMM_READ_SERIAL;
-
-                QList<Sp::ProtocolCommand> list;
-
-                list.append(Sp::ReadSerialNumber);
-                cmd_buf_tmp = comm_protocol->doCommands(list);
-
-                cmd_buf[0] =  cmd_buf_tmp.size();
-
-                for(quint8 cmd_size=0; cmd_size<cmd_buf_tmp.size()+1; cmd_size++)
-                    cmd_buf[cmd_size+1] = cmd_buf_tmp[cmd_size];
-
-                result = write(fd, cmd_buf, cmd_buf[0]+1);
-
-                resp_timer->start(response_time_msec);
+                cmd_buf_tmp = comm_protocol->requestCommand(Sp::ReadSerialNumber);
+                make_hid_cmd_packet(static_cast<quint8>(cmd_buf_tmp.size()));
             }
         break;
 
         case sys_cmd_resp::CMD_COMM_SET_TIME:
-            {
-                int result = 0;
-
+            {                
                 resp_bgms_comm->m_comm_status = sys_cmd_resp::CMD_COMM_SET_TIME;
-
-                QList<Sp::ProtocolCommand> list;
-
-                list.append(Sp::WriteTimeInformation);
-                cmd_buf_tmp = comm_protocol->doCommands(list);
-
-                cmd_buf[0] =  cmd_buf_tmp.size();
-
-                for(quint8 cmd_size=0; cmd_size<cmd_buf_tmp.size()+1; cmd_size++)
-                    cmd_buf[cmd_size+1] = cmd_buf_tmp[cmd_size];
-
-                result = write(fd, cmd_buf, cmd_buf[0]+1);
-
-                resp_timer->start(response_time_msec);
-            }
-        break;
-
-        case sys_cmd_resp::CMD_COMM_DOWNLOAD:
-            {
-                int result = 0;
-
-                resp_bgms_comm->m_comm_status = sys_cmd_resp::CMD_COMM_DOWNLOAD;
-
-                QList<Sp::ProtocolCommand> list;
-
-                list.append(Sp::GluecoseResultDataTxExpanded);
-                cmd_buf_tmp = comm_protocol->doCommands(list);
-
-                cmd_buf[0] =  cmd_buf_tmp.size();
-
-                for(quint8 cmd_size=0; cmd_size<cmd_buf_tmp.size()+1; cmd_size++)
-                    cmd_buf[cmd_size+1] = cmd_buf_tmp[cmd_size];
-
-                result = write(fd, cmd_buf, cmd_buf[0]+1);
-
-                resp_timer->start(response_time_msec);
+                cmd_buf_tmp = comm_protocol->requestCommand(Sp::WriteTimeInformation);
+                make_hid_cmd_packet(static_cast<quint8>(cmd_buf_tmp.size()));
             }
         break;
 
         case sys_cmd_resp::CMD_COMM_GET_STORED_VALUE_COUNT:                
             {
-                int result = 0;
-
-                resp_bgms_comm->m_comm_status = sys_cmd_resp::CMD_COMM_GET_STORED_VALUE_COUNT;
-
-                QList<Sp::ProtocolCommand> list;
-
-                list.append(Sp::CurrentIndexOfGluecose);
-                cmd_buf_tmp = comm_protocol->doCommands(list);
-
-                cmd_buf[0] =  cmd_buf_tmp.size();
-
-                for(quint8 cmd_size=0; cmd_size<cmd_buf_tmp.size()+1; cmd_size++)
-                    cmd_buf[cmd_size+1] = cmd_buf_tmp[cmd_size];
-
-                result = write(fd, cmd_buf, cmd_buf[0]+1);
-
-                resp_timer->start(response_time_msec);
+                resp_bgms_comm->m_comm_status = sys_cmd_resp::CMD_COMM_GET_STORED_VALUE_COUNT;                
+                cmd_buf_tmp = comm_protocol->requestCommand(Sp::CurrentIndexOfGluecose);
+                make_hid_cmd_packet(static_cast<quint8>(cmd_buf_tmp.size()));
             }
         break;
 
         case sys_cmd_resp::CMD_COMM_MEM_DELETE:
-            {
-                int result = 0;
-
+            {                
                 resp_bgms_comm->m_comm_status = sys_cmd_resp::CMD_COMM_MEM_DELETE;
+                cmd_buf_tmp = comm_protocol->requestCommand(Sp::DeleteData);
+                make_hid_cmd_packet(static_cast<quint8>(cmd_buf_tmp.size()));
+            }
+        break;
 
-                QList<Sp::ProtocolCommand> list;
-
-                list.append(Sp::DeleteData);
-                cmd_buf_tmp = comm_protocol->doCommands(list);
-
-                cmd_buf[0] =  cmd_buf_tmp.size();
-
-                for(quint8 cmd_size=0; cmd_size<cmd_buf_tmp.size()+1; cmd_size++)
-                    cmd_buf[cmd_size+1] = cmd_buf_tmp[cmd_size];
-
-                result = write(fd, cmd_buf, cmd_buf[0]+1);
-
-                resp_timer->start(response_time_msec);
+        case sys_cmd_resp::CMD_COMM_DOWNLOAD:
+            {
+                resp_bgms_comm->m_comm_status = sys_cmd_resp::CMD_COMM_DOWNLOAD;
+                resp_bgms_comm->m_bgms_data_download_cmd = sys_cmd_resp::DOWNLOAD_READ_SERIAL;
+                cmd_buf_tmp = comm_protocol->requestCommand(Sp::ReadSerialNumber);
+                make_hid_cmd_packet(static_cast<quint8>(cmd_buf_tmp.size()));
             }
         break;
 

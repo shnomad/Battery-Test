@@ -13,6 +13,7 @@
 #include "hid_uart_comm.h"
 #include "udev_monitor_usb.h"
 #include "cli_monitor.h"
+#include "camera.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -70,6 +71,8 @@ private slots:
     void ui_bgms_comm_ch_3_response(sys_cmd_resp *);
 
     void dmm_working_status(QString);
+
+public slots:
 
 private Q_SLOTS:
 
@@ -139,12 +142,12 @@ private Q_SLOTS:
     void on_device_close_ch3_clicked();
 
     void on_time_sync_ch1_clicked();
-
     void on_mem_delete_ch1_clicked();
-
     void on_download_ch1_clicked();
-
     void on_audo_download_ch1_stateChanged(int arg1);
+
+    void on_start_preview_clicked();
+    void on_stop_preview_clicked();
 
 signals:
     void measure_setup_ch1(measurement_param);
@@ -178,6 +181,7 @@ signals:
     void update_dmm_status(QString);
 
     void sig_bgms_comm_cmd(sys_cmd_resp *);
+    void sig_camera_cmd(sys_cmd_resp *);
 
 Q_SIGNALS:
     void currentIndexChanged(int index);
@@ -239,6 +243,9 @@ private:
 
     /*usb mass storage handling*/
     QString dev_path;
+
+    /*camera Preview function*/
+    camera *m_camera;
 };
 
 #endif // MAINWINDOW_H

@@ -58,7 +58,13 @@ Sp::CommProtocolType SerialProtocolAbstract::checkProtocol(const QByteArray &arr
     return Sp::CommProtocolUnknown;
 }
 
-void SerialProtocolAbstract::parseReceivedData(QByteArray rcvPacket)
+bool SerialProtocolAbstract::parseReceivedData(QByteArray rcvPacket)
+{
+    Q_UNUSED(rcvPacket);
+}
+
+//void SerialProtocolAbstract::processPacket(QByteArray rcvPacket)
+QByteArray SerialProtocolAbstract::processPacket(QByteArray rcvPacket)
 {
     Q_UNUSED(rcvPacket);
 }

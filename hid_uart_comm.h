@@ -15,8 +15,8 @@ class hid_uart_comm : public QObject
 public:
     explicit hid_uart_comm(quint8, QObject *parent = nullptr);
     ~hid_uart_comm();
-
     void port_init();
+    int make_hid_cmd_packet(quint8);
 
 signals:
     void sig_bgms_comm_response(sys_cmd_resp *);
@@ -44,6 +44,7 @@ private:
     QString hidpath;
     sys_cmd_resp *resp_bgms_comm;
     SerialProtocolAbstract *comm_protocol;
+    bool m_bgms_data_download = false;
 };
 
 #endif // HID_UART_COMM_H

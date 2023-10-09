@@ -23,6 +23,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    camera.cpp \
     cli_monitor.cpp \
         control.cpp \
         gpiocontrol.cpp \
@@ -42,12 +43,13 @@ SOURCES += \
 #       serialcom/serialprotocol2.cpp \
         serialcom/serialprotocol3.cpp \
         serialcom/serialprotocolabstract.cpp \
-    udev_monitor_usb.cpp
+        udev_monitor_usb.cpp
 #       serialcom/stmhidport.cpp
 #       serialcom/stmhidtester.cpp
 
 HEADERS += \
         bgms_set_param_info.h \
+    camera.h \
     cli_monitor.h \
         control.h \
         gpiocontrol.h \
@@ -75,9 +77,9 @@ HEADERS += \
 #       serialcom/serialprotocol2.h \
         serialcom/serialprotocol3.h \
         serialcom/serialprotocolabstract.h \
-    udev_monitor_usb.h
+        udev_monitor_usb.h
 #       serialcom/glucosedownloadprogress.h \
-#        serialcom/stmhidport.h
+#       serialcom/stmhidport.h
 #       serialcom/stmhidtester.h
 
 #buildtimeTarget.target = builddatetime.h
@@ -90,14 +92,36 @@ QMAKE_EXTRA_TARGETS += buildtimeTarget
 FORMS += \
         mainwindow.ui
 
-INCLUDEPATH +=/opt/qt5pi/sysroot/usr/include
+INCLUDEPATH +=/opt/RPi4/sysroot/usr/include \
+              /opt/Rpi4/sysroot/usr/local/include/opencv4 \
+              /opt/Rpi4/sysroot/usr/local/include/tensorflow
 
 #LIBS += -L/opt/qt5pi/sysroot/usr/lib -lwiringPi \
 LIBS += -L/opt/qt5rpi3/sysroot/usr/lib -lhidapi-hidraw
 #        -L/opt/qt5rpi3/sysroot/usr/lib/python3.7/config-3.7m-arm-linux-gnueabihf -lpython3.7
 #        -L/opt/qt5rpi3/sysroot/usr/local/qt5pi/lib -lQt5Network \
 #        -L/opt/qt5rpi3/sysroot/usr/local/qt5pi/lib -lQt5SerialPort
-LIBS += -L/opt/Rpi4/sysroot/usr/lib/arm-linux-gnueabihf -ludev
+LIBS += -L/opt/Rpi4/sysroot/usr/lib/arm-linux-gnueabihf -ludev#-ledgetpu
+LIBS += -L/opt/Rpi4/sysroot/usr/local/lib -lopencv_calib3d \
+         -lopencv_core \
+         -lopencv_features2d \
+         -lopencv_flann \
+         -lopencv_highgui \
+         -lopencv_imgcodecs \
+         -lopencv_imgproc \
+         -lopencv_ml \
+         -lopencv_objdetect \
+         -lopencv_photo \
+         -lopencv_shape \
+         -lopencv_stitching \
+         -lopencv_superres \
+         -lopencv_video \
+         -lopencv_videoio \
+         -lopencv_videostab \
+         -lopencv_optflow \
+         -lopencv_ximgproc \
+         -lopencv_xfeatures2d
+#         -ltensorflow-lite
 
 QMAKE_CFLAGS_ISYSTEM = -I
 
